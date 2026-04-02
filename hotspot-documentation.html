@@ -926,6 +926,18 @@ tr:hover td { background: #FAFAFA; }
   display: flex;
   justify-content: space-between;
 }
+.sidebar-back {
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4F46E5;
+  cursor: pointer;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.sidebar-back:hover {
+  background: #F3F4F6;
+}
 </style>
 </head>
 <body>
@@ -934,6 +946,9 @@ tr:hover td { background: #FAFAFA; }
 
   <!-- SIDEBAR -->
   <nav class="sidebar">
+    <div class="sidebar-back" onclick="window.location.href='index.html'">
+  ← Demo Home
+</div>
     <div class="sidebar-logo">Add Hotspot</div>
     <div class="sidebar-section">
       <div class="sidebar-section-label">Overview</div>
