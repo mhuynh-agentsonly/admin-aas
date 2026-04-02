@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Hotspot — Design Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  background: #F8F9FB;
+  color: #111827;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── LAYOUT ── */
+.page {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: white;
+  border-right: 1px solid #E5E7EB;
+  padding: 32px 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-logo {
+  padding: 0 20px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #4F46E5;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #E5E7EB;
+  margin-bottom: 16px;
+}
+
+.sidebar-section {
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+
+.sidebar-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #9CA3AF;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 8px 8px 4px;
+}
+
+.sidebar a {
+  display: block;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #374151;
+  text-decoration: none;
+  transition: background 0.1s;
+}
+.sidebar a:hover { background: #F3F4F6; }
+.sidebar a.active { background: #EEF2FF; color: #4F46E5; font-weight: 600; }
+
+.content {
+  flex: 1;
+  max-width: 860px;
+  padding: 48px 56px;
+}
+
+/* ── TYPOGRAPHY ── */
+h1 { font-size: 28px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+h2 { font-size: 20px; font-weight: 700; color: #111827; margin: 48px 0 16px; padding-top: 48px; border-top: 1px solid #E5E7EB; }
+h2:first-of-type { border-top: none; margin-top: 32px; }
+h3 { font-size: 15px; font-weight: 700; color: #111827; margin: 28px 0 10px; }
+h4 { font-size: 13px; font-weight: 600; color: #374151; margin: 20px 0 8px; }
+p { color: #374151; margin-bottom: 12px; }
+p:last-child { margin-bottom: 0; }
+
+.page-meta {
+  font-size: 13px;
+  color: #6B7280;
+  margin-bottom: 32px;
+  display: flex;
+  gap: 16px;
+}
+.page-meta span { display: flex; align-items: center; gap: 5px; }
+
+/* ── CALLOUT ── */
+.callout {
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin: 16px 0;
+  font-size: 13px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.callout-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+.callout.info { background: #EFF6FF; border: 1px solid #DBEAFE; color: #1D4ED8; }
+.callout.warning { background: #FFFBEB; border: 1px solid #FDE68A; color: #92400E; }
+.callout.success { background: #F0FDF4; border: 1px solid #BBF7D0; color: #15803D; }
+
+/* ── TABLES ── */
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+th { background: #F9FAFB; text-align: left; padding: 10px 14px; font-weight: 600; color: #374151; border-bottom: 2px solid #E5E7EB; font-size: 12px; }
+td { padding: 10px 14px; border-bottom: 1px solid #F3F4F6; color: #374151; vertical-align: top; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #FAFAFA; }
+
+/* ── CHIPS / BADGES ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge.pos  { background: #D1FAE5; color: #065F46; }
+.badge.neg  { background: #FEF3C7; color: #92400E; }
+.badge.term { background: #FEE2E2; color: #991B1B; }
+.badge.cond { background: #EDE9FE; color: #5B21B6; }
+.badge.neutral { background: #F3F4F6; color: #374151; }
+
+/* ── TYPE CARDS ── */
+.type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.type-card {
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 20px;
+  background: white;
+}
+
+.type-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.type-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #F3F4F6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.type-icon .material-symbols-outlined {
+  font-size: 20px;
+  color: #6B7280;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+}
+
+.type-card-title { font-size: 15px; font-weight: 700; }
+.type-card-sub   { font-size: 12px; color: #6B7280; margin-top: 1px; }
+.type-card p     { font-size: 13px; color: #374151; margin-bottom: 10px; }
+.type-card p:last-child { margin-bottom: 0; }
+
+/* ── PROPERTY ROWS ── */
+.prop-list { margin: 12px 0; display: flex; flex-direction: column; gap: 8px; }
+.prop-row {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: 13px;
+}
+.prop-label { width: 140px; flex-shrink: 0; font-weight: 600; color: #374151; }
+.prop-value { color: #6B7280; flex: 1; }
+
+/* ── FLOW DIAGRAM ── */
+.flow-demo {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flow-item-demo {
+  display: grid;
+  grid-template-columns: 10px 1fr 14px 100px;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px dashed #BFDBFE;
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: white;
+  font-size: 12px;
+}
+/* Tighter dest column when inside a panel demo */
+.panel-demo .flow-item-demo {
+  grid-template-columns: 10px 1fr 10px 70px;
+  gap: 6px;
+  padding: 6px 8px;
+}
+.flow-item-demo.neg  { border-color: #FED7AA; }
+.flow-item-demo.term { border-color: #FECACA; }
+
+.fdot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.fdot.pos  { background: #22C55E; }
+.fdot.neg  { background: #F97316; }
+.fdot.term { background: #EF4444; border-radius: 2px; }
+.fdot.cond { background: #8B5CF6; }
+
+.flabel { display: flex; flex-direction: column; }
+.fname  { font-weight: 600; color: #111827; }
+.fpol   { font-size: 10px; margin-top: 1px; }
+.fpol.pos  { color: #15803D; }
+.fpol.neg  { color: #C2410C; }
+.fpol.term { color: #DC2626; }
+
+.farrow { color: #9CA3AF; text-align: center; }
+
+.fdest {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #374151;
+  text-align: center;
+}
+
+/* ── CANVAS OVERLAYS DEMO ── */
+.overlay-section {
+  margin: 20px 0;
+}
+
+.overlay-type-group {
+  margin-bottom: 32px;
+}
+
+.overlay-type-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.overlay-states-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.overlay-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.overlay-state-label {
+  font-size: 10px;
+  color: #6B7280;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Base hotspot box */
+.hs-box {
+  width: 110px;
+  height: 68px;
+  border-radius: 3px;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+  user-select: none;
+}
+
+/* ── DEFAULT / EDITING STATE (cyan) ── */
+.hs-box.default-state {
+  border: 2px solid #67E8F9;
+  background: rgba(103,232,249,0.12);
+}
+.hs-box.default-state:hover,
+.hs-box.default-state.focused {
+  border-color: #06B6D4;
+  background: rgba(6,182,212,0.18);
+}
+.hs-box.default-state:active {
+  border-color: #0891B2;
+  background: rgba(8,145,178,0.25);
+}
+
+/* ── CORRECT / GREEN ── */
+.hs-box.correct-state {
+  border: 2px solid #22C55E;
+  background: rgba(34,197,94,0.08);
+}
+.hs-box.correct-state:hover,
+.hs-box.correct-state.focused {
+  border-width: 2.5px;
+  border-color: #22C55E;
+  background: rgba(34,197,94,0.18);
+}
+.hs-box.correct-state:active {
+  border-width: 2.5px;
+  border-color: #16A34A;
+  background: rgba(34,197,94,0.28);
+}
+
+/* ── WRONG / ORANGE ── */
+.hs-box.wrong-state {
+  border: 2px solid #F97316;
+  background: rgba(249,115,22,0.08);
+}
+.hs-box.wrong-state:hover,
+.hs-box.wrong-state.focused {
+  border-width: 2.5px;
+  border-color: #F97316;
+  background: rgba(249,115,22,0.18);
+}
+.hs-box.wrong-state:active {
+  border-width: 2.5px;
+  border-color: #EA580C;
+  background: rgba(249,115,22,0.28);
+}
+
+/* ── TERMINAL / RED ── */
+.hs-box.terminal-state {
+  border: 2px solid #EF4444;
+  background: rgba(239,68,68,0.08);
+}
+.hs-box.terminal-state:hover,
+.hs-box.terminal-state.focused {
+  border-width: 2.5px;
+  border-color: #EF4444;
+  background: rgba(239,68,68,0.18);
+}
+.hs-box.terminal-state:active {
+  border-width: 2.5px;
+  border-color: #DC2626;
+  background: rgba(239,68,68,0.28);
+}
+
+/* ── CONDITIONAL / PURPLE ── */
+.hs-box.cond-state {
+  border: 2px solid #8B5CF6;
+  background: rgba(139,92,246,0.08);
+}
+.hs-box.cond-state:hover,
+.hs-box.cond-state.focused {
+  border-width: 2.5px;
+  border-color: #8B5CF6;
+  background: rgba(139,92,246,0.18);
+}
+.hs-box.cond-state:active {
+  border-width: 2.5px;
+  border-color: #7C3AED;
+  background: rgba(139,92,246,0.28);
+}
+
+/* ── RESIZE HANDLE DOTS ── */
+/* Only shown in focused/selected state — NOT on hover */
+.hs-handle-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.hs-box.focused .hs-handle-dot { opacity: 1; }
+
+/* Clickable hotspots — dots hidden until clicked */
+.hs-box.hs-clickable { cursor: pointer; }
+.hs-box.hs-clickable .hs-handle-dot { opacity: 0; }
+.hs-box.hs-clickable.focused .hs-handle-dot { opacity: 1; }
+.hs-box.hs-clickable.focused {
+  border-color: #0891B2 !important;
+  background: rgba(8,145,178,0.22) !important;
+}
+
+/* ── HOTSPOT NAME BADGE ── */
+.hs-name-badge {
+  position: absolute;
+  top: -22px;
+  left: 0;
+  background: #4F46E5;
+  color: white;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hs-name-badge.pos  { background: #16A34A; }
+.hs-name-badge.neg  { background: #EA580C; }
+.hs-name-badge.term { background: #DC2626; }
+.hs-name-badge.cond { background: #7C3AED; }
+
+/* 8 positions: 4 corners + 4 midpoints */
+.hs-handle-dot.tl { top: -5px;  left: -5px; }
+.hs-handle-dot.tc { top: -5px;  left: calc(50% - 4px); }
+.hs-handle-dot.tr { top: -5px;  right: -5px; }
+.hs-handle-dot.ml { top: calc(50% - 4px); left: -5px; }
+.hs-handle-dot.mr { top: calc(50% - 4px); right: -5px; }
+.hs-handle-dot.bl { bottom: -5px; left: -5px; }
+.hs-handle-dot.bc { bottom: -5px; left: calc(50% - 4px); }
+.hs-handle-dot.br { bottom: -5px; right: -5px; }
+
+/* inner elements */
+.mock-input {
+  position: absolute;
+  bottom: 5px; left: 5px; right: 5px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(55,65,81,0.2);
+  border-radius: 3px;
+  padding: 3px 6px;
+  font-size: 10px;
+  color: rgba(55,65,81,0.4);
+}
+
+.mock-check {
+  position: absolute;
+  top: 5px; left: 5px;
+  width: 18px; height: 18px;
+  background: #10B981;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+}
+.mock-check.unchecked { background: transparent; border: 2px solid #10B981; }
+
+.mock-select {
+  position: absolute;
+  bottom: 5px; left: 5px; right: 5px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(55,65,81,0.2);
+  border-radius: 3px;
+  padding: 3px 6px;
+  font-size: 10px;
+  color: rgba(55,65,81,0.4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* screen bg mock */
+.hs-screen-bg {
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay-label { font-size: 11px; color: #374151; font-weight: 500; text-align: center; }
+
+/* ── SCORING SECTION ── */
+.scoring-paths {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+.scoring-path {
+  flex: 1;
+  min-width: 160px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 14px;
+  background: white;
+}
+.scoring-path.correct { border-color: #BBF7D0; background: #F0FDF4; }
+.scoring-path.wrong   { border-color: #FDE68A; background: #FFFBEB; }
+.scoring-path.terminal { border-color: #FECACA; background: #FFF5F5; }
+
+.scoring-path-title {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.scoring-path.correct .scoring-path-title  { color: #15803D; }
+.scoring-path.wrong .scoring-path-title    { color: #C2410C; }
+.scoring-path.terminal .scoring-path-title { color: #DC2626; }
+
+.scoring-path ul { padding-left: 16px; font-size: 12px; color: #374151; }
+.scoring-path ul li { margin-bottom: 3px; }
+
+/* ── CHECKBOX TABLE ── */
+.checkbox-table td:first-child { font-size: 16px; text-align: center; }
+
+/* ── IA DIAGRAM ── */
+.ia-diagram {
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 20px 0;
+}
+
+.ia-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1px;
+  background: #E5E7EB;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ia-col {
+  background: white;
+  padding: 16px;
+}
+
+.ia-col-header {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.ia-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  font-size: 12px;
+}
+.ia-item:hover { background: #F9FAFB; }
+.ia-item-dot { width: 6px; height: 6px; border-radius: 50%; background: #D1D5DB; flex-shrink: 0; margin-top: 4px; }
+.ia-item-dot.active { background: #4F46E5; }
+.ia-item-text { color: #374151; line-height: 1.4; }
+.ia-item-text strong { font-weight: 600; color: #111827; }
+
+/* ── RULE BLOCKS ── */
+.rule-list { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+.rule-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: #374151;
+}
+.rule-num {
+  width: 22px; height: 22px;
+  background: #4F46E5;
+  color: white;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── DIVIDER ── */
+.divider { border: none; border-top: 1px solid #E5E7EB; margin: 32px 0; }
+
+/* ── LEGEND DEMO ── */
+.legend-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: white;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 16px;
+  width: fit-content;
+  margin: 16px 0;
+}
+.legend-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #374151; }
+.ldot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.ldot.pos  { background: #22C55E; }
+.ldot.neg  { background: #F97316; }
+.ldot.term { background: #EF4444; border-radius: 2px; }
+
+/* ── PROPERTIES PANEL MOCK ── */
+.panel-demo-wrap {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.panel-demo {
+  background: white;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;
+  width: 230px;
+  flex-shrink: 0;
+  overflow: hidden;
+  font-size: 12px;
+}
+.panel-demo-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid #F3F4F6;
+  background: #FAFAFA;
+}
+.panel-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+/* type row */
+.pp-type-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #111827;
+}
+.pp-type-icon {
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: #F3F4F6;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.pp-type-icon .material-symbols-outlined {
+  font-size: 16px;
+  color: #6B7280;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+}
+
+/* field block */
+.pp-field { display: flex; flex-direction: column; gap: 3px; }
+.pp-label { font-size: 10px; font-weight: 600; color: #6B7280; }
+.pp-input {
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 11px;
+  color: #374151;
+  background: white;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.pp-input.placeholder { color: #9CA3AF; }
+.pp-input.filled { color: #111827; }
+.pp-input-wrap { display: flex; flex-direction: column; width: 100%; }
+.pp-input-wrap .pp-input { width: 100%; }
+.pp-input-counter { font-size: 9px; color: #9CA3AF; text-align: right; margin-top: 2px; }
+
+/* points row */
+.pp-points-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pp-points-prefix {
+  width: 24px; height: 24px;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  flex-shrink: 0;
+}
+.pp-points-prefix.pos { color: #15803D; background: #F0FDF4; border-color: #BBF7D0; }
+.pp-points-prefix.neg { color: #C2410C; background: #FFF7ED; border-color: #FED7AA; }
+.pp-points-input {
+  flex: 1;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: #111827;
+}
+.pp-points-unit { font-size: 10px; color: #9CA3AF; }
+
+/* radio cards */
+.pp-radio-group { display: flex; flex-direction: column; gap: 4px; }
+.pp-radio-card {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 7px;
+  padding: 6px 10px;
+  font-size: 11px;
+  color: #374151;
+  cursor: default;
+}
+.pp-radio-card.selected { border-color: #6366F1; background: #EEF2FF; color: #3730A3; font-weight: 600; }
+.pp-radio-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 1.5px solid #D1D5DB;
+  flex-shrink: 0;
+}
+.pp-radio-dot.selected { border-color: #6366F1; background: #6366F1; }
+
+/* divider */
+.pp-divider { border: none; border-top: 1px solid #F3F4F6; margin: 2px 0; }
+
+/* section header */
+.pp-section-head {
+  font-size: 10px;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.pp-section-head.correct { color: #15803D; }
+.pp-section-head.wrong   { color: #C2410C; }
+
+/* action bar */
+.pp-actions {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px;
+  border-top: 1px solid #F3F4F6;
+  background: #FAFAFA;
+}
+.pp-btn {
+  flex: 1;
+  text-align: center;
+  border-radius: 7px;
+  padding: 5px 0;
+  font-size: 11px;
+  font-weight: 600;
+}
+.pp-btn.primary { background: #4F46E5; color: white; }
+.pp-btn.primary.disabled { background: #C7D2FE; color: #818CF8; }
+.pp-btn.ghost { background: white; border: 1.5px solid #E5E7EB; color: #374151; }
+.pp-btn.danger { background: white; border: 1.5px solid #FECACA; color: #DC2626; }
+
+/* terminal box */
+.pp-terminal-box {
+  background: #FFF5F5;
+  border: 1px solid #FECACA;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 10px;
+  color: #991B1B;
+  line-height: 1.5;
+}
+.pp-terminal-box strong { display: block; font-weight: 700; margin-bottom: 2px; color: #7F1D1D; }
+
+/* screen dropdown */
+.pp-select {
+  border: 1px solid #D1D5DB;
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 11px;
+  color: #374151;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pp-select.disabled { background: #F9FAFB; color: #9CA3AF; border-color: #E5E7EB; }
+
+/* chips (view mode) */
+.pp-chip {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: #374151;
+  background: white;
+}
+.pp-chip-icon {
+  width: 24px; height: 24px;
+  border-radius: 5px;
+  background: #F3F4F6;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pp-chip-icon .material-symbols-outlined {
+  font-size: 13px;
+  color: #6B7280;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+}
+.pp-chip-body { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.pp-chip-meta { font-size: 10px; color: #9CA3AF; white-space: nowrap; }
+.pp-chip-name { font-size: 11px; color: #374151; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pp-chip-scores { display: flex; gap: 3px; flex-wrap: nowrap; align-items: center; }
+/* tighter badge sizing inside chips */
+.pp-chip-scores .badge {
+  padding: 1px 6px;
+  font-size: 10px;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+/* empty state */
+.pp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 24px 14px;
+  color: #9CA3AF;
+  text-align: center;
+}
+.pp-empty .material-symbols-outlined {
+  font-size: 28px;
+  color: #D1D5DB;
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 28;
+}
+.pp-empty-text { font-size: 11px; line-height: 1.5; color: #9CA3AF; }
+
+/* items list */
+.pp-items-list { display: flex; flex-direction: column; gap: 3px; }
+.pp-item-row {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: #374151;
+}
+.pp-item-row .pp-input { flex: 1; padding: 4px 7px; }
+.pp-item-del {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  display: flex; align-items: center; justify-content: center;
+  cursor: default;
+  flex-shrink: 0;
+}
+.pp-item-del .material-symbols-outlined { font-size: 11px; color: #EF4444; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+.pp-add-item {
+  font-size: 10px;
+  font-weight: 600;
+  color: #4F46E5;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+/* flow rows inside panel */
+.pp-flow-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #374151;
+  padding: 4px 6px;
+  border-radius: 5px;
+  background: #F9FAFB;
+  border: 1px solid #F3F4F6;
+}
+.pp-flow-label { flex: 1; line-height: 1.3; }
+.pp-flow-dest {
+  font-size: 9px;
+  font-weight: 600;
+  color: #374151;
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 4px;
+  padding: 2px 5px;
+  white-space: nowrap;
+}
+
+/* panel states grid */
+.panel-states-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+  align-items: flex-start;
+}
+.panel-state-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.panel-state-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6B7280;
+  text-align: center;
+}
+
+/* ── FOOTER ── */
+.footer {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid #E5E7EB;
+  font-size: 12px;
+  color: #9CA3AF;
+  display: flex;
+  justify-content: space-between;
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">Add Hotspot</div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Overview</div>
+      <a href="#overview" class="active">What is this tool?</a>
+      <a href="#ia">Information Architecture</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Hotspot Types</div>
+      <a href="#click-area">Click Area</a>
+      <a href="#text-field">Text Field</a>
+      <a href="#checkbox">Checkbox</a>
+      <a href="#dropdown">Dropdown</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Behaviour</div>
+      <a href="#navigation">Navigation Rules</a>
+      <a href="#scoring">Scoring & Branching</a>
+      <a href="#flow">Current Screen Flow</a>
+      <a href="#canvas">Canvas Overlays</a>
+      <a href="#properties-panel">Properties Panel</a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Reference</div>
+      <a href="#legend">Legend</a>
+      <a href="#constraints">Constraints</a>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- HEADER -->
+    <h1>Add Hotspot — Design Documentation</h1>
+    <div class="page-meta">
+      <span>🎓 Hotel Training Feature</span>
+      <span>·</span>
+      <span>Last updated April 2026</span>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ</span>
+      <div>This document covers the <strong>Add Hotspot</strong> step of the simulation creation wizard — where admins configure interactive areas on training screenshots that agents will interact with during a simulation run.</div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <h2 id="overview">What is this tool?</h2>
+    <p>The Add Hotspot tool lets training admins place and configure interactive hotspots on top of simulation screenshots. Each hotspot defines what the agent is expected to do on that part of the screen, how it is scored, and what happens next in the simulation flow.</p>
+    <p>The tool is a 3-column layout: a <strong>screen list</strong> on the left, the <strong>canvas</strong> in the centre where hotspots are drawn, and the <strong>Hotspot Properties</strong> panel on the right.</p>
+
+    <!-- IA -->
+    <h2 id="ia">Information Architecture</h2>
+    <p>The tool is divided into three columns that work together:</p>
+
+    <div class="ia-diagram">
+      <div class="ia-columns">
+        <div class="ia-col">
+          <div class="ia-col-header">Left — Screen Navigation</div>
+          <div class="ia-item"><div class="ia-item-dot active"></div><div class="ia-item-text"><strong>Screen navigation items</strong><br>Admin-defined name, truncated with tooltip. Status dots show correct/wrong/terminal paths.</div></div>
+          <div class="ia-item"><div class="ia-item-dot"></div><div class="ia-item-text"><strong>Chain icon</strong><br>Shown when screen is connected via navigation.</div></div>
+          <div class="ia-item"><div class="ia-item-dot"></div><div class="ia-item-text"><strong>Legend</strong><br>Colour key for the status dots. Fixed at bottom.</div></div>
+        </div>
+        <div class="ia-col">
+          <div class="ia-col-header">Centre — Canvas</div>
+          <div class="ia-item"><div class="ia-item-dot active"></div><div class="ia-item-text"><strong>Screenshot preview</strong><br>Full training screen image. Scrollable for tall screenshots.</div></div>
+          <div class="ia-item"><div class="ia-item-dot"></div><div class="ia-item-text"><strong>Hotspot overlays</strong><br>Draggable, resizable rectangles. Colour-coded by type outcome.</div></div>
+          <div class="ia-item"><div class="ia-item-dot"></div><div class="ia-item-text"><strong>Type selector + Add Hotspot</strong><br>Anchored below canvas. Hidden during editing.</div></div>
+        </div>
+        <div class="ia-col">
+          <div class="ia-col-header">Right — Properties Panel</div>
+          <div class="ia-item"><div class="ia-item-dot active"></div><div class="ia-item-text"><strong>Browse state</strong><br>Lists all hotspots on current screen + Current Screen Flow.</div></div>
+          <div class="ia-item"><div class="ia-item-dot"></div><div class="ia-item-text"><strong>Edit state</strong><br>Full form for name, scoring, action, and flow preview.</div></div>
+          <div class="ia-item"><div class="ia-item-dot"></div><div class="ia-item-text"><strong>Save / Discard / Delete</strong><br>Fixed action bar at the bottom of the panel.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <span class="callout-icon">⚠</span>
+      <div><strong>Max hotspots per screen:</strong> 10. The Add Hotspot button is disabled and shows "Max Reached" when this limit is hit.</div>
+    </div>
+
+    <!-- HOTSPOT TYPES -->
+    <h2>Hotspot Types</h2>
+    <p>There are four hotspot types. Each behaves differently on the canvas and has different properties in the edit panel.</p>
+
+    <div class="type-grid">
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon">
+            <span class="material-symbols-outlined">ads_click</span>
+          </div>
+          <div>
+            <div class="type-card-title">Click Area</div>
+            <div class="type-card-sub">Marks a clickable target</div>
+          </div>
+        </div>
+        <p>The agent is expected to click within this area. Can reward a correct click, penalise a wrong click, or trigger terminal failure.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="badge pos">correct +pts</span>
+          <span class="badge neg">wrong −pts</span>
+          <span class="badge term">■ terminal</span>
+        </div>
+      </div>
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon">
+            <span class="material-symbols-outlined">text_fields</span>
+          </div>
+          <div>
+            <div class="type-card-title">Text Field</div>
+            <div class="type-card-sub">Alphanumeric input</div>
+          </div>
+        </div>
+        <p>The agent must type a value. Admin sets an answer key. Scored on whether the final input matches.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="badge cond">conditional</span>
+          <span class="badge term">■ terminal</span>
+        </div>
+      </div>
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon">
+            <span class="material-symbols-outlined">check_box</span>
+          </div>
+          <div>
+            <div class="type-card-title">Checkbox</div>
+            <div class="type-card-sub">Tick or untick</div>
+          </div>
+        </div>
+        <p>Admin sets the <strong>Expected End State</strong> (must be checked or unchecked). Scored on final state match — not on whether the agent clicked.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="badge cond">conditional</span>
+          <span class="badge term">■ terminal</span>
+        </div>
+      </div>
+
+      <div class="type-card">
+        <div class="type-card-header">
+          <div class="type-icon">
+            <span class="material-symbols-outlined">format_list_bulleted</span>
+          </div>
+          <div>
+            <div class="type-card-title">Dropdown</div>
+            <div class="type-card-sub">Select from list</div>
+          </div>
+        </div>
+        <p>Admin defines dropdown items and marks the correct answer. Scored on whether the agent selects the right option.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="badge cond">conditional</span>
+          <span class="badge term">■ terminal</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLICK AREA -->
+    <h2 id="click-area">Click Area — Properties</h2>
+    <p>Click Area is the only non-conditional type. The outcome is determined by the admin toggling a correct or wrong click, and selecting what action follows.</p>
+
+    <h3>Points</h3>
+    <p>Admin toggles <strong>+</strong> or <strong>−</strong> using the sign prefix next to the points input. This determines whether the hotspot is a correct click or a wrong click.</p>
+    <div class="callout info" style="margin-top:4px;">
+      <span class="callout-icon">ℹ</span>
+      <div>Points input accepts values from <strong>0 → ∞</strong>, no error states. The <strong>+</strong> / <strong>−</strong> sign is a prefix icon — admin always inputs a regular number. If the admin enters an out-of-range value (e.g. a decimal), it auto-reverts to <strong>1</strong> (default). Uses an <code>Input Number</code> component with <code>formatter</code> + <code>parser</code>.</div>
+    </div>
+
+    <h3>Action (Correct click-area)</h3>
+    <div class="prop-list">
+      <div class="prop-row"><span class="prop-label">Navigate to Screen</span><span class="prop-value">Admin selects any screen <em>after</em> the current one. Defaults to the next screen in sequence.</span></div>
+    </div>
+
+    <h3>Action (Wrong click-area)</h3>
+    <div class="prop-list">
+      <div class="prop-row"><span class="prop-label">Navigate to Screen</span><span class="prop-value">Admin selects any screen <em>after</em> the current one. Backward navigation is not allowed.</span></div>
+      <div class="prop-row"><span class="prop-label">Continue (silent)</span><span class="prop-value">Points deducted but the simulation continues without interruption. Agent does not see feedback.</span></div>
+      <div class="prop-row"><span class="prop-label">End Simulation</span><span class="prop-value">Terminal Failure. Immediately ends the simulation, marks it as FAILED, sets score to 0%.</span></div>
+    </div>
+
+    <div class="callout warning">
+      <span class="callout-icon">⚠</span>
+      <div>The <strong>Continue</strong> and <strong>End Simulation</strong> options are only shown when the click is set to wrong (− toggle). Correct clicks always navigate.</div>
+    </div>
+
+    <!-- TEXT FIELD -->
+    <h2 id="text-field">Text Field — Properties</h2>
+    <p>Text Field is a conditional type. It always has two scoring paths: correct answer and wrong answer. The correct path always continues — there is no navigation choice.</p>
+
+    <h3>Answer Key</h3>
+    <p>Optional. Admin enters the expected text value the agent should type. If left empty, any input is treated as correct.</p>
+
+    <h3>On Correct Answer</h3>
+    <div class="prop-list">
+      <div class="prop-row"><span class="prop-label">Points</span><span class="prop-value">1 or more pts awarded (0 → ∞, default 1). Agent always continues to next hotspot.</span></div>
+    </div>
+    <div class="callout info" style="margin: 8px 0 0;">
+      <span class="callout-icon">ℹ</span>
+      <div>Points accept values from <strong>0 → ∞</strong>. The <strong>+</strong> / <strong>−</strong> sign is a prefix icon set by the path (correct vs wrong) — admin always inputs a regular number. Out-of-range input (e.g. decimal) auto-reverts to <strong>1</strong>. Uses <code>Input Number</code> with <code>formatter</code> + <code>parser</code>.</div>
+    </div>
+
+    <h3>On Wrong Answer</h3>
+    <div class="prop-list">
+      <div class="prop-row"><span class="prop-label">Points</span><span class="prop-value">1 or more pts deducted (0 → ∞, default 1). Disabled if terminal.</span></div>
+      <div class="prop-row"><span class="prop-label">Continue (silent)</span><span class="prop-value">Points deducted, simulation continues without feedback.</span></div>
+      <div class="prop-row"><span class="prop-label">End Simulation</span><span class="prop-value">Terminal Failure — ends immediately.</span></div>
+    </div>
+
+    <!-- CHECKBOX -->
+    <h2 id="checkbox">Checkbox — Properties</h2>
+    <p>Checkbox is a conditional type with an important distinction: the admin sets the <strong>Expected End State</strong>, not the expected action. The agent is scored on whether the checkbox is in the right state at the end — not whether they clicked it.</p>
+
+    <h3>Expected End State</h3>
+    <div class="prop-list">
+      <div class="prop-row"><span class="prop-label">☑ Must checked</span><span class="prop-value">The checkbox must be checked when the agent finishes. If it's already checked, the agent should leave it alone.</span></div>
+      <div class="prop-row"><span class="prop-label">☐ Must unchecked</span><span class="prop-value">The checkbox must be unchecked when the agent finishes. If it's already unchecked, leave it alone.</span></div>
+    </div>
+
+    <h3>Scoring matrix</h3>
+    <table class="checkbox-table">
+      <thead>
+        <tr>
+          <th>Screenshot shows</th>
+          <th>Expected End State</th>
+          <th>Agent should</th>
+          <th>Doing nothing is</th>
+          <th>Example</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>☐</td>
+          <td>☑ Must checked</td>
+          <td>Click to check it</td>
+          <td><span class="badge term">✗ Incorrect</span></td>
+          <td>"Send me promotional emails" — opt-in unchecked by default, agent must check it</td>
+        </tr>
+        <tr>
+          <td>☑</td>
+          <td>☐ Must unchecked</td>
+          <td>Click to uncheck it</td>
+          <td><span class="badge term">✗ Incorrect</span></td>
+          <td>"Add travel insurance (+$49)" — pre-checked upsell the agent should remove</td>
+        </tr>
+        <tr>
+          <td>☐</td>
+          <td>☐ Must unchecked</td>
+          <td>Leave it alone</td>
+          <td><span class="badge pos">✓ Correct</span></td>
+          <td>"I agree to share my data with partners" — already unchecked, agent recognises it's correct</td>
+        </tr>
+        <tr>
+          <td>☑</td>
+          <td>☑ Must checked</td>
+          <td>Leave it alone</td>
+          <td><span class="badge pos">✓ Correct</span></td>
+          <td>"I agree to Terms & Conditions" — required checkbox already ticked, agent should not uncheck it</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout success">
+      <span class="callout-icon">💡</span>
+      <div>Use rows 3 & 4 to test that an agent knows <strong>not to touch</strong> a checkbox that's already in the correct state — this tests restraint, not just action.</div>
+    </div>
+
+    <!-- DROPDOWN -->
+    <h2 id="dropdown">Dropdown — Properties</h2>
+    <p>Dropdown is a conditional type. Admin builds the list of options and marks one as the correct answer.</p>
+
+    <h3>Dropdown Items</h3>
+    <p>Admin adds up to 15 items. Each item is a text string. Items can be deleted individually. The list populates the Answer Key selector below it.</p>
+
+    <h3>Answer Key</h3>
+    <p>Admin selects which item is the correct answer from the Answer Key dropdown. The selector is always visible — when no items have been added yet, it shows a <em>"Select answer key"</em> placeholder and is not interactive. Once at least one item is added, the correct answer can be selected.</p>
+
+    <h3>On Correct / Wrong</h3>
+    <p>Same branching as Text Field: correct always continues with +pts; wrong can either continue silently with −pts, or trigger Terminal Failure.</p>
+
+    <!-- NAVIGATION -->
+    <h2 id="navigation">Navigation Rules</h2>
+    <p>The simulation is <strong>linear and cannot loop backward.</strong> This affects all navigation dropdowns across hotspot types.</p>
+
+    <div class="rule-list">
+      <div class="rule-item">
+        <div class="rule-num">1</div>
+        <div>The Navigate to Screen dropdown only lists screens <strong>after</strong> the current one. Screens that come before are hidden entirely.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">2</div>
+        <div>Both <strong>correct</strong> and <strong>wrong click-area</strong> hotspots let the admin freely pick any forward screen as the destination.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">4</div>
+        <div><strong>Conditional types</strong> (Text Field, Checkbox, Dropdown) always continue on the correct path. Navigation choices are not available for the correct path.</div>
+      </div>
+      <div class="rule-item">
+        <div class="rule-num">5</div>
+        <div>Result screens (Pass / Fail) appear as <strong>"Result Screen"</strong> in all navigation dropdowns and flow displays.</div>
+      </div>
+    </div>
+
+    <!-- SCORING -->
+    <h2 id="scoring">Scoring & Branching</h2>
+    <p>Every hotspot produces one of three possible outcomes:</p>
+
+    <div class="scoring-paths">
+      <div class="scoring-path correct">
+        <div class="scoring-path-title">✓ Correct path</div>
+        <ul>
+          <li>Awards points — the <strong>+</strong> prefix is added automatically; admin inputs a regular number (0 → ∞, default 1)</li>
+          <li>Simulation continues to next hotspot</li>
+          <li>Click Area: navigates to the next screen</li>
+        </ul>
+      </div>
+      <div class="scoring-path wrong">
+        <div class="scoring-path-title">✕ Wrong path</div>
+        <ul>
+          <li>Deducts points — the <strong>−</strong> prefix is added automatically; admin inputs a regular number (0 → ∞, default 1)</li>
+          <li>Simulation continues silently</li>
+          <li>Agent receives no feedback</li>
+        </ul>
+      </div>
+      <div class="scoring-path terminal">
+        <div class="scoring-path-title">■ Terminal</div>
+        <ul>
+          <li>Ends simulation immediately</li>
+          <li>Marks session as FAILED</li>
+          <li>Sets result score to 0%</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Branching by hotspot type</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Correct</th>
+          <th>Wrong</th>
+          <th>Terminal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Click Area</strong></td>
+          <td>+pts, navigate to any forward screen (admin's choice)</td>
+          <td>−pts, continue or navigate</td>
+          <td style="font-size:12px;line-height:1.6;">• Ends the simulation<br>• Marks the session as FAILED<br>• Sets test result to 0%</td>
+        </tr>
+        <tr>
+          <td><strong>Text Field</strong></td>
+          <td>+pts, continue</td>
+          <td>−pts, continue silently</td>
+          <td style="font-size:12px;line-height:1.6;">• Ends the simulation<br>• Marks the session as FAILED<br>• Sets test result to 0%</td>
+        </tr>
+        <tr>
+          <td><strong>Checkbox</strong></td>
+          <td>+pts, continue</td>
+          <td>−pts, continue silently</td>
+          <td style="font-size:12px;line-height:1.6;">• Ends the simulation<br>• Marks the session as FAILED<br>• Sets test result to 0%</td>
+        </tr>
+        <tr>
+          <td><strong>Dropdown</strong></td>
+          <td>+pts, continue</td>
+          <td>−pts, continue silently</td>
+          <td style="font-size:12px;line-height:1.6;">• Ends the simulation<br>• Marks the session as FAILED<br>• Sets test result to 0%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- FLOW -->
+    <h2 id="flow">Current Screen Flow</h2>
+    <p>The Current Screen Flow section appears at the bottom of the Hotspot Properties panel. It shows a visual summary of all hotspots on the current screen that have a navigation or terminal impact.</p>
+
+    <h3>What appears in the flow</h3>
+    <div class="prop-list">
+      <div class="prop-row"><span class="prop-label">Shown</span><span class="prop-value">Hotspots that navigate to another screen, or that can trigger Terminal Failure.</span></div>
+      <div class="prop-row"><span class="prop-label">Hidden</span><span class="prop-value">Pure "continue" hotspots — they have no flow impact and would add noise.</span></div>
+    </div>
+
+    <h3>How conditional types appear</h3>
+    <p>Text Field, Checkbox, and Dropdown show <strong>two rows</strong> — one for the correct path and one for the wrong path — but only when at least one path has a navigation or terminal impact. If both paths just continue (no navigation, not terminal), neither row is shown, since neither has any flow impact.</p>
+
+    <h3>Example flow</h3>
+    <div class="flow-demo">
+      <div class="flow-item-demo">
+        <div class="fdot pos"></div>
+        <div class="flabel"><span class="fname">Hotel Location</span><span class="fpol pos">Correct · +1 pts</span></div>
+        <div class="farrow">→</div>
+        <div class="fdest">Continue</div>
+      </div>
+      <div class="flow-item-demo term">
+        <div class="fdot term"></div>
+        <div class="flabel"><span class="fname">Hotel Location</span><span class="fpol term">Wrong</span></div>
+        <div class="farrow">→</div>
+        <div class="fdest">Terminal</div>
+      </div>
+      <div class="flow-item-demo">
+        <div class="fdot pos"></div>
+        <div class="flabel"><span class="fname">Find Hotels</span><span class="fpol pos">Click · +1 pts</span></div>
+        <div class="farrow">→</div>
+        <div class="fdest">Search Results</div>
+      </div>
+      <div class="flow-item-demo neg">
+        <div class="fdot neg"></div>
+        <div class="flabel"><span class="fname">Skip to Screen 6</span><span class="fpol neg">Click · −1 pts</span></div>
+        <div class="farrow">→</div>
+        <div class="fdest">Booking Confirmation</div>
+      </div>
+    </div>
+
+    <!-- CANVAS OVERLAYS -->
+    <h2 id="canvas">Canvas Overlays</h2>
+    <p>Each hotspot type has a distinct visual overlay on the canvas. Colour changes based on the save state and outcome. Hover or click the overlays below to see interactive states.</p>
+
+    <div class="callout info">
+      <span class="callout-icon">ℹ</span>
+      <div><strong>Tip:</strong> <strong>Hover</strong> = intensified border and fill (no handle dots). <strong>Focus/selected</strong> = same intensity + 8 resize-handle dots appear at corners and midpoints. The name badge is visible once a hotspot is saved.</div>
+    </div>
+
+    <div class="overlay-section">
+
+      <!-- 1. Default / Editing -->
+      <h3>1. Default / Editing State (Before saved)</h3>
+      <p>Cyan border on all types — represents a hotspot that has not yet been saved. This is the only state where the outline is uniform across all types.</p>
+
+      <p style="font-size:12px;color:#6B7280;margin-bottom:12px;">Click any hotspot below to toggle the selected/focus state with resize-handle dots.</p>
+      <div class="overlay-states-row" style="margin-bottom:24px;">
+        <div class="overlay-state">
+          <div class="hs-screen-bg"><div class="hs-box default-state hs-clickable" style="color:#06B6D4;"><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div></div></div>
+          <div class="overlay-state-label">Click Area</div>
+        </div>
+        <div class="overlay-state">
+          <div class="hs-screen-bg"><div class="hs-box default-state hs-clickable" style="color:#06B6D4;"><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div><div class="mock-input">Enter text...</div></div></div>
+          <div class="overlay-state-label">Text Field</div>
+        </div>
+        <div class="overlay-state">
+          <div class="hs-screen-bg"><div class="hs-box default-state hs-clickable" style="color:#06B6D4;"><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div><div class="mock-check"><svg width="10" height="8" viewBox="0 0 12 10" fill="none"><polyline points="1.5,5 4.5,8 10.5,2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+          <div class="overlay-state-label">Checkbox (checked)</div>
+        </div>
+        <div class="overlay-state">
+          <div class="hs-screen-bg"><div class="hs-box default-state hs-clickable" style="color:#06B6D4;"><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div><div class="mock-check unchecked"></div></div></div>
+          <div class="overlay-state-label">Checkbox (unchecked)</div>
+        </div>
+        <div class="overlay-state">
+          <div class="hs-screen-bg"><div class="hs-box default-state hs-clickable" style="color:#06B6D4;"><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div><div class="mock-select"><span>Select option</span><span style="font-size:9px;">▾</span></div></div></div>
+          <div class="overlay-state-label">Dropdown</div>
+        </div>
+      </div>
+
+      <!-- 2. After Saved -->
+      <h3>2. After Saved — Semantic Colour</h3>
+      <p>Once saved, hotspots switch to semantic colours that encode the outcome. Click Area uses green/orange/red based on the correct/wrong/terminal toggle. Conditional types (Text Field, Checkbox, Dropdown) are always purple — they have two paths and cannot be reduced to a single colour.</p>
+      <p style="font-size:12px;color:#6B7280;margin-top:-6px;">Hover = border intensifies, no dots. Focus/selected = intensified border + 8 resize-handle dots + name badge.</p>
+
+      <div style="display:flex;flex-direction:column;gap:20px;margin-top:16px;">
+
+        <!-- Correct row -->
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#15803D;margin-bottom:10px;display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;background:#22C55E;border-radius:50%;"></span> Correct click-area</div>
+          <div class="overlay-states-row">
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box correct-state" style="color:#22C55E;"><span class="hs-name-badge pos">Find Hotels</span></div></div>
+              <div class="overlay-state-label">No focus</div>
+            </div>
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box correct-state" style="color:#22C55E;border-width:2.5px;background:rgba(34,197,94,0.18);"><span class="hs-name-badge pos">Find Hotels</span></div></div>
+              <div class="overlay-state-label">Hover</div>
+            </div>
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box correct-state focused" style="color:#22C55E;"><span class="hs-name-badge pos">Find Hotels</span><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div></div></div>
+              <div class="overlay-state-label">Focus / in edit mode</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Wrong row -->
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#C2410C;margin-bottom:10px;display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;background:#F97316;border-radius:50%;"></span> Wrong click-area</div>
+          <div class="overlay-states-row">
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box wrong-state" style="color:#F97316;"><span class="hs-name-badge neg">Skip to S6</span></div></div>
+              <div class="overlay-state-label">No focus</div>
+            </div>
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box wrong-state" style="color:#F97316;border-width:2.5px;background:rgba(249,115,22,0.18);"><span class="hs-name-badge neg">Skip to S6</span></div></div>
+              <div class="overlay-state-label">Hover</div>
+            </div>
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box wrong-state focused" style="color:#F97316;"><span class="hs-name-badge neg">Skip to S6</span><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div></div></div>
+              <div class="overlay-state-label">Focus / in edit mode</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terminal row -->
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#DC2626;margin-bottom:10px;display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;background:#EF4444;border-radius:2px;"></span> Terminal click-area</div>
+          <div class="overlay-states-row">
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box terminal-state" style="color:#EF4444;"><span class="hs-name-badge term">Pay Now</span></div></div>
+              <div class="overlay-state-label">No focus</div>
+            </div>
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box terminal-state" style="color:#EF4444;border-width:2.5px;background:rgba(239,68,68,0.18);"><span class="hs-name-badge term">Pay Now</span></div></div>
+              <div class="overlay-state-label">Hover</div>
+            </div>
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box terminal-state focused" style="color:#EF4444;"><span class="hs-name-badge term">Pay Now</span><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div></div></div>
+              <div class="overlay-state-label">Focus / in edit mode</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Conditional row (all 3 types) -->
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#7C3AED;margin-bottom:10px;display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:10px;height:10px;background:#8B5CF6;border-radius:50%;"></span> Conditional types — Text Field, Checkbox, Dropdown</div>
+          <div class="overlay-states-row" style="flex-wrap:nowrap;">
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box cond-state" style="color:#8B5CF6;"><span class="hs-name-badge cond">Hotel Location</span><div class="mock-input">Enter text...</div></div></div>
+              <div class="overlay-state-label">Text Field<br>No focus</div>
+            </div>
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box cond-state focused" style="color:#8B5CF6;"><span class="hs-name-badge cond">Hotel Location</span><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div><div class="mock-input">Enter text...</div></div></div>
+              <div class="overlay-state-label">Text Field<br>Focus</div>
+            </div>
+            <div class="overlay-state" style="margin-left:16px;">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box cond-state" style="color:#8B5CF6;"><span class="hs-name-badge cond">T&amp;C Checkbox</span><div class="mock-check"><svg width="10" height="8" viewBox="0 0 12 10" fill="none"><polyline points="1.5,5 4.5,8 10.5,2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+              <div class="overlay-state-label">Checkbox<br>No focus</div>
+            </div>
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box cond-state focused" style="color:#8B5CF6;"><span class="hs-name-badge cond">T&amp;C Checkbox</span><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div><div class="mock-check"><svg width="10" height="8" viewBox="0 0 12 10" fill="none"><polyline points="1.5,5 4.5,8 10.5,2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+              <div class="overlay-state-label">Checkbox<br>Focus</div>
+            </div>
+            <div class="overlay-state" style="margin-left:16px;">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box cond-state" style="color:#8B5CF6;"><span class="hs-name-badge cond">Check-in Date</span><div class="mock-select"><span>Select option</span><span style="font-size:9px;">▾</span></div></div></div>
+              <div class="overlay-state-label">Dropdown<br>No focus</div>
+            </div>
+            <div class="overlay-state">
+              <div class="hs-screen-bg" style="padding-top:24px;"><div class="hs-box cond-state focused" style="color:#8B5CF6;"><span class="hs-name-badge cond">Check-in Date</span><div class="hs-handle-dot tl"></div><div class="hs-handle-dot tc"></div><div class="hs-handle-dot tr"></div><div class="hs-handle-dot ml"></div><div class="hs-handle-dot mr"></div><div class="hs-handle-dot bl"></div><div class="hs-handle-dot bc"></div><div class="hs-handle-dot br"></div><div class="mock-select"><span>Select option</span><span style="font-size:9px;">▾</span></div></div></div>
+              <div class="overlay-state-label">Dropdown<br>Focus</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <h3>Overlay colour coding</h3>
+    <table>
+      <thead>
+        <tr><th>Colour</th><th>Meaning</th><th>Applied when</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#06B6D4;">■ Cyan</span></td><td>Unsaved / Editing state</td><td>All hotspot types before Save is clicked</td></tr>
+        <tr><td><span class="badge pos">■ Green</span></td><td>Correct path</td><td>Correct click-area (after save)</td></tr>
+        <tr><td><span class="badge neg">■ Orange</span></td><td>Wrong path</td><td>Wrong click-area (after save)</td></tr>
+        <tr><td><span class="badge term">■ Red</span></td><td>Terminal</td><td>Terminal click-area (after save)</td></tr>
+        <tr><td><span class="badge cond">■ Purple</span></td><td>Conditional</td><td>Text Field, Checkbox, Dropdown (after save)</td></tr>
+      </tbody>
+    </table>
+
+    <!-- PROPERTIES PANEL -->
+    <h2 id="properties-panel">Hotspot Properties Panel</h2>
+    <p>The 290px right panel has two modes: <strong>view mode</strong> (browse) when no hotspot is being edited, and <strong>edit mode</strong> when a hotspot is selected or a new one is being placed.</p>
+
+    <!-- VIEW MODE -->
+    <h3>View Mode (Browse)</h3>
+    <p>Shown when the admin is not actively editing any hotspot. Displays an empty hint when no hotspots exist, or a chip list of all saved hotspots plus the Current Screen Flow.</p>
+
+    <div class="panel-states-grid">
+      <!-- Empty state -->
+      <div class="panel-state-col">
+        <div class="panel-state-label">No hotspots added</div>
+        <div class="panel-demo">
+          <div class="panel-demo-title">Hotspot List</div>
+          <div class="pp-empty">
+            <span class="material-symbols-outlined">ads_click</span>
+            <span class="pp-empty-text">Click + drag on the screenshot to place a hotspot</span>
+          </div>
+        </div>
+      </div>
+      <!-- With hotspots -->
+      <div class="panel-state-col">
+        <div class="panel-state-label">Hotspots added</div>
+        <div class="panel-demo">
+          <div class="panel-demo-title">Hotspot List</div>
+          <div class="panel-body" style="gap:6px;">
+            <!-- chip 1 -->
+            <div class="pp-chip">
+              <div class="pp-chip-icon"><span class="material-symbols-outlined">ads_click</span></div>
+              <div class="pp-chip-body">
+                <div class="pp-chip-meta">Hotspot 1 · Click Area</div>
+                <div class="pp-chip-name">"Find Hotels"</div>
+                <div class="pp-chip-scores"><span class="badge pos">+1 pt</span></div>
+              </div>
+            </div>
+            <!-- chip 2 -->
+            <div class="pp-chip">
+              <div class="pp-chip-icon"><span class="material-symbols-outlined">text_fields</span></div>
+              <div class="pp-chip-body">
+                <div class="pp-chip-meta">Hotspot 2 · Text Field</div>
+                <div class="pp-chip-name">"Hotel Location"</div>
+                <div class="pp-chip-scores"><span class="badge pos">+1 pt</span><span class="badge neg">−1 pt</span><span class="badge term">Terminal</span></div>
+              </div>
+            </div>
+            <!-- chip 3 -->
+            <div class="pp-chip">
+              <div class="pp-chip-icon"><span class="material-symbols-outlined">format_list_bulleted</span></div>
+              <div class="pp-chip-body">
+                <div class="pp-chip-meta">Hotspot 3 · Dropdown</div>
+                <div class="pp-chip-name">"Check-in Date"</div>
+                <div class="pp-chip-scores"><span class="badge pos">+1 pt</span><span class="badge neg">−1 pt</span></div>
+              </div>
+            </div>
+            <div class="pp-divider"></div>
+            <!-- flow -->
+            <div class="pp-section-head">Current Screen Flow</div>
+            <div class="flow-item-demo" style="font-size:11px;">
+              <div class="fdot pos"></div>
+              <div><div class="fname">Find Hotels</div><div class="fpol pos">Click · +1 pt</div></div>
+              <div class="farrow">→</div>
+              <div class="fdest">Search Results</div>
+            </div>
+            <div class="flow-item-demo" style="font-size:11px;">
+              <div class="fdot pos"></div>
+              <div><div class="fname">Hotel Location</div><div class="fpol pos">Correct · +1 pts</div></div>
+              <div class="farrow">→</div>
+              <div class="fdest">Continue</div>
+            </div>
+            <div class="flow-item-demo term" style="font-size:11px;">
+              <div class="fdot term"></div>
+              <div><div class="fname">Hotel Location</div><div class="fpol term">Wrong</div></div>
+              <div class="farrow">→</div>
+              <div class="fdest">Terminal</div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p>Each chip shows the hotspot's type icon, its number + type label, name in quotes, and score badges for the correct and wrong points. Terminal and conditional chips also show a <span class="fdest">Terminal</span> badge where applicable.</p>
+
+    <!-- EDIT MODE -->
+    <h3>Edit Mode</h3>
+    <p>Opens when the admin clicks a saved hotspot or finishes drawing a new one. The panel always starts with a <strong>Type row</strong> and a <strong>Hotspot Name</strong> field. Content below varies by type.</p>
+
+    <div class="callout info">
+      <span class="callout-icon">✏️</span>
+      <div>The <strong>Save Hotspot</strong> button is disabled until the name field is filled. For Click Area with Navigate to Screen selected, a destination screen must also be chosen before saving is enabled.</div>
+    </div>
+
+    <!-- CLICK AREA -->
+    <h3 id="panel-click">Click Area Panel</h3>
+    <p>Click Area has a single <strong>Points</strong> field with a +/− toggle prefix that determines the hotspot's polarity. Toggling to <strong>+</strong> (correct) locks the action to Navigate to Screen. Toggling to <strong>−</strong> (wrong) opens a full Action radio group.</p>
+
+    <!-- Correct row -->
+    <div style="font-size:11px;font-weight:700;color:#15803D;display:flex;align-items:center;gap:6px;margin:16px 0 8px;">
+      <span style="display:inline-block;width:8px;height:8px;background:#22C55E;border-radius:50%;"></span> + Correct
+    </div>
+    <div class="panel-demo-wrap" style="margin:0 0 24px;">
+
+      <!-- Correct · Filled & saved -->
+      <div class="panel-state-col">
+        <div class="panel-state-label">Filled</div>
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">ads_click</span></div>
+            Click Area
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Find Hotels</div><span class="pp-input-counter">11/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:6px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:90px;">
+              <span style="color:#16A34A;font-weight:700;font-size:12px;">+</span>
+              <span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Click the +/- to toggle reward or penalty.
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#374151;display:flex;align-items:center;gap:5px;margin-bottom:10px;">
+              <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">bolt</span> Action
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">Navigate to Screen</span></div>
+              <div class="pp-select" style="font-size:11px;">Search Results <span style="float:right;">▾</span></div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end correct row -->
+
+    <!-- Wrong row -->
+    <div style="font-size:11px;font-weight:700;color:#C2410C;display:flex;align-items:center;gap:6px;margin:0 0 8px;">
+      <span style="display:inline-block;width:8px;height:8px;background:#F97316;border-radius:50%;"></span> − Wrong
+    </div>
+    <div class="panel-demo-wrap" style="margin:0;">
+
+      <!-- Wrong · Navigate to Screen (closed) -->
+      <div class="panel-state-col">
+        <div class="panel-state-label">Navigate to Screen</div>
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">ads_click</span></div>
+            Click Area
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Find Hotels</div><span class="pp-input-counter">11/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:6px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:90px;">
+              <span style="color:#EA580C;font-weight:700;font-size:12px;">−</span>
+              <span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Click the +/- to toggle reward or penalty.
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#374151;display:flex;align-items:center;gap:5px;margin-bottom:10px;">
+              <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">bolt</span> Action
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">Navigate to Screen</span></div>
+              <div class="pp-select" style="font-size:11px;">Search Results <span style="float:right;">▾</span></div>
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>Continue</div>
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>End Simulation (Terminal Failure)</div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wrong · Continue -->
+      <div class="panel-state-col">
+        <div class="panel-state-label">Continue</div>
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">ads_click</span></div>
+            Click Area
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Find Hotels</div><span class="pp-input-counter">11/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:6px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:90px;">
+              <span style="color:#EA580C;font-weight:700;font-size:12px;">−</span>
+              <span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Click the +/- to toggle reward or penalty.
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#374151;display:flex;align-items:center;gap:5px;margin-bottom:10px;">
+              <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">bolt</span> Action
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>Navigate to Screen</div>
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">Continue</span></div>
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>End Simulation (Terminal Failure)</div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wrong · End Simulation -->
+      <div class="panel-state-col">
+        <div class="panel-state-label">End Simulation</div>
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">ads_click</span></div>
+            Click Area
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Find Hotels</div><span class="pp-input-counter">11/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:6px;">Points</div>
+            <div class="pp-input" style="gap:6px;width:fit-content;min-width:90px;background:#F3F4F6;border-color:#E5E7EB;color:#6B7280;">0</div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;">No points for terminal failure.</div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#374151;display:flex;align-items:center;gap:5px;margin-bottom:10px;">
+              <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">bolt</span> Action
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>Navigate to Screen</div>
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>Continue</div>
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">End Simulation (Terminal Failure)</span></div>
+              <div class="pp-terminal-box">
+                <strong style="color:#991B1B;display:flex;align-items:center;gap:5px;margin-bottom:4px;"><span style="width:10px;height:10px;background:#EF4444;border-radius:2px;display:inline-block;flex-shrink:0;"></span>Terminal Failure Active</strong>
+                <ul style="padding-left:14px;margin:0;font-size:10px;color:#991B1B;line-height:1.7;">
+                  <li>Ends the simulation</li>
+                  <li>Marks the session as <strong>FAILED</strong></li>
+                  <li>Sets test result to <strong>0%</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end wrong row -->
+
+    <div class="callout info" style="margin-top:4px;">
+      <span class="callout-icon">ℹ️</span>
+      <div>When <strong>End Simulation (Terminal Failure)</strong> is selected, the Points field is locked to 0 — terminal failure always scores 0% regardless of any points value.</div>
+    </div>
+
+    <!-- TEXT FIELD -->
+    <h3 id="panel-textfield">Text Field Panel</h3>
+    <p>Text Field has an optional <strong>Answer Key</strong> field, then separate <strong>On Correct Answer</strong> and <strong>On Incorrect Answer</strong> sections each with their own Points and branching controls.</p>
+
+    <!-- On Incorrect → Continue row -->
+    <div style="font-size:11px;font-weight:700;color:#C2410C;display:flex;align-items:center;gap:6px;margin:16px 0 8px;">
+      <span style="display:inline-block;width:8px;height:8px;background:#F97316;border-radius:50%;"></span> On Incorrect → Continue
+    </div>
+    <div class="panel-demo-wrap" style="margin:0 0 24px;">
+
+      <div class="panel-state-col">
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">text_fields</span></div>
+            Text Field
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Hotel Location</div><span class="pp-input-counter">14/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Answer Key <span style="color:#9CA3AF;font-size:9px;font-weight:400;">(Optional)</span></div>
+            <div class="pp-input filled" style="position:relative;">Ohio<span style="position:absolute;bottom:3px;right:3px;font-size:9px;color:#D1D5DB;line-height:1;">◢</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#16A34A;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">check_circle</span> On Correct Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#16A34A;font-weight:700;font-size:12px;">+</span><span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Agent always continues to next hotspot
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#DC2626;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">cancel</span> On Incorrect Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#EA580C;font-weight:700;font-size:12px;">−</span><span>1</span>
+            </div>
+            <div class="pp-label" style="margin-top:8px;margin-bottom:6px;">Then</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">Continue</span></div>
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>End Simulation (Terminal Failure)</div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end continue row -->
+
+    <!-- On Incorrect → End Simulation row -->
+    <div style="font-size:11px;font-weight:700;color:#DC2626;display:flex;align-items:center;gap:6px;margin:0 0 8px;">
+      <span style="display:inline-block;width:8px;height:8px;background:#EF4444;border-radius:2px;"></span> On Incorrect → End Simulation
+    </div>
+    <div class="panel-demo-wrap" style="margin:0;">
+
+      <div class="panel-state-col">
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">text_fields</span></div>
+            Text Field
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Hotel Location</div><span class="pp-input-counter">14/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Answer Key <span style="color:#9CA3AF;font-size:9px;font-weight:400;">(Optional)</span></div>
+            <div class="pp-input filled" style="position:relative;">Ohio<span style="position:absolute;bottom:3px;right:3px;font-size:9px;color:#D1D5DB;line-height:1;">◢</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#16A34A;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">check_circle</span> On Correct Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#16A34A;font-weight:700;font-size:12px;">+</span><span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Agent always continues to next hotspot
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#DC2626;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">cancel</span> On Incorrect Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input" style="gap:6px;width:fit-content;min-width:80px;background:#F3F4F6;border-color:#E5E7EB;color:#6B7280;">0</div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;">No points for terminal failure.</div>
+            <div class="pp-label" style="margin-top:8px;margin-bottom:6px;">Then</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>Continue</div>
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">End Simulation (Terminal Failure)</span></div>
+              <div class="pp-terminal-box">
+                <strong style="color:#991B1B;display:flex;align-items:center;gap:5px;margin-bottom:4px;"><span style="width:10px;height:10px;background:#EF4444;border-radius:2px;display:inline-block;flex-shrink:0;"></span>Terminal Failure Active</strong>
+                <ul style="padding-left:14px;margin:0;font-size:10px;color:#991B1B;line-height:1.7;">
+                  <li>Ends the simulation</li>
+                  <li>Marks the session as <strong>FAILED</strong></li>
+                  <li>Sets test result to <strong>0%</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end terminal row -->
+
+    <!-- CHECKBOX -->
+    <h3 id="panel-checkbox">Checkbox Panel</h3>
+    <p>The Checkbox panel has an <strong>Expected End State</strong> selector with two radio cards (Must check / Must uncheck). The scoring form below follows the same On Correct / On Incorrect structure as Text Field.</p>
+
+    <!-- Must check group -->
+    <div style="font-size:11px;font-weight:700;color:#374151;display:flex;align-items:center;gap:6px;margin:16px 0 8px;">
+      <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">check_box</span> Must check
+    </div>
+    <div class="panel-demo-wrap" style="margin:0 0 24px;">
+
+      <!-- Must check · On Incorrect → Continue -->
+      <div class="panel-state-col">
+        <div class="panel-state-label" style="color:#C2410C;font-weight:600;display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;background:#F97316;border-radius:50%;flex-shrink:0;"></span>On Incorrect → Continue</div>
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">check_box</span></div>
+            Checkbox
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Free Breakfast</div><span class="pp-input-counter">14/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:6px;">Expected End State</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">☑ Must check</span></div>
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>☐ Must uncheck</div>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:6px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              The expected final state of this checkbox.
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#16A34A;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">check_circle</span> On Correct Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#16A34A;font-weight:700;font-size:12px;">+</span><span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Agent always continues to next hotspot
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#DC2626;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">cancel</span> On Incorrect Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#EA580C;font-weight:700;font-size:12px;">−</span><span>1</span>
+            </div>
+            <div class="pp-label" style="margin-top:8px;margin-bottom:6px;">Then</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">Continue</span></div>
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>End Simulation (Terminal Failure)</div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Must check · On Incorrect → End Simulation -->
+      <div class="panel-state-col">
+        <div class="panel-state-label" style="color:#DC2626;font-weight:600;display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;background:#EF4444;border-radius:2px;flex-shrink:0;"></span>On Incorrect → End Simulation</div>
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">check_box</span></div>
+            Checkbox
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Free Breakfast</div><span class="pp-input-counter">14/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:6px;">Expected End State</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">☑ Must check</span></div>
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>☐ Must uncheck</div>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:6px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              The expected final state of this checkbox.
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#16A34A;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">check_circle</span> On Correct Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#16A34A;font-weight:700;font-size:12px;">+</span><span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Agent always continues to next hotspot
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#DC2626;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">cancel</span> On Incorrect Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input" style="gap:6px;width:fit-content;min-width:80px;background:#F3F4F6;border-color:#E5E7EB;color:#6B7280;">0</div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;">No points for terminal failure.</div>
+            <div class="pp-label" style="margin-top:8px;margin-bottom:6px;">Then</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>Continue</div>
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">End Simulation (Terminal Failure)</span></div>
+              <div class="pp-terminal-box">
+                <strong style="color:#991B1B;display:flex;align-items:center;gap:5px;margin-bottom:4px;"><span style="width:10px;height:10px;background:#EF4444;border-radius:2px;display:inline-block;flex-shrink:0;"></span>Terminal Failure Active</strong>
+                <ul style="padding-left:14px;margin:0;font-size:10px;color:#991B1B;line-height:1.7;">
+                  <li>Ends the simulation</li>
+                  <li>Marks the session as <strong>FAILED</strong></li>
+                  <li>Sets test result to <strong>0%</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end must-check group -->
+
+    <!-- Must uncheck group -->
+    <div style="font-size:11px;font-weight:700;color:#374151;display:flex;align-items:center;gap:6px;margin:0 0 8px;">
+      <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">check_box_outline_blank</span> Must uncheck
+    </div>
+    <div class="panel-demo-wrap" style="margin:0;">
+
+      <!-- Must uncheck · On Incorrect → Continue -->
+      <div class="panel-state-col">
+        <div class="panel-state-label" style="color:#C2410C;font-weight:600;display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;background:#F97316;border-radius:50%;flex-shrink:0;"></span>On Incorrect → Continue</div>
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">check_box</span></div>
+            Checkbox
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Free Breakfast</div><span class="pp-input-counter">14/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:6px;">Expected End State</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>☑ Must check</div>
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">☐ Must uncheck</span></div>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:6px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              The expected final state of this checkbox.
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#16A34A;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">check_circle</span> On Correct Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#16A34A;font-weight:700;font-size:12px;">+</span><span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Agent always continues to next hotspot
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#DC2626;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">cancel</span> On Incorrect Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#EA580C;font-weight:700;font-size:12px;">−</span><span>1</span>
+            </div>
+            <div class="pp-label" style="margin-top:8px;margin-bottom:6px;">Then</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">Continue</span></div>
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>End Simulation (Terminal Failure)</div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Must uncheck · On Incorrect → End Simulation -->
+      <div class="panel-state-col">
+        <div class="panel-state-label" style="color:#DC2626;font-weight:600;display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:8px;height:8px;background:#EF4444;border-radius:2px;flex-shrink:0;"></span>On Incorrect → End Simulation</div>
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">check_box</span></div>
+            Checkbox
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Free Breakfast</div><span class="pp-input-counter">14/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:6px;">Expected End State</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>☑ Must check</div>
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">☐ Must uncheck</span></div>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:6px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              The expected final state of this checkbox.
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#16A34A;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">check_circle</span> On Correct Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#16A34A;font-weight:700;font-size:12px;">+</span><span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Agent always continues to next hotspot
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#DC2626;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">cancel</span> On Incorrect Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input" style="gap:6px;width:fit-content;min-width:80px;background:#F3F4F6;border-color:#E5E7EB;color:#6B7280;">0</div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;">No points for terminal failure.</div>
+            <div class="pp-label" style="margin-top:8px;margin-bottom:6px;">Then</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>Continue</div>
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">End Simulation (Terminal Failure)</span></div>
+              <div class="pp-terminal-box">
+                <strong style="color:#991B1B;display:flex;align-items:center;gap:5px;margin-bottom:4px;"><span style="width:10px;height:10px;background:#EF4444;border-radius:2px;display:inline-block;flex-shrink:0;"></span>Terminal Failure Active</strong>
+                <ul style="padding-left:14px;margin:0;font-size:10px;color:#991B1B;line-height:1.7;">
+                  <li>Ends the simulation</li>
+                  <li>Marks the session as <strong>FAILED</strong></li>
+                  <li>Sets test result to <strong>0%</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end must-uncheck group -->
+
+    <!-- DROPDOWN -->
+    <h3 id="panel-dropdown">Dropdown Panel</h3>
+    <p>The Dropdown panel has a <strong>Dropdown item</strong> list (max 15 items) and an <strong>Answer Key</strong> selector. The conditional scoring form follows the same On Correct / On Incorrect structure as Text Field.</p>
+
+    <!-- On Incorrect → Continue row -->
+    <div style="font-size:11px;font-weight:700;color:#C2410C;display:flex;align-items:center;gap:6px;margin:16px 0 8px;">
+      <span style="display:inline-block;width:8px;height:8px;background:#F97316;border-radius:50%;"></span> On Incorrect → Continue
+    </div>
+    <div class="panel-demo-wrap" style="margin:0 0 24px;">
+
+      <div class="panel-state-col">
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">format_list_bulleted</span></div>
+            Dropdown
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Check-in Date</div><span class="pp-input-counter">13/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:6px;">Dropdown item <span style="color:#9CA3AF;font-size:9px;font-weight:400;">(max 15)</span></div>
+            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:6px;">
+              <div class="pp-input filled">Apr 30</div>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <div class="pp-input filled" style="flex:1;">May 1</div>
+                <span style="color:#9CA3AF;font-size:14px;cursor:pointer;flex-shrink:0;">✕</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <div class="pp-input filled" style="flex:1;">May 2</div>
+                <span style="color:#9CA3AF;font-size:14px;cursor:pointer;flex-shrink:0;">✕</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <div class="pp-input filled" style="flex:1;">May 3</div>
+                <span style="color:#9CA3AF;font-size:14px;cursor:pointer;flex-shrink:0;">✕</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <div class="pp-input filled" style="flex:1;">May 4</div>
+                <span style="color:#9CA3AF;font-size:14px;cursor:pointer;flex-shrink:0;">✕</span>
+              </div>
+            </div>
+            <div style="border:1.5px dashed #D1D5DB;border-radius:6px;padding:5px 8px;font-size:11px;color:#6B7280;display:flex;align-items:center;gap:4px;cursor:pointer;">
+              <span style="font-size:14px;line-height:1;">+</span> Add item
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Answer Key</div>
+            <div class="pp-select" style="font-size:11px;">Apr 30 <span style="float:right;">▾</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#16A34A;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">check_circle</span> On Correct Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#16A34A;font-weight:700;font-size:12px;">+</span><span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Agent always continues to next hotspot
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#DC2626;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">cancel</span> On Incorrect Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#EA580C;font-weight:700;font-size:12px;">−</span><span>1</span>
+            </div>
+            <div class="pp-label" style="margin-top:8px;margin-bottom:6px;">Then</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">Continue</span></div>
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>End Simulation (Terminal Failure)</div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end dropdown continue row -->
+
+    <!-- On Incorrect → End Simulation row -->
+    <div style="font-size:11px;font-weight:700;color:#DC2626;display:flex;align-items:center;gap:6px;margin:0 0 8px;">
+      <span style="display:inline-block;width:8px;height:8px;background:#EF4444;border-radius:2px;"></span> On Incorrect → End Simulation
+    </div>
+    <div class="panel-demo-wrap" style="margin:0;">
+
+      <div class="panel-state-col">
+        <div class="panel-demo" style="width:230px;">
+          <div style="font-size:11px;font-weight:600;color:#374151;padding:10px 14px 8px;">Hotspot Properties</div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px 8px;display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:#6B7280;">
+            <div class="pp-type-icon" style="width:22px;height:22px;border-radius:5px;"><span class="material-symbols-outlined" style="font-size:13px;color:#6B7280;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20;">format_list_bulleted</span></div>
+            Dropdown
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Hotspot Name</div>
+            <div class="pp-input-wrap"><div class="pp-input filled">Check-in Date</div><span class="pp-input-counter">13/30</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:6px;">Dropdown item <span style="color:#9CA3AF;font-size:9px;font-weight:400;">(max 15)</span></div>
+            <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:6px;">
+              <div class="pp-input filled">Apr 30</div>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <div class="pp-input filled" style="flex:1;">May 1</div>
+                <span style="color:#9CA3AF;font-size:14px;cursor:pointer;flex-shrink:0;">✕</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <div class="pp-input filled" style="flex:1;">May 2</div>
+                <span style="color:#9CA3AF;font-size:14px;cursor:pointer;flex-shrink:0;">✕</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <div class="pp-input filled" style="flex:1;">May 3</div>
+                <span style="color:#9CA3AF;font-size:14px;cursor:pointer;flex-shrink:0;">✕</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <div class="pp-input filled" style="flex:1;">May 4</div>
+                <span style="color:#9CA3AF;font-size:14px;cursor:pointer;flex-shrink:0;">✕</span>
+              </div>
+            </div>
+            <div style="border:1.5px dashed #D1D5DB;border-radius:6px;padding:5px 8px;font-size:11px;color:#6B7280;display:flex;align-items:center;gap:4px;cursor:pointer;">
+              <span style="font-size:14px;line-height:1;">+</span> Add item
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div class="pp-label" style="margin-bottom:4px;">Answer Key</div>
+            <div class="pp-select" style="font-size:11px;">Apr 30 <span style="float:right;">▾</span></div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#16A34A;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">check_circle</span> On Correct Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input filled" style="gap:6px;width:fit-content;min-width:80px;">
+              <span style="color:#16A34A;font-weight:700;font-size:12px;">+</span><span>1</span>
+            </div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;display:flex;align-items:flex-start;gap:4px;">
+              <span class="material-symbols-outlined" style="font-size:11px;flex-shrink:0;margin-top:1px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">info</span>
+              Agent always continues to next hotspot
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;">
+            <div style="font-size:11px;font-weight:700;color:#DC2626;display:flex;align-items:center;gap:5px;margin-bottom:8px;">
+              <span class="material-symbols-outlined" style="font-size:14px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20;">cancel</span> On Incorrect Answer
+            </div>
+            <div class="pp-label" style="margin-bottom:4px;">Points</div>
+            <div class="pp-input" style="gap:6px;width:fit-content;min-width:80px;background:#F3F4F6;border-color:#E5E7EB;color:#6B7280;">0</div>
+            <div style="font-size:9px;color:#6B7280;margin-top:5px;line-height:1.4;">No points for terminal failure.</div>
+            <div class="pp-label" style="margin-top:8px;margin-bottom:6px;">Then</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div class="pp-radio-card"><div class="pp-radio-dot"></div>Continue</div>
+              <div class="pp-radio-card selected" style="border-color:#6366F1;background:#EEF2FF;"><div class="pp-radio-dot selected"></div><span style="font-weight:600;color:#3730A3;">End Simulation (Terminal Failure)</span></div>
+              <div class="pp-terminal-box">
+                <strong style="color:#991B1B;display:flex;align-items:center;gap:5px;margin-bottom:4px;"><span style="width:10px;height:10px;background:#EF4444;border-radius:2px;display:inline-block;flex-shrink:0;"></span>Terminal Failure Active</strong>
+                <ul style="padding-left:14px;margin:0;font-size:10px;color:#991B1B;line-height:1.7;">
+                  <li>Ends the simulation</li>
+                  <li>Marks the session as <strong>FAILED</strong></li>
+                  <li>Sets test result to <strong>0%</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;font-size:11px;font-weight:600;color:#6B7280;display:flex;align-items:center;gap:5px;">
+            <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;">account_tree</span> Current Screen Flow
+          </div>
+          <div class="pp-divider"></div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px;">
+            <div class="pp-btn primary" style="padding:8px 0;">Save Hotspot</div>
+            <div class="pp-btn ghost" style="padding:8px 0;">Discard</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end dropdown terminal row -->
+
+    <!-- SAVE / DISCARD / DELETE -->
+    <h3>Save, Discard &amp; Delete</h3>
+    <p>The action bar at the bottom of the panel changes depending on whether the hotspot has been saved before.</p>
+    <table>
+      <thead>
+        <tr><th>State</th><th>Left button</th><th>Right button</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>New, unfilled</strong></td>
+          <td><span class="badge neutral">Discard</span></td>
+          <td><span class="badge neutral" style="opacity:0.5;">Save Hotspot</span> (disabled)</td>
+          <td>Hotspot name is empty — Save remains disabled</td>
+        </tr>
+        <tr>
+          <td><strong>New, filled</strong></td>
+          <td><span class="badge neutral">Discard</span></td>
+          <td><span class="badge" style="background:#4F46E5;color:white;">Save Hotspot</span></td>
+          <td>Discard removes the unsaved hotspot from canvas</td>
+        </tr>
+        <tr>
+          <td><strong>Editing saved</strong></td>
+          <td><span class="badge term">Delete Hotspot</span></td>
+          <td><span class="badge" style="background:#4F46E5;color:white;">Save Hotspot</span></td>
+          <td>Delete permanently removes the hotspot; Save updates it</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- LEGEND -->
+    <h2 id="legend">Legend</h2>
+    <p>The legend is fixed at the bottom of the left screen list panel. It explains the coloured dot badges on each screen item.</p>
+
+    <div class="legend-demo">
+      <div class="legend-row"><div class="ldot pos"></div> Has correct path</div>
+      <div class="legend-row"><div class="ldot neg"></div> Has penalty hotspot</div>
+      <div class="legend-row"><div class="ldot term"></div> Has terminal path</div>
+      <div class="legend-row">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 0 10h-3"/><path d="M9 17H6a5 5 0 0 1 0-10h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Connected screen
+      </div>
+    </div>
+
+    <p>A screen can show multiple dots simultaneously — e.g. green + orange means it has both a correct path hotspot and a wrong path hotspot.</p>
+
+    <!-- CONSTRAINTS -->
+    <h2 id="constraints">Constraints & Limits</h2>
+    <table>
+      <thead>
+        <tr><th>Constraint</th><th>Value</th><th>Notes</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Max hotspots per screen</td><td>10</td><td>Add Hotspot button disabled at limit</td></tr>
+        <tr><td>Min hotspot size</td><td>12 × 12 px</td><td>Enforced during resize</td></tr>
+        <tr><td>Hotspot name length</td><td>30 characters</td><td>Live character counter shown in edit panel</td></tr>
+        <tr><td>Screen name length</td><td>30 characters</td><td>Automatically truncated with ellipsis after uploading</td></tr>
+        <tr><td>Dropdown items</td><td>Max 15 items</td><td>Add item button hidden at limit</td></tr>
+        <tr><td>Points range</td><td>0 → ∞, default 1</td><td>Applies to both correct and wrong paths. The +/− sign is a prefix icon — admin always inputs a regular number.</td></tr>
+        <tr><td>Navigation direction</td><td>Forward only</td><td>No backward navigation allowed in simulation</td></tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      <span>Add Hotspot — Design Documentation · Hotel Training Feature · Agents Only</span>
+      <span>April 2026</span>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('h2[id], h3[id]');
+  const links = document.querySelectorAll('.sidebar a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 80) current = s.id;
+    });
+    links.forEach(l => {
+      l.classList.remove('active');
+      if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+    });
+  });
+
+  // Click-to-toggle focused state for .hs-clickable hotspot boxes
+  document.querySelectorAll('.hs-box.hs-clickable').forEach(box => {
+    box.addEventListener('click', (e) => {
+      e.stopPropagation();
+      box.classList.toggle('focused');
+    });
+  });
+  // Click outside any hs-clickable box to deselect all
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.hs-box.hs-clickable.focused').forEach(b => b.classList.remove('focused'));
+  });
+</script>
+
+</body>
+</html>
