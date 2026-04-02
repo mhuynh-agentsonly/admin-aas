@@ -938,6 +938,92 @@ tr:hover td { background: #FAFAFA; }
 .sidebar-back:hover {
   background: #F3F4F6;
 }
+
+/* ── RESPONSIVE ── */
+
+/* Tablet: hide sidebar, full-width content */
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+  .content {
+    max-width: 100%;
+    padding: 32px 28px;
+  }
+  .type-grid {
+    grid-template-columns: 1fr;
+  }
+  table {
+    font-size: 12px;
+  }
+  th, td {
+    padding: 8px 10px;
+  }
+}
+
+/* Mobile: tighter padding, stack everything */
+@media (max-width: 600px) {
+  .content {
+    padding: 20px 16px;
+  }
+  h1 { font-size: 22px; }
+  h2 { font-size: 17px; padding-top: 32px; margin: 32px 0 12px; }
+  h3 { font-size: 14px; }
+
+  /* Wrap panel demos and overlay rows */
+  .panel-demo-wrap,
+  .panel-states-grid,
+  .overlay-states-row {
+    flex-wrap: wrap;
+  }
+
+  /* Allow conditional overlay row to wrap too */
+  .overlay-states-row[style*="flex-wrap:nowrap"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* Tables: horizontal scroll */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  /* Callouts */
+  .callout {
+    font-size: 12px;
+    padding: 12px 14px;
+  }
+
+  /* Flow items */
+  .flow-item-demo {
+    grid-template-columns: 10px 1fr 10px 70px;
+    gap: 6px;
+    padding: 6px 10px;
+  }
+
+  /* Panel demos: allow shrinking to fit screen */
+  .panel-demo {
+    width: 100% !important;
+    max-width: 320px;
+  }
+  .panel-state-col {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  /* Example flow items in Current Screen Flow section */
+  .flow-examples {
+    flex-direction: column;
+  }
+
+  /* Page meta row */
+  .page-meta {
+    flex-direction: column;
+    gap: 6px;
+  }
+}
 </style>
 </head>
 <body>
