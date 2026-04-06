@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapping Step (AI-Mapped) – Audio & Image Sim</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100vh; overflow: hidden; }
+    body { font-family: 'DM Sans', sans-serif; background: #F2F4F7; display: flex; }
+
+    /* ── Sidebar ── */
+    .sidebar { width: 280px; height: 100vh; background: #fff; border-right: 1px solid #E4E7EC; flex-shrink: 0; display: flex; flex-direction: column; overflow-y: auto; }
+    .sidebar-top { padding: 20px 24px 14px; }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .logo-icon { width: 30px; height: 30px; background: #213C50; border-radius: 6px; display: grid; place-items: center; }
+    .logo-icon span { color: #fff; font-size: 10px; font-weight: 700; }
+    .logo-name { font-size: 14px; font-weight: 700; color: #213C50; }
+    .env-badge { font-size: 11px; font-weight: 500; color: #fff; background: #444CE7; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 0 24px; height: 44px; font-size: 14px; color: #344054; cursor: pointer; }
+    .nav-item.active { background: #F0F9FF; color: #213C50; font-weight: 700; border-right: 3px solid #3538CD; }
+    .nav-dot { width: 30px; height: 30px; border-radius: 99px; background: #E9FEF9; display: grid; place-items: center; flex-shrink: 0; }
+    .nav-dot svg { width: 16px; height: 16px; }
+    .sidebar-footer { margin-top: auto; padding: 8px 0 16px; border-top: 1px solid #F2F4F7; }
+    .sidebar-version { padding: 6px 24px; font-size: 11px; color: #98A2B3; }
+
+    /* ── Main ── */
+    .main { flex: 1; height: 100vh; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+    .page-header { padding: 28px 48px 0; display: flex; align-items: center; gap: 10px; }
+    .back-btn { display: flex; align-items: center; color: #344054; cursor: pointer; }
+    .back-btn svg { width: 22px; height: 22px; }
+    .page-title { font-size: 26px; font-weight: 700; color: #101828; }
+
+    /* ── Progress bar ── */
+    .progress-bar { margin: 20px 48px 20px; background: #FEF3C7; border-radius: 10px; padding: 14px 0; display: flex; align-items: center; justify-content: center; }
+    .step { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: #667085; padding: 0 12px; }
+    .step.done { color: #344054; }
+    .step.active { color: #F79009; font-weight: 700; }
+    .step-num { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+    .step.done .step-num   { background: #00D0A3; color: #fff; }
+    .step.active .step-num { background: #F79009; color: #fff; }
+    .step.inactive .step-num { background: #D0D5DD; color: #fff; }
+    .step-divider { width: 20px; height: 1px; background: #D0D5DD; }
+
+    /* ── Content wrapper ── */
+    .content-wrapper { margin: 0 48px 0; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0; }
+
+    /* ── Top card: sim title + description ── */
+    .top-card { background: #fff; border-radius: 12px 12px 0 0; border: 1px solid #E4E7EC; border-bottom: none; padding: 24px 32px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .training-title-row { display: flex; align-items: center; gap: 10px; }
+    .training-name { font-size: 20px; font-weight: 700; color: #101828; }
+    .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+    .badge-audio-image { background: #F4F3FF; color: #5925DC; }
+
+    /* ── Two-column body ── */
+    .two-col-card { background: #fff; border-radius: 0 0 12px 12px; border: 1px solid #E4E7EC; display: flex; flex: 1; min-height: 0; overflow: hidden; }
+
+    /* ── Left: Screen Summary Panel ── */
+    .screen-panel { width: 280px; flex-shrink: 0; border-right: 1px solid #E4E7EC; display: flex; flex-direction: column; overflow: hidden; }
+    .screen-panel-header { padding: 20px 24px 14px; border-bottom: 1px solid #F2F4F7; flex-shrink: 0; }
+    .panel-title { font-size: 13px; font-weight: 700; color: #101828; margin-bottom: 2px; }
+    .panel-desc { font-size: 12px; color: #667085; line-height: 1.45; }
+    .screen-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; }
+
+    /* Screen summary card */
+    .screen-summary-card { border: 1.5px solid #E4E7EC; border-radius: 8px; overflow: hidden; background: #fff; transition: border-color 0.15s, box-shadow 0.15s; cursor: pointer; flex-shrink: 0; }
+    .screen-summary-card.mapped { border-color: #A9EFD8; background: #fff; }
+    .screen-summary-card.silent { border-color: #E4E7EC; background: #F2F4F7; }
+    .screen-summary-card:hover { border-color: #444CE7; box-shadow: 0 0 0 2px #C7D7FE; }
+    .ssc-top { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
+    .ssc-thumb { width: 44px; height: 34px; background: #F2F4F7; border-radius: 4px; border: 1px solid #D0D5DD; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+    .ssc-thumb .mini-chrome { height: 5px; background: #E4E7EC; display: flex; align-items: center; gap: 1px; padding: 0 2px; }
+    .ssc-thumb .mini-dot { width: 2px; height: 2px; border-radius: 50%; background: #98A2B3; }
+    .ssc-thumb .mini-body { background: #F9FAFB; padding: 2px; flex: 1; }
+    .ssc-thumb .mini-line { height: 2px; background: #E4E7EC; border-radius: 1px; margin-bottom: 1px; }
+    .ssc-thumb .mini-line.w70 { width: 70%; }
+    .ssc-thumb .mini-line.w50 { width: 50%; }
+    .ssc-thumb .mini-line.w40 { width: 40%; }
+    .ssc-thumb-inner { display: flex; flex-direction: column; width: 100%; height: 100%; }
+    .ssc-num { position: absolute; bottom: 1px; right: 2px; font-size: 6px; font-weight: 700; color: #667085; }
+    .ssc-info { flex: 1; min-width: 0; }
+    .ssc-screen-label { font-size: 10px; font-weight: 700; color: #98A2B3; text-transform: uppercase; letter-spacing: 0.4px; }
+    .ssc-screen-name { font-size: 12px; font-weight: 600; color: #101828; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ssc-bottom { padding: 4px 10px 8px; }
+    .ssc-lines-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; }
+    .ssc-lines-tag.has-lines { background: #E9FEF9; color: #00B081; }
+    .ssc-lines-tag.no-lines { background: #F2F4F7; color: #667085; }
+
+    /* ── Right: Script Thread ── */
+    .script-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
+    .script-panel-header { padding: 20px 24px 14px; border-bottom: 1px solid #F2F4F7; flex-shrink: 0; position: sticky; top: 0; background: #fff; z-index: 1; }
+    .script-thread { padding: 16px 24px 32px; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; position: relative; }
+
+    /* Break zone between lines */
+    .break-zone { display: flex; align-items: center; gap: 0; height: 28px; cursor: pointer; position: relative; }
+    .break-zone .bz-line { flex: 1; height: 1px; background: transparent; transition: background 0.15s; }
+    .break-zone .bz-add { width: 22px; height: 22px; border-radius: 50%; background: transparent; border: 1.5px dashed transparent; display: grid; place-items: center; flex-shrink: 0; transition: all 0.15s; }
+    .break-zone .bz-add svg { width: 12px; height: 12px; color: #98A2B3; opacity: 0; transition: opacity 0.15s; }
+    .break-zone:hover .bz-line { background: #C7D7FE; }
+    .break-zone:hover .bz-add { border-color: #444CE7; background: #EEF4FF; }
+    .break-zone:hover .bz-add svg { opacity: 1; color: #444CE7; }
+
+    /* Screen break divider */
+    .screen-break { display: flex; align-items: center; gap: 10px; margin: 2px 0 4px; }
+    .sb-line { flex: 1; height: 1px; background: #E4E7EC; }
+    .sb-pill { display: flex; align-items: center; gap: 7px; background: #F2F4F7; border: 1px solid #D0D5DD; border-radius: 999px; padding: 5px 12px; }
+    .sb-label { font-size: 11px; font-weight: 600; color: #344054; white-space: nowrap; }
+    .sb-remove { width: 16px; height: 16px; border-radius: 50%; background: #D0D5DD; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; transition: background 0.15s; }
+    .sb-remove:hover { background: #FDA29B; }
+    .sb-remove svg { width: 8px; height: 8px; color: #344054; }
+    .sb-remove:hover svg { color: #B42318; }
+
+    /* Screen 1 top label — selector pill (switchable, not removable) */
+    .sb-pill-selector { cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+    .sb-pill-selector:hover { background: #EEF4FF; border-color: #444CE7; }
+    .sb-pill-selector:hover .sb-label { color: #3538CD; }
+    .sb-chevron { width: 16px; height: 16px; display: grid; place-items: center; flex-shrink: 0; }
+    .sb-chevron svg { width: 10px; height: 10px; color: #98A2B3; }
+    .sb-pill-selector:hover .sb-chevron svg { color: #444CE7; }
+
+    /* Script line bubble */
+    .script-line { display: flex; margin-bottom: 2px; }
+    .script-line.customer { justify-content: flex-start; }
+    .script-line.agent    { justify-content: flex-end; }
+
+    .bubble-wrap { display: flex; flex-direction: column; max-width: 68%; }
+    .script-line.customer .bubble-wrap { align-items: flex-start; }
+    .script-line.agent    .bubble-wrap { align-items: flex-end; }
+
+.bubble { padding: 9px 13px; border-radius: 12px; font-size: 13px; line-height: 1.5; color: #101828; }
+    .customer .bubble { background: #F2F4F7; border-radius: 4px 12px 12px 12px; }
+    .agent    .bubble { background: #EEF4FF; border-radius: 12px 4px 12px 12px; color: #1D2939; }
+
+    .bubble-audio { display: flex; align-items: center; gap: 5px; margin-top: 5px; }
+    .audio-play { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; border: none; cursor: pointer; }
+    .customer .audio-play { background: #D0D5DD; }
+    .audio-play svg { width: 10px; height: 10px; }
+    .customer .audio-play svg { color: #344054; }
+    .audio-wave { display: flex; align-items: center; gap: 2px; height: 16px; }
+    .audio-wave span { display: block; width: 2px; border-radius: 1px; }
+    .customer .audio-wave span { background: #98A2B3; }
+
+    /* Footer nav */
+    .footer-nav { margin: 0 48px; padding: 16px 0 24px; display: flex; justify-content: space-between; flex-shrink: 0; }
+    .btn { padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; }
+    .btn-secondary { background: #fff; border: 1.5px solid #D0D5DD; color: #344054; }
+    .btn-primary { background: #00B081; color: #fff; }
+    .btn-primary:hover { background: #00936b; }
+
+    /* ── Dynamic screen section label in script thread ── */
+    .script-screen-label { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 0; }
+    .ssl-line { flex: 1; height: 1px; background: #E4E7EC; }
+
+    /* ── Hotspot preview modal ── */
+    .hs-modal-backdrop { position: fixed; inset: 0; background: rgba(16,24,40,0.55); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .hs-modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .hs-modal { background: #fff; border-radius: 14px; width: 720px; max-width: 94vw; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.22); transform: translateY(10px); transition: transform 0.2s; overflow: hidden; }
+    .hs-modal-backdrop.open .hs-modal { transform: translateY(0); }
+    .hs-modal-header { padding: 16px 20px; border-bottom: 1px solid #E4E7EC; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .hs-modal-title { font-size: 15px; font-weight: 700; color: #101828; }
+    .hs-modal-sub { font-size: 12px; color: #667085; margin-top: 1px; }
+    .hs-modal-close { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #E4E7EC; background: #fff; cursor: pointer; display: grid; place-items: center; }
+    .hs-modal-close svg { width: 14px; height: 14px; color: #667085; }
+    .hs-modal-close:hover { background: #F2F4F7; }
+    .hs-modal-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+    .hs-modal-preview-wrap { flex-shrink: 0; padding: 20px 20px 0; }
+    .hs-modal-detail-scroll { flex: 1; overflow-y: auto; padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* Screen preview area */
+    .hs-screen-preview { position: relative; background: #F2F4F7; border: 1px solid #E4E7EC; border-radius: 10px; overflow: hidden; }
+    .hs-screen-chrome { height: 28px; background: #E4E7EC; display: flex; align-items: center; gap: 5px; padding: 0 12px; border-bottom: 1px solid #D0D5DD; }
+    .hs-chrome-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .hs-screen-body { background: #fff; position: relative; font-size: 13px; color: #344054; max-height: 280px; overflow-y: auto; }
+    .hs-screen-body-inner { position: relative; }
+
+    /* Hotspot overlays inside preview */
+    .hs-overlay { position: absolute; border-radius: 4px; display: flex; align-items: center; justify-content: center; cursor: default; }
+    .hs-overlay-label { font-size: 9px; font-weight: 700; color: #fff; background: rgba(0,0,0,0.45); border-radius: 3px; padding: 1px 4px; white-space: nowrap; }
+    /* Conditional hotspots: text, checkbox, dropdown → purple */
+    .hs-overlay.type-text     { background: rgba(105,65,198,0.15); border: 1.5px solid #7F56D9; }
+    .hs-overlay.type-checkbox { background: rgba(105,65,198,0.15); border: 1.5px solid #7F56D9; }
+    .hs-overlay.type-dropdown { background: rgba(105,65,198,0.15); border: 1.5px solid #7F56D9; }
+    /* Click areas: green = correct, orange = wrong/deduct, red = terminal/end-sim */
+    .hs-overlay.type-click          { background: rgba(0,176,129,0.15);  border: 1.5px solid #00B081; }
+    .hs-overlay.type-click-neg      { background: rgba(247,144,9,0.15);  border: 1.5px solid #F79009; }
+    .hs-overlay.type-click-terminal { background: rgba(180,35,24,0.15);  border: 1.5px solid #B42318; }
+
+
+    /* Hotspot list in modal */
+    .hs-list-section { }
+    .hs-list-title { font-size: 12px; font-weight: 700; color: #344054; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.4px; }
+    .hs-list-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid #E4E7EC; border-radius: 6px; background: #F9FAFB; margin-bottom: 6px; }
+    .hs-list-type-dot { width: 8px; height: 8px; border-radius: 2px; border: 1.5px solid; flex-shrink: 0; }
+    .hs-list-name { font-size: 12px; font-weight: 600; color: #101828; flex: 1; }
+    .hs-list-detail { font-size: 11px; color: #667085; }
+
+    /* Script lines in modal */
+    .modal-script-section { }
+    .modal-script-empty { padding: 14px 16px; border: 1.5px dashed #D0D5DD; border-radius: 8px; background: #F9FAFB; font-size: 12px; color: #98A2B3; text-align: center; }
+    .modal-script-list { display: flex; flex-direction: column; gap: 6px; }
+    .modal-script-line { display: flex; gap: 8px; align-items: flex-start; padding: 8px 10px; border: 1px solid #E4E7EC; border-radius: 6px; background: #F9FAFB; }
+    .modal-script-line .msl-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; padding-top: 1px; flex-shrink: 0; width: 60px; }
+    .modal-script-line .msl-role.customer { color: #667085; }
+    .modal-script-line .msl-role.agent { color: #444CE7; }
+    .modal-script-line .msl-text { font-size: 12px; color: #344054; line-height: 1.5; }
+
+    /* ── Screen picker popover ── */
+    .picker-popover { position: absolute; z-index: 100; background: #fff; border: 1px solid #E4E7EC; border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); padding: 6px; min-width: 220px; display: none; }
+    .picker-popover.open { display: block; }
+    .picker-popover-title { font-size: 10px; font-weight: 700; color: #98A2B3; text-transform: uppercase; letter-spacing: 0.5px; padding: 4px 8px 6px; }
+    .picker-item { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 6px; cursor: pointer; transition: background 0.1s; }
+    .picker-item:hover { background: #F2F4F7; }
+    .picker-item.disabled { opacity: 0.38; pointer-events: none; }
+    .picker-item-thumb { width: 26px; height: 20px; background: #E4E7EC; border-radius: 3px; border: 1px solid #D0D5DD; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden; }
+    .picker-item-thumb .t-bar { height: 4px; background: #D0D5DD; }
+    .picker-item-thumb .t-body { flex: 1; background: #F9FAFB; }
+    .picker-item-label { font-size: 12px; font-weight: 600; color: #101828; }
+    .picker-item-sub { font-size: 11px; color: #98A2B3; }
+
+    /* Silent segment block */
+    .silent-segment { margin: 2px 0 4px; border: 1.5px dashed #D0D5DD; border-radius: 8px; background: #F9FAFB; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+    .silent-seg-icon { width: 32px; height: 32px; border-radius: 6px; background: #F2F4F7; border: 1px solid #E4E7EC; display: grid; place-items: center; flex-shrink: 0; }
+    .silent-seg-icon svg { width: 16px; height: 16px; color: #98A2B3; }
+    .silent-seg-text {}
+    .silent-seg-name { font-size: 12px; font-weight: 700; color: #344054; margin-bottom: 1px; }
+    .silent-seg-desc { font-size: 11px; color: #98A2B3; }
+  </style>
+</head>
+<body>
+
+<!-- ══ Sidebar ══════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><span>AO</span></div>
+      <span class="logo-name">Agents Only</span>
+    </div>
+    <span class="env-badge">Staging</span>
+  </div>
+  <nav style="margin-top:12px;">
+    <div class="nav-item">
+      <div class="nav-dot">
+        <svg fill="none" viewBox="0 0 24 24" stroke="#667085" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-9 5v6m4-6v6m5-10.5V19a1 1 0 01-1 1H6a1 1 0 01-1-1v-6.5"/></svg>
+      </div>
+      Dashboard
+    </div>
+    <div class="nav-item active">
+      <div class="nav-dot">
+        <svg fill="none" viewBox="0 0 24 24" stroke="#00B081" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      </div>
+      Training
+    </div>
+    <div class="nav-item">
+      <div class="nav-dot">
+        <svg fill="none" viewBox="0 0 24 24" stroke="#667085" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+      </div>
+      Agents
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-version">v2.4.1</div>
+  </div>
+</aside>
+
+<!-- ══ Main ════════════════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="back-btn">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </div>
+    <h1 class="page-title">Create Simulation</h1>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar">
+    <div class="step done">
+      <div class="step-num">✓</div>
+      Overview
+    </div>
+    <div class="step-divider"></div>
+    <div class="step done">
+      <div class="step-num">✓</div>
+      Script &amp; Audio
+    </div>
+    <div class="step-divider"></div>
+    <div class="step done">
+      <div class="step-num">✓</div>
+      Images
+    </div>
+    <div class="step-divider"></div>
+    <div class="step active">
+      <div class="step-num">4</div>
+      Mapping
+    </div>
+    <div class="step-divider"></div>
+    <div class="step inactive">
+      <div class="step-num">5</div>
+      AI Scoring
+    </div>
+    <div class="step-divider"></div>
+    <div class="step inactive">
+      <div class="step-num">6</div>
+      Summary
+    </div>
+  </div>
+
+  <!-- Two-column content -->
+  <div class="content-wrapper">
+    <div class="top-card">
+      <div class="training-title-row">
+        <span class="training-name">Hotel Booking Call Center</span>
+        <span class="badge badge-audio-image">Audio + Image</span>
+      </div>
+    </div>
+
+    <div class="two-col-card">
+
+      <!-- ── LEFT: Screen Summary Panel ── -->
+      <div class="screen-panel">
+        <div class="screen-panel-header">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+            <div class="panel-title">Screens</div>
+            <div id="screenMappedCount" style="font-size:11px;font-weight:500;color:#667085;background:#F2F4F7;border-radius:999px;padding:2px 8px;white-space:nowrap;">0 of 6 mapped</div>
+          </div>
+          <div class="panel-desc">Click a screen to preview its hotspots and assigned script lines.</div>
+        </div>
+        <div class="screen-list" id="screenList">
+
+          <!-- Screen 1 -->
+          <div class="screen-summary-card mapped" id="ssc-1" onclick="openScreenModal(1)">
+            <div class="ssc-top">
+              <div class="ssc-thumb" style="padding:0;">
+                <img src="1.Landing.png" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:3px;" />
+                <span class="ssc-num">S1</span>
+              </div>
+              <div class="ssc-info">
+                <div class="ssc-screen-label">Screen 1</div>
+                <div class="ssc-screen-name">Landing</div>
+              </div>
+            </div>
+            <div class="ssc-bottom">
+              <span class="ssc-lines-tag has-lines">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+                4 lines
+              </span>
+            </div>
+          </div>
+
+          <!-- Screen 2 -->
+          <div class="screen-summary-card mapped" id="ssc-2" onclick="openScreenModal(2)">
+            <div class="ssc-top">
+              <div class="ssc-thumb" style="padding:0;">
+                <img src="2.Search Results.png" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:3px;" />
+                <span class="ssc-num">S2</span>
+              </div>
+              <div class="ssc-info">
+                <div class="ssc-screen-label">Screen 2</div>
+                <div class="ssc-screen-name">Search Results</div>
+              </div>
+            </div>
+            <div class="ssc-bottom">
+              <span class="ssc-lines-tag has-lines">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+                2 lines
+              </span>
+            </div>
+          </div>
+
+          <!-- Screen 3 -->
+          <div class="screen-summary-card mapped" id="ssc-3" onclick="openScreenModal(3)">
+            <div class="ssc-top">
+              <div class="ssc-thumb" style="padding:0;">
+                <img src="3.Hotel Detail.png" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:3px;" />
+                <span class="ssc-num">S3</span>
+              </div>
+              <div class="ssc-info">
+                <div class="ssc-screen-label">Screen 3</div>
+                <div class="ssc-screen-name">Hotel Detail</div>
+              </div>
+            </div>
+            <div class="ssc-bottom">
+              <span class="ssc-lines-tag has-lines">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+                3 lines
+              </span>
+            </div>
+          </div>
+
+          <!-- Screen 4 -->
+          <div class="screen-summary-card silent" id="ssc-4" onclick="openScreenModal(4)">
+            <div class="ssc-top">
+              <div class="ssc-thumb" style="padding:0;">
+                <img src="4.Room Selection.png" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:3px;" />
+                <span class="ssc-num">S4</span>
+              </div>
+              <div class="ssc-info">
+                <div class="ssc-screen-label">Screen 4</div>
+                <div class="ssc-screen-name">Room Selection</div>
+              </div>
+            </div>
+            <div class="ssc-bottom">
+              <span class="ssc-lines-tag no-lines">No script lines</span>
+            </div>
+          </div>
+
+          <!-- Screen 5 -->
+          <div class="screen-summary-card mapped" id="ssc-5" onclick="openScreenModal(5)">
+            <div class="ssc-top">
+              <div class="ssc-thumb" style="padding:0;">
+                <img src="5.Guest Details &amp; Payment.jpeg" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:3px;" />
+                <span class="ssc-num">S5</span>
+              </div>
+              <div class="ssc-info">
+                <div class="ssc-screen-label">Screen 5</div>
+                <div class="ssc-screen-name">Guest Details &amp; Payment</div>
+              </div>
+            </div>
+            <div class="ssc-bottom">
+              <span class="ssc-lines-tag has-lines">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+                2 lines
+              </span>
+            </div>
+          </div>
+
+          <!-- Screen 6 -->
+          <div class="screen-summary-card mapped" id="ssc-6" onclick="openScreenModal(6)">
+            <div class="ssc-top">
+              <div class="ssc-thumb" style="padding:0;">
+                <img src="6.Booking Confirmation.jpg" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:3px;" />
+                <span class="ssc-num">S6</span>
+              </div>
+              <div class="ssc-info">
+                <div class="ssc-screen-label">Screen 6</div>
+                <div class="ssc-screen-name">Booking Confirmation</div>
+              </div>
+            </div>
+            <div class="ssc-bottom">
+              <span class="ssc-lines-tag has-lines">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+                2 lines
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /screen-panel -->
+
+      <!-- ── RIGHT: Script Thread ── -->
+      <div class="script-panel">
+        <div class="script-panel-header">
+          <div class="panel-title">Script</div>
+          <div class="panel-desc" style="font-size:12px;color:#667085;margin-top:2px;line-height:1.45;">Add screen breaks between lines to assign the script to each screen. Screens with no lines will behave as silent interaction screens.</div>
+        </div>
+
+        <div class="script-thread" id="scriptThread">
+
+          <!-- AI mapping notice -->
+          <div id="aiMappingBanner" style="display:flex;align-items:center;gap:10px;background:#F0FDF9;border:1.5px solid #A9EFD8;border-radius:8px;padding:10px 14px;margin-bottom:12px;">
+            <div style="width:28px;height:28px;border-radius:50%;background:#00B081;display:grid;place-items:center;flex-shrink:0;">
+              <span class="material-symbols-outlined" style="font-size:16px;color:#fff;line-height:1;">auto_fix_high</span>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#00805C;">AI mapping applied</div>
+              <div style="font-size:11px;color:#00966D;margin-top:1px;">Script lines have been automatically assigned to each screen. Move the breaks to adjust.</div>
+            </div>
+          </div>
+
+          <!-- Role legend — part of scrollable area, sits above the script -->
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid #F2F4F7;margin-bottom:4px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div style="width:24px;height:24px;border-radius:50%;background:#F2F4F7;display:grid;place-items:center;flex-shrink:0;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#667085" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              </div>
+              <span style="font-size:12px;color:#667085;font-weight:500;">Customer</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:12px;color:#444CE7;font-weight:500;">Agent</span>
+              <div style="width:24px;height:24px;border-radius:50%;background:#EEF4FF;display:grid;place-items:center;flex-shrink:0;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#444CE7" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Screen picker popover (shared, positioned by JS) -->
+          <div class="picker-popover" id="screenPickerPopover">
+            <div class="picker-popover-title">Start screen here</div>
+            <!-- Items injected by JS -->
+          </div>
+
+          <!-- Dynamic label showing which screen owns the first lines -->
+          <div class="script-screen-label" id="firstScreenLabel">
+            <div class="ssl-line"></div>
+            <div class="sb-pill sb-pill-selector" onclick="removeFirstScreenLabel()" title="Change which screen starts here">
+              <span class="sb-label" id="firstScreenLabelText">Screen 1 — Landing</span>
+              <div class="sb-chevron">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+            <div class="ssl-line"></div>
+          </div>
+
+          <!-- Line 1: Customer -->
+          <div class="script-line customer" data-line="1">
+            <div class="bubble-wrap">
+
+              <div class="bubble">Hi, I'd like to book a hotel room in Ohio for next weekend — checking in Apr 30, checking out May 1.</div>
+              <div class="bubble-audio">
+                <button class="audio-play" title="Play audio">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="audio-wave">
+                  <span style="height:4px"></span><span style="height:8px"></span><span style="height:12px"></span><span style="height:6px"></span><span style="height:10px"></span><span style="height:14px"></span><span style="height:8px"></span><span style="height:5px"></span><span style="height:10px"></span><span style="height:7px"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Break zone 1→2 -->
+          <div class="break-zone" onclick="openPicker(event, this,1)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- Line 2: Agent -->
+          <div class="script-line agent" data-line="2">
+            <div class="bubble-wrap">
+
+              <div class="bubble">Of course! Let me look that up for you. Could you confirm the city? I want to make sure I search the right area.</div>
+            </div>
+          </div>
+
+          <!-- Break zone 2→3 -->
+          <div class="break-zone" onclick="openPicker(event, this,2)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- AI-placed screen break: Screen 2 -->
+          <div class="screen-break" id="break-s2" data-break-screen="2">
+            <div class="ssl-line"></div>
+            <div class="sb-pill">
+
+              <span class="sb-label">Screen 2 — Search Results</span>
+              <div class="sb-remove" onclick="removeBreak(2)" title="Remove break">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </div>
+            </div>
+            <div class="ssl-line"></div>
+          </div>
+
+          <!-- Line 3: Customer -->
+          <div class="script-line customer" data-line="3">
+            <div class="bubble-wrap">
+
+              <div class="bubble">Yes, Ohio — anywhere nearby works.</div>
+              <div class="bubble-audio">
+                <button class="audio-play">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="audio-wave">
+                  <span style="height:5px"></span><span style="height:9px"></span><span style="height:6px"></span><span style="height:11px"></span><span style="height:8px"></span><span style="height:13px"></span><span style="height:7px"></span><span style="height:9px"></span><span style="height:4px"></span><span style="height:7px"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Break zone 3→4 -->
+          <div class="break-zone" onclick="openPicker(event, this,3)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- Line 4: Agent -->
+          <div class="script-line agent" data-line="4">
+            <div class="bubble-wrap">
+
+              <div class="bubble">Perfect, I'll search Ohio. And the dates were Apr 30 to May 1 — I'll enter those now.</div>
+            </div>
+          </div>
+
+          <!-- Break zone 4→5 -->
+          <div class="break-zone" onclick="openPicker(event, this,4)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- AI-placed screen break: Screen 3 -->
+          <div class="screen-break" id="break-s3" data-break-screen="3">
+            <div class="ssl-line"></div>
+            <div class="sb-pill">
+
+              <span class="sb-label">Screen 3 — Hotel Detail</span>
+              <div class="sb-remove" onclick="removeBreak(3)" title="Remove break">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </div>
+            </div>
+            <div class="ssl-line"></div>
+          </div>
+
+          <!-- Line 5: Customer -->
+          <div class="script-line customer" data-line="5">
+            <div class="bubble-wrap">
+
+              <div class="bubble">Great, I can see a few options. Holiday Inn Express looks nice — can we go with that one?</div>
+              <div class="bubble-audio">
+                <button class="audio-play">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="audio-wave">
+                  <span style="height:6px"></span><span style="height:10px"></span><span style="height:8px"></span><span style="height:13px"></span><span style="height:7px"></span><span style="height:11px"></span><span style="height:9px"></span><span style="height:5px"></span><span style="height:12px"></span><span style="height:7px"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Break zone 5→6 -->
+          <div class="break-zone" onclick="openPicker(event, this,5)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- Line 6: Agent -->
+          <div class="script-line agent" data-line="6">
+            <div class="bubble-wrap">
+
+              <div class="bubble">Sure! I'll select Holiday Inn Express for you now.</div>
+            </div>
+          </div>
+
+          <!-- Break zone 6→7 -->
+          <div class="break-zone" onclick="openPicker(event, this,6)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- Line 7: Customer -->
+          <div class="script-line customer" data-line="7">
+            <div class="bubble-wrap">
+
+              <div class="bubble">It's just for two adults. We'd prefer to pay at the hotel rather than upfront if that's an option.</div>
+              <div class="bubble-audio">
+                <button class="audio-play">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="audio-wave">
+                  <span style="height:8px"></span><span style="height:13px"></span><span style="height:7px"></span><span style="height:11px"></span><span style="height:5px"></span><span style="height:10px"></span><span style="height:9px"></span><span style="height:6px"></span><span style="height:12px"></span><span style="height:8px"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Break zone 7→8 -->
+          <div class="break-zone" onclick="openPicker(event, this,7)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- Line 8: Agent -->
+          <div class="script-line agent" data-line="8">
+            <div class="bubble-wrap">
+
+              <div class="bubble">Absolutely, I'll set the adult count to 2 and select "Pay at Hotel" for you.</div>
+            </div>
+          </div>
+
+          <!-- Break zone 8→9 -->
+          <div class="break-zone" onclick="openPicker(event, this,8)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- AI-placed screen break: Screen 4 -->
+          <div class="screen-break" id="break-s4" data-break-screen="4">
+            <div class="ssl-line"></div>
+            <div class="sb-pill">
+
+              <span class="sb-label">Screen 4 — Room Selection</span>
+              <div class="sb-remove" onclick="removeBreak(4)" title="Remove break">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </div>
+            </div>
+            <div class="ssl-line"></div>
+          </div>
+
+          <!-- Line 9: Customer -->
+          <div class="script-line customer" data-line="9">
+            <div class="bubble-wrap">
+
+              <div class="bubble">Wonderful, thank you!</div>
+              <div class="bubble-audio">
+                <button class="audio-play">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="audio-wave">
+                  <span style="height:4px"></span><span style="height:7px"></span><span style="height:5px"></span><span style="height:9px"></span><span style="height:6px"></span><span style="height:8px"></span><span style="height:4px"></span><span style="height:6px"></span><span style="height:5px"></span><span style="height:7px"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Break zone 9→10 -->
+          <div class="break-zone" onclick="openPicker(event, this,9)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- AI-placed screen break: Screen 5 -->
+          <div class="screen-break" id="break-s5" data-break-screen="5">
+            <div class="ssl-line"></div>
+            <div class="sb-pill">
+
+              <span class="sb-label">Screen 5 — Guest Details &amp; Payment</span>
+              <div class="sb-remove" onclick="removeBreak(5)" title="Remove break">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </div>
+            </div>
+            <div class="ssl-line"></div>
+          </div>
+
+          <!-- Line 10: Customer -->
+          <div class="script-line customer" data-line="10">
+            <div class="bubble-wrap">
+
+              <div class="bubble">My name is Claire. Can you make sure the booking is under that name?</div>
+              <div class="bubble-audio">
+                <button class="audio-play">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="audio-wave">
+                  <span style="height:7px"></span><span style="height:11px"></span><span style="height:8px"></span><span style="height:13px"></span><span style="height:6px"></span><span style="height:10px"></span><span style="height:9px"></span><span style="height:5px"></span><span style="height:12px"></span><span style="height:8px"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Break zone 10→11 -->
+          <div class="break-zone" onclick="openPicker(event, this,10)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- Line 11: Agent -->
+          <div class="script-line agent" data-line="11">
+            <div class="bubble-wrap">
+
+              <div class="bubble">Of course — I'll enter "Claire" as the guest name and complete the booking now.</div>
+            </div>
+          </div>
+
+          <!-- Break zone 11→12 -->
+          <div class="break-zone" onclick="openPicker(event, this,11)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- AI-placed screen break: Screen 6 -->
+          <div class="screen-break" id="break-s6" data-break-screen="6">
+            <div class="ssl-line"></div>
+            <div class="sb-pill">
+
+              <span class="sb-label">Screen 6 — Booking Confirmation</span>
+              <div class="sb-remove" onclick="removeBreak(6)" title="Remove break">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </div>
+            </div>
+            <div class="ssl-line"></div>
+          </div>
+
+          <!-- Line 12: Customer -->
+          <div class="script-line customer" data-line="12">
+            <div class="bubble-wrap">
+
+              <div class="bubble">I see the confirmation on my end — booking number HC-4421. Thank you so much!</div>
+              <div class="bubble-audio">
+                <button class="audio-play">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </button>
+                <div class="audio-wave">
+                  <span style="height:6px"></span><span style="height:10px"></span><span style="height:8px"></span><span style="height:13px"></span><span style="height:7px"></span><span style="height:11px"></span><span style="height:9px"></span><span style="height:6px"></span><span style="height:12px"></span><span style="height:8px"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Break zone 12→13 -->
+          <div class="break-zone" onclick="openPicker(event, this,12)">
+            <div class="bz-line"></div>
+            <div class="bz-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg></div>
+            <div class="bz-line"></div>
+          </div>
+
+          <!-- Line 13: Agent -->
+          <div class="script-line agent" data-line="13">
+            <div class="bubble-wrap">
+
+              <div class="bubble">You're all set, Sarah! Your confirmation number is HC-4421. Is there anything else I can help you with today?</div>
+            </div>
+          </div>
+
+          <!-- End of script -->
+          <div style="display:flex;align-items:center;gap:8px;margin-top:16px;">
+            <div style="flex:1;height:1px;background:#E4E7EC;"></div>
+            <div style="font-size:11px;font-weight:600;color:#98A2B3;background:#F9FAFB;border:1px solid #E4E7EC;border-radius:999px;padding:3px 10px;">End of script</div>
+            <div style="flex:1;height:1px;background:#E4E7EC;"></div>
+          </div>
+
+        </div><!-- /script-thread -->
+      </div><!-- /script-panel -->
+    </div><!-- /two-col-card -->
+  </div><!-- /content-wrapper -->
+
+  <!-- Footer nav -->
+  <div class="footer-nav">
+    <button class="btn btn-secondary">← Back</button>
+    <button class="btn btn-primary">Continue to AI Scoring →</button>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══ Hotspot Preview Modal ══════════════════════════════════════ -->
+<div class="hs-modal-backdrop" id="hsModalBackdrop" onclick="closeModalOnBackdrop(event)">
+  <div class="hs-modal" id="hsModal">
+    <div class="hs-modal-header">
+      <div>
+        <div class="hs-modal-title" id="hsModalTitle">Screen 1 — Find Hotels</div>
+        <div class="hs-modal-sub" id="hsModalSub">6 hotspots</div>
+      </div>
+      <button class="hs-modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="hs-modal-body">
+      <!-- Screen preview — fixed, always visible -->
+      <div class="hs-modal-preview-wrap">
+        <div class="hs-screen-preview">
+          <div class="hs-screen-chrome">
+            <div class="hs-chrome-dot" style="background:#F04438;"></div>
+            <div class="hs-chrome-dot" style="background:#F79009;"></div>
+            <div class="hs-chrome-dot" style="background:#00B081;"></div>
+          </div>
+          <div class="hs-screen-body" id="hsScreenBody">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+      <!-- Scrollable detail: script lines + hotspots -->
+      <div class="hs-modal-detail-scroll">
+        <div class="modal-script-section">
+          <div class="hs-list-title">Assigned Script Lines</div>
+          <div id="hsScriptLines"><!-- Populated by JS --></div>
+        </div>
+        <div class="hs-list-section">
+          <div class="hs-list-title">Hotspots</div>
+          <div id="hsHotspotList"><!-- Populated by JS --></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── Screen data: hotspots per screen ────────────────────────
+  const SCREENS = {
+    1: {
+      name: 'Landing',
+      img:  '1.Landing.png',
+      hotspots: [
+        { type: 'text',     label: 'Hotel Location', detail: 'Answer key: "Ohio" · Incorrect → end simulation',   pos: {top:'38%', left:'9%',  w:'82%', h:'10%'} },
+        { type: 'dropdown', label: 'Check-in Date',  detail: 'Correct: "Apr 30" · 4 options',                      pos: {top:'50%', left:'9%',  w:'24%', h:'11%'} },
+        { type: 'dropdown', label: 'Check-out Date', detail: 'Correct: "May 1" · 4 options',                       pos: {top:'50%', left:'35%', w:'24%', h:'11%'} },
+        { type: 'click',    label: 'Find Hotels',           detail: 'Correct → Screen 2',                                  pos: {top:'64%', left:'9%',  w:'82%', h:'11%'} },
+      ]
+    },
+    2: {
+      name: 'Search Results',
+      img:  '2.Search Results.png',
+      hotspots: [
+        { type: 'click', label: 'Select Hotel', detail: 'Correct → Screen 3', pos: {top:'17%', left:'18%', w:'76%', h:'20%'} },
+      ]
+    },
+    3: {
+      name: 'Hotel Detail',
+      img:  '3.Hotel Detail.png',
+      hotspots: [
+        { type: 'text',     label: 'Adult Count',  detail: 'Answer key: "2" · Incorrect → continue silently', pos: {top:'2%',  left:'56%', w:'36%', h:'10%'} },
+        { type: 'click-terminal', label: 'Pay Now', detail: 'Terminal → ends simulation immediately',            pos: {top:'13%', left:'54%', w:'16%', h:'8%'} },
+        { type: 'click',    label: 'Pay at Hotel', detail: 'Correct → Screen 4',                               pos: {top:'37%', left:'58%', w:'28%', h:'9%'} },
+      ]
+    },
+    4: {
+      name: 'Room Selection',
+      img:  '4.Room Selection.png',
+      hotspots: [
+        { type: 'click', label: 'Confirm Room', detail: 'Correct → Screen 5', pos: {top:'24%', left:'58%', w:'28%', h:'9%'} },
+      ]
+    },
+    5: {
+      name: 'Guest Details & Payment',
+      img:  '5.Guest Details & Payment.jpeg',
+      hotspots: [
+        { type: 'text',  label: 'Guest Name',       detail: 'Answer key: "Claire" · Incorrect → end simulation',        pos: {top:'25%', left:'14%', w:'42%', h:'4%'} },
+        { type: 'click', label: 'Complete Booking', detail: 'Correct → Screen 6',                                       pos: {top:'87%', left:'14%', w:'42%', h:'5%'} },
+      ]
+    },
+    6: {
+      name: 'Booking Confirmation',
+      img:  '6.Booking Confirmation.jpg',
+      hotspots: [
+        { type: 'click', label: 'Confirmation', detail: 'Correct → result', pos: {top:'28%', left:'5%', w:'88%', h:'40%'} },
+      ]
+    }
+  };
+
+  const TYPE_COLORS = {
+    // Conditional hotspots — always purple
+    'text':           { bg: 'rgba(105,65,198,0.15)',  border: '#7F56D9', dotBg: 'rgba(105,65,198,0.15)' },
+    'checkbox':       { bg: 'rgba(105,65,198,0.15)',  border: '#7F56D9', dotBg: 'rgba(105,65,198,0.15)' },
+    'dropdown':       { bg: 'rgba(105,65,198,0.15)',  border: '#7F56D9', dotBg: 'rgba(105,65,198,0.15)' },
+    // Click areas — green correct / orange wrong+deduct / red terminal
+    'click':          { bg: 'rgba(0,176,129,0.15)',   border: '#00B081', dotBg: 'rgba(0,176,129,0.15)' },
+    'click-neg':      { bg: 'rgba(247,144,9,0.15)',   border: '#F79009', dotBg: 'rgba(247,144,9,0.15)' },
+    'click-terminal': { bg: 'rgba(180,35,24,0.15)',   border: '#B42318', dotBg: 'rgba(180,35,24,0.15)' },
+  };
+  const TYPE_NAMES = {
+    'click':          'Click area (correct)',
+    'click-neg':      'Click area (wrong — deducts points)',
+    'click-terminal': 'Click area (terminal — ends simulation)',
+    'text':           'Text field',
+    'checkbox':       'Checkbox',
+    'dropdown':       'Dropdown',
+  };
+
+  function openScreenModal(screenNum) {
+    const s = SCREENS[screenNum];
+    if (!s) return;
+
+    // Get assigned script lines from live DOM state
+    const assignedLines = getAssignedLines(screenNum);
+
+    // Update subtitle with combined info
+    const lineCount = assignedLines.length;
+    const hsCount = s.hotspots.length;
+    document.getElementById('hsModalTitle').textContent = `Screen ${screenNum} — ${s.name}`;
+    document.getElementById('hsModalSub').textContent = `${hsCount} hotspot${hsCount !== 1 ? 's' : ''} · ${lineCount > 0 ? lineCount + ' script line' + (lineCount !== 1 ? 's' : '') : 'No script lines'}`;
+
+    // Build screen preview with real image + hotspot overlays
+    const body = document.getElementById('hsScreenBody');
+    let overlaysHtml = '';
+    s.hotspots.forEach(function(hs) {
+      const c = TYPE_COLORS[hs.type];
+      overlaysHtml += '<div class="hs-overlay type-' + hs.type + '" style="top:' + hs.pos.top + ';left:' + hs.pos.left + ';width:' + hs.pos.w + ';height:' + hs.pos.h + ';background:' + c.bg + ';border-color:' + c.border + ';">'
+        + '<span class="hs-overlay-label">' + hs.label + '</span></div>';
+    });
+    body.innerHTML = '<div class="hs-screen-body-inner"><img src="' + s.img + '" style="width:100%;display:block;" />'
+      + overlaysHtml + '</div>';
+
+    // Build script lines section (string concatenation — avoids nested template literal bugs)
+    const scriptEl = document.getElementById('hsScriptLines');
+    if (assignedLines.length === 0) {
+      scriptEl.innerHTML = '<div class="modal-script-empty">No script lines — agent interacts silently on this screen</div>';
+    } else {
+      let linesHtml = '<div class="modal-script-list">';
+      assignedLines.forEach(function(line) {
+        const role = line.classList.contains('customer') ? 'customer' : 'agent';
+        const text = line.querySelector('.bubble').textContent.trim();
+        linesHtml += '<div class="modal-script-line">'
+          + '<div class="msl-role ' + role + '">' + role + '</div>'
+          + '<div class="msl-text">' + text + '</div>'
+          + '</div>';
+      });
+      linesHtml += '</div>';
+      scriptEl.innerHTML = linesHtml;
+    }
+
+    // Build hotspot list (string concatenation)
+    const list = document.getElementById('hsHotspotList');
+    let hsListHtml = '';
+    s.hotspots.forEach(function(hs) {
+      const c = TYPE_COLORS[hs.type];
+      hsListHtml += '<div class="hs-list-item">'
+        + '<div class="hs-list-type-dot" style="background:' + c.bg + ';border-color:' + c.border + ';"></div>'
+        + '<div class="hs-list-name">' + hs.label + '</div>'
+        + '<div class="hs-list-detail">' + TYPE_NAMES[hs.type] + ' \u00b7 ' + hs.detail + '</div>'
+        + '</div>';
+    });
+    list.innerHTML = hsListHtml;
+
+    // Reset detail scroll each open
+    const detailScroll = document.querySelector('.hs-modal-detail-scroll');
+    if (detailScroll) detailScroll.scrollTop = 0;
+
+    document.getElementById('hsModalBackdrop').classList.add('open');
+  }
+
+  // Read live DOM to find which .script-line elements belong to a given screen
+  function getAssignedLines(targetScreen) {
+    const thread = document.getElementById('scriptThread');
+    const children = Array.from(thread.children);
+    const lines = [];
+    let currentScreen = 1;
+
+    // Check if Screen 1 label was hidden (= Screen 1 is silent)
+    const label = document.getElementById('firstScreenLabel');
+    const s1Hidden = label && (label.style.display === 'none' || label.dataset.userHidden === 'true');
+
+    for (const el of children) {
+      if (el.classList.contains('screen-break')) {
+        currentScreen = parseInt(el.dataset.breakScreen);
+      } else if (el.classList.contains('script-line')) {
+        // If screen 1 label is hidden and no break has been encountered yet,
+        // these lines are "unassigned" — they still belong to Screen 1 technically
+        // but Screen 1 is meant to be silent. We treat them as Screen 1 lines anyway
+        // since the constraint is about script-to-screen mapping.
+        if (currentScreen === targetScreen) {
+          lines.push(el);
+        }
+      }
+    }
+    return lines;
+  }
+
+  function closeModal() {
+    document.getElementById('hsModalBackdrop').classList.remove('open');
+  }
+
+  function closeModalOnBackdrop(e) {
+    if (e.target === document.getElementById('hsModalBackdrop')) closeModal();
+  }
+
+  // ─── AI banner dismissal ─────────────────────────────────────
+  function dismissAiBanner() {
+    const banner = document.getElementById('aiMappingBanner');
+    if (!banner) return;
+    banner.style.transition = 'opacity 0.3s, max-height 0.3s, margin-bottom 0.3s';
+    banner.style.opacity = '0';
+    banner.style.maxHeight = '0';
+    banner.style.marginBottom = '0';
+    banner.style.overflow = 'hidden';
+    setTimeout(function() { banner.remove(); }, 300);
+  }
+
+  // ─── Break removal ───────────────────────────────────────────
+  function removeBreak(screenNum) {
+    const breakEl = document.getElementById('break-s' + screenNum);
+    if (!breakEl) return;
+
+    dismissAiBanner();
+    breakEl.remove();
+    updateScreenSummary();
+  }
+
+  // ─── Screen picker popover ───────────────────────────────────
+  let _pickerAnchor = null; // the break-zone element that triggered the picker
+
+  function openPicker(event, zoneEl, afterLine) {
+    event.stopPropagation();
+    const popover = document.getElementById('screenPickerPopover');
+    _pickerAnchor = { zoneEl, afterLine };
+
+    const thread = document.getElementById('scriptThread');
+    const allChildren = Array.from(thread.children);
+    const zoneIdx = allChildren.indexOf(zoneEl);
+
+    // Find the nearest screen-break ABOVE the clicked zone
+    let screenAbove = 1; // default: Screen 1 owns the top
+    for (let i = zoneIdx - 1; i >= 0; i--) {
+      if (allChildren[i].classList.contains('screen-break')) {
+        screenAbove = parseInt(allChildren[i].dataset.breakScreen);
+        break;
+      }
+    }
+
+    // Find the nearest screen-break BELOW the clicked zone
+    let screenBelow = 7; // sentinel: nothing below
+    for (let i = zoneIdx + 1; i < allChildren.length; i++) {
+      if (allChildren[i].classList.contains('screen-break')) {
+        screenBelow = parseInt(allChildren[i].dataset.breakScreen);
+        break;
+      }
+    }
+
+    const isBefore1 = (afterLine === 'before-first');
+    const existingBreakNums = new Set(
+      Array.from(thread.querySelectorAll('.screen-break')).map(function(el) { return parseInt(el.dataset.breakScreen); })
+    );
+
+    // For before-first, screenAbove is implicitly 1 (Screen 1 owns the top by default).
+    // Apply the same linear constraint as normal positions: valid = screenAbove+1 to screenBelow-1.
+    // For before-first that means valid = 2 to screenBelow-1.
+    const effectiveAbove = isBefore1 ? 1 : screenAbove;
+
+    // Screens in valid range (may or may not be placed)
+    const inRange = [];
+    for (let n = effectiveAbove + 1; n < screenBelow; n++) inRange.push(n);
+
+    let pickerHTML = '<div class="picker-popover-title">' + (isBefore1 ? 'Change starting screen' : 'Start screen here') + '</div>';
+
+    if (inRange.length === 0) {
+      pickerHTML += '<div style="padding:8px 8px 6px;font-size:12px;color:#98A2B3;">No screens available here</div>';
+    } else {
+      pickerHTML += inRange.map(function(n) {
+        const taken = existingBreakNums.has(n);
+        return '<div class="picker-item' + (taken ? ' disabled' : '') + '"'
+          + (taken ? '' : ' onclick="insertBreakForScreen(' + n + ')"') + '>'
+          + '<div class="picker-item-thumb" style="padding:0;overflow:hidden;"><img src="' + SCREENS[n].img + '" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>'
+          + '<div><div class="picker-item-label">Screen ' + n + ' — ' + screenName(n) + '</div>'
+          + (taken ? '<div class="picker-item-sub">Remove its break first</div>' : '')
+          + '</div></div>';
+      }).join('');
+    }
+
+    popover.innerHTML = pickerHTML;
+
+    // Position below the break zone
+    const rect = zoneEl.getBoundingClientRect();
+    const scrollPanel = zoneEl.closest('.script-thread');
+    const panelRect = scrollPanel ? scrollPanel.getBoundingClientRect() : {left:0, top:0};
+    popover.style.top = (rect.bottom - panelRect.top + (scrollPanel ? scrollPanel.scrollTop : 0) + 4) + 'px';
+    popover.style.left = Math.max(0, rect.left - panelRect.left + rect.width/2 - 110) + 'px';
+    popover.classList.add('open');
+
+    // Close on outside click
+    setTimeout(() => document.addEventListener('click', closePicker, {once: true}), 0);
+  }
+
+  function closePicker() {
+    document.getElementById('screenPickerPopover').classList.remove('open');
+  }
+
+  function insertBreakForScreen(screenNum) {
+    closePicker();
+    dismissAiBanner();
+    if (!_pickerAnchor) return;
+    const { zoneEl, afterLine } = _pickerAnchor;
+    _pickerAnchor = null;
+
+    const thread = document.getElementById('scriptThread');
+
+    // Build the break divider element
+    const breakEl = document.createElement('div');
+    breakEl.className = 'screen-break';
+    breakEl.id = 'break-s' + screenNum;
+    breakEl.dataset.breakScreen = screenNum;
+    breakEl.innerHTML = `
+      <div class="sb-line"></div>
+      <div class="sb-pill">
+        <span class="sb-label">Screen ${screenNum} — ${screenName(screenNum)}</span>
+        <div class="sb-remove" onclick="removeBreak(${screenNum})" title="Remove break">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </div>
+      </div>
+      <div class="sb-line"></div>`;
+
+    if (afterLine === 'before-first') {
+      // Insert before the firstScreenLabel element
+      const label = document.getElementById('firstScreenLabel');
+      thread.insertBefore(breakEl, label);
+    } else {
+      // Insert after the break-zone that was clicked
+      zoneEl.insertAdjacentElement('afterend', breakEl);
+    }
+
+    updateScreenSummary();
+  }
+
+  // ─── × on Screen 1 label — open picker anchored to the label itself ────────
+  // Picking a screen inserts a real break before line 1, making Screen 1 silent.
+  function removeFirstScreenLabel() {
+    const labelEl = document.getElementById('firstScreenLabel');
+    if (labelEl) {
+      const fakeEvent = { stopPropagation: function() {} };
+      openPicker(fakeEvent, labelEl, 'before-first');
+    }
+  }
+
+  // ─── Update screen summary line counts & silent segments ─────
+  function updateScreenSummary() {
+    const thread = document.getElementById('scriptThread');
+    const children = Array.from(thread.children);
+
+    // Compute Screen 1 boundary state (used for both label + silent segment)
+    const firstBreak = children.find(el => el.classList.contains('screen-break'));
+    const firstBreakIdx = firstBreak ? children.indexOf(firstBreak) : -1;
+    const firstLineIdx = children.findIndex(el => el.classList.contains('script-line'));
+    const breakIsAboveLine1 = firstBreak && firstBreakIdx < firstLineIdx;
+
+    // Update the "Screen N — Name" label above line 1
+    const labelEl = document.getElementById('firstScreenLabel');
+    const labelText = document.getElementById('firstScreenLabelText');
+    if (labelEl && labelText) {
+      if (!firstBreak || !breakIsAboveLine1) {
+        // No breaks, or all breaks are below line 1 — Screen 1 owns the start, show label
+        labelText.textContent = 'Screen 1 — ' + screenName(1);
+        labelEl.style.display = '';
+      } else {
+        // A real break sits above line 1 — the break pill itself serves as the boundary label,
+        // so hide the floating Screen 1 label
+        labelEl.style.display = 'none';
+      }
+    }
+
+    // Count lines per screen
+    const counts = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0};
+    let currentScreen = 1;
+    children.forEach(el => {
+      if (el.classList.contains('screen-break')) {
+        currentScreen = parseInt(el.dataset.breakScreen);
+      } else if (el.classList.contains('script-line')) {
+        counts[currentScreen] = (counts[currentScreen] || 0) + 1;
+      }
+    });
+
+    // Update "X of 6 mapped" indicator in panel header
+    const mappedCount = Object.values(counts).filter(function(c) { return c > 0; }).length;
+    const countEl = document.getElementById('screenMappedCount');
+    if (countEl) {
+      countEl.textContent = mappedCount + ' of 6 mapped';
+      countEl.style.background = mappedCount === 6 ? '#E9FEF9' : '#F2F4F7';
+      countEl.style.color = mappedCount === 6 ? '#00B081' : '#667085';
+    }
+
+    // Detect which screens are sandwiched between two consecutive breaks (silent)
+    // and ensure a silent-segment block exists between them.
+    // We do a full sweep: remove all existing silent-segments first, then re-insert where needed.
+    // This avoids stale segments from previous states.
+    thread.querySelectorAll('.silent-segment').forEach(function(seg) { seg.remove(); });
+
+    const breakEls = Array.from(thread.querySelectorAll('.screen-break'));
+    breakEls.forEach(function(breakEl, i) {
+      const thisScreen = parseInt(breakEl.dataset.breakScreen);
+      const nextBreak = breakEls[i + 1];
+      if (!nextBreak) return;
+      const linesBetween = countLinesBetween(breakEl, nextBreak);
+      if (linesBetween === 0) {
+        const seg = makeSilentSegment(thisScreen, screenName(thisScreen));
+        breakEl.insertAdjacentElement('afterend', seg);
+      }
+    });
+
+    // Silent segments for every screen skipped before the first break
+    // e.g. if Screen 3 is first, insert Screen 1 + Screen 2 silent blocks
+    // Insert in reverse order so DOM order is Screen 1 → Screen 2 → … → firstBreak
+    if (breakIsAboveLine1) {
+      const firstBreakScreen = parseInt(firstBreak.dataset.breakScreen);
+      // Loop ascending: each segment is inserted immediately before firstBreak,
+      // so n=1 goes in first, then n=2 pushes after it, etc.
+      // Result: Screen 1 → Screen 2 → … → Screen N-1 → firstBreak  ✓
+      for (let n = 1; n < firstBreakScreen; n++) {
+        const seg = makeSilentSegment(n, screenName(n));
+        firstBreak.insertAdjacentElement('beforebegin', seg);
+      }
+    }
+
+    // Update left panel cards
+    for (let s = 1; s <= 6; s++) {
+      const card = document.getElementById('ssc-' + s);
+      if (!card) continue;
+      const bottom = card.querySelector('.ssc-bottom');
+      const count = counts[s] || 0;
+      if (count === 0) {
+        card.className = 'screen-summary-card silent';
+        bottom.innerHTML = '<span class="ssc-lines-tag no-lines">No script lines</span>';
+      } else {
+        card.className = 'screen-summary-card mapped';
+        bottom.innerHTML = `<span class="ssc-lines-tag has-lines">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+          ${count} line${count !== 1 ? 's' : ''}
+        </span>`;
+      }
+    }
+  }
+
+  function countLinesBetween(startEl, endEl) {
+    let count = 0;
+    let el = startEl.nextElementSibling;
+    while (el && el !== endEl) {
+      if (el.classList.contains('script-line')) count++;
+      el = el.nextElementSibling;
+    }
+    return count;
+  }
+
+  function screenName(num) {
+    const names = {1:'Landing',2:'Search Results',3:'Hotel Detail',4:'Room Selection',5:'Guest Details & Payment',6:'Booking Confirmation'};
+    return names[num] || 'Screen ' + num;
+  }
+
+  function makeSilentSegment(num, name) {
+    const seg = document.createElement('div');
+    seg.className = 'silent-segment';
+    seg.innerHTML = `
+      <div class="silent-seg-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9h6M9 13h4M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/><path stroke-linecap="round" d="M15 17l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" stroke-width="1.8"/></svg>
+      </div>
+      <div class="silent-seg-text">
+        <div class="silent-seg-name">Screen ${num} — ${name}</div>
+        <div class="silent-seg-desc">No script lines — agent interacts silently on this screen</div>
+      </div>`;
+    return seg;
+  }
+
+  // ─── Init ─────────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    updateScreenSummary();
+  });
+</script>
+</body>
+</html>
