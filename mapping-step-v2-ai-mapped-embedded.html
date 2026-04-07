@@ -12,19 +12,20 @@
     body { font-family: 'DM Sans', sans-serif; background: #F2F4F7; display: flex; }
 
     /* ── Sidebar ── */
-    .sidebar { width: 280px; height: 100vh; background: #fff; border-right: 1px solid #E4E7EC; flex-shrink: 0; display: flex; flex-direction: column; overflow-y: auto; }
-    .sidebar-top { padding: 20px 24px 14px; }
-    .sidebar-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    .logo-icon { width: 30px; height: 30px; background: #213C50; border-radius: 6px; display: grid; place-items: center; }
-    .logo-icon span { color: #fff; font-size: 10px; font-weight: 700; }
-    .logo-name { font-size: 14px; font-weight: 700; color: #213C50; }
-    .env-badge { font-size: 11px; font-weight: 500; color: #fff; background: #444CE7; border-radius: 4px; padding: 2px 8px; display: inline-block; }
-    .nav-item { display: flex; align-items: center; gap: 10px; padding: 0 24px; height: 44px; font-size: 14px; color: #344054; cursor: pointer; }
-    .nav-item.active { background: #F0F9FF; color: #213C50; font-weight: 700; border-right: 3px solid #3538CD; }
-    .nav-dot { width: 30px; height: 30px; border-radius: 99px; background: #E9FEF9; display: grid; place-items: center; flex-shrink: 0; }
-    .nav-dot svg { width: 16px; height: 16px; }
-    .sidebar-footer { margin-top: auto; padding: 8px 0 16px; border-top: 1px solid #F2F4F7; }
-    .sidebar-version { padding: 6px 24px; font-size: 11px; color: #98A2B3; }
+    .sidebar { width: 196px; height: 100vh; background: #fff; border-right: 1px solid #E4E7EC; flex-shrink: 0; display: flex; flex-direction: column; overflow-y: auto; }
+    .sidebar-top { padding: 16px 12px 10px; }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .logo-icon { width: 30px; height: 30px; background: #3538CD; border-radius: 7px; display: grid; place-items: center; flex-shrink: 0; }
+    .logo-name { font-size: 12.5px; font-weight: 700; color: #101828; line-height: 1.2; }
+    .logo-sub { font-size: 11px; color: #667085; line-height: 1.2; }
+    .env-badge { font-size: 11px; font-weight: 500; color: #1570EF; background: #EFF8FF; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+    .nav { padding: 4px 8px; flex: 1; }
+    .nav-item { display: flex; align-items: center; gap: 7px; padding: 7px 10px; font-size: 13px; font-weight: 500; color: #344054; cursor: pointer; border-radius: 6px; margin: 1px 0; transition: background 0.12s; }
+    .nav-item:hover { background: #F9FAFB; }
+    .nav-item.active { background: #EEF4FF; color: #3538CD; font-weight: 600; border-radius: 6px 0 0 6px; border-right: 3px solid #3538CD; }
+    .nav-item .nav-icon { font-size: 17px; flex-shrink: 0; color: inherit; }
+    .sidebar-footer { margin-top: auto; padding: 6px 8px 12px; border-top: 1px solid #F2F4F7; }
+    .sidebar-version { padding: 4px 10px; font-size: 10.5px; color: #98A2B3; }
 
     /* ── Main ── */
     .main { flex: 1; height: 100vh; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
@@ -36,13 +37,13 @@
     /* ── Progress bar ── */
     .progress-bar { margin: 20px 48px 20px; background: #FEF3C7; border-radius: 10px; padding: 14px 0; display: flex; align-items: center; justify-content: center; }
     .step { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: #667085; padding: 0 12px; }
-    .step.done { color: #344054; }
+    .step.done { color: #101828; font-weight: 700; }
     .step.active { color: #F79009; font-weight: 700; }
     .step-num { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-    .step.done .step-num   { background: #00D0A3; color: #fff; }
+    .step.done .step-num   { background: #F79009; color: #fff; }
     .step.active .step-num { background: #F79009; color: #fff; }
-    .step.inactive .step-num { background: #D0D5DD; color: #fff; }
-    .step-divider { width: 20px; height: 1px; background: #D0D5DD; }
+    .step.inactive .step-num { background: #E4E7EC; color: #98A2B3; }
+    .step-divider { width: 1px; height: 20px; background: #D0D5DD; }
 
     /* ── Content wrapper ── */
     .content-wrapper { margin: 0 48px 0; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0; }
@@ -52,7 +53,7 @@
     .training-title-row { display: flex; align-items: center; gap: 10px; }
     .training-name { font-size: 20px; font-weight: 700; color: #101828; }
     .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
-    .badge-audio-image { background: #F4F3FF; color: #5925DC; }
+    .badge-audio-image { background: #EEF4FF; color: #3538CD; }
 
     /* ── Two-column body ── */
     .two-col-card { background: #fff; border-radius: 0 0 12px 12px; border: 1px solid #E4E7EC; display: flex; flex: 1; min-height: 0; overflow: hidden; }
@@ -64,11 +65,18 @@
     .panel-desc { font-size: 12px; color: #667085; line-height: 1.45; }
     .screen-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; }
 
-    /* Screen summary card */
-    .screen-summary-card { border: 1.5px solid #E4E7EC; border-radius: 8px; overflow: hidden; background: #fff; transition: border-color 0.15s, box-shadow 0.15s; cursor: pointer; flex-shrink: 0; }
-    .screen-summary-card.mapped { border-color: #A9EFD8; background: #fff; }
-    .screen-summary-card.silent { border-color: #E4E7EC; background: #F2F4F7; }
-    .screen-summary-card:hover { border-color: #444CE7; box-shadow: 0 0 0 2px #C7D7FE; }
+    /* Screen summary card — base */
+    .screen-summary-card { border: 1.5px solid transparent; border-radius: 8px; overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; cursor: pointer; flex-shrink: 0; }
+
+    /* With script lines */
+    .screen-summary-card.mapped         { background: #F5F8FF; }
+    .screen-summary-card.mapped:hover   { background: #EEF4FF; border-color: #A4BCFD; box-shadow: none; }
+    .screen-summary-card.mapped.active  { background: #F5F8FF; border-color: #A4BCFD; box-shadow: 0 0 0 3px #C7D7FE; }
+
+    /* Without script lines */
+    .screen-summary-card.silent         { background: #F9FAFB; }
+    .screen-summary-card.silent:hover   { background: #F2F4F7; border-color: #E4E7EC; box-shadow: none; }
+    .screen-summary-card.silent.active  { background: #F9FAFB; border-color: #D0D5DD; box-shadow: 0 0 0 3px #E4E7EC; }
     .ssc-top { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
     .ssc-thumb { width: 44px; height: 34px; background: #F2F4F7; border-radius: 4px; border: 1px solid #D0D5DD; flex-shrink: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
     .ssc-thumb .mini-chrome { height: 5px; background: #E4E7EC; display: flex; align-items: center; gap: 1px; padding: 0 2px; }
@@ -85,13 +93,13 @@
     .ssc-screen-name { font-size: 12px; font-weight: 600; color: #101828; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .ssc-bottom { padding: 4px 10px 8px; }
     .ssc-lines-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 999px; }
-    .ssc-lines-tag.has-lines { background: #E9FEF9; color: #00B081; }
+    .ssc-lines-tag.has-lines { background: #EEF4FF; color: #3538CD; }
     .ssc-lines-tag.no-lines { background: #F2F4F7; color: #667085; }
 
     /* ── Right: Script Thread ── */
     .script-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
     .script-panel-header { padding: 16px 16px 14px; border-bottom: 1px solid #F2F4F7; flex-shrink: 0; position: sticky; top: 0; background: #fff; z-index: 1; }
-    .script-thread { padding: 16px 16px 32px; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; position: relative; }
+    .script-thread { padding: 16px 16px 32px; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; position: relative; background-color: #FCFCFE; background-image: radial-gradient(circle, rgba(180, 190, 220, 0.25) 1px, transparent 1px); background-size: 12px 12px; }
 
     /* Break zone between lines */
     .break-zone { display: flex; align-items: center; gap: 0; height: 28px; cursor: pointer; position: relative; }
@@ -129,25 +137,25 @@
     .script-line.customer .bubble-wrap { align-items: flex-start; }
     .script-line.agent    .bubble-wrap { align-items: flex-end; }
 
-.bubble { padding: 9px 13px; border-radius: 12px; font-size: 13px; line-height: 1.5; color: #101828; }
-    .customer .bubble { background: #F2F4F7; border-radius: 4px 12px 12px 12px; }
+.bubble { padding: 9px 13px; border-radius: 12px; font-size: 13px; line-height: 1.5; color: #101828; box-shadow: 0 1px 3px 0 rgba(16, 24, 40, 0.10), 0 1px 2px 0 rgba(16, 24, 40, 0.06); }
+    .customer .bubble { background: #fff; border-radius: 4px 12px 12px 12px; }
     .agent    .bubble { background: #EEF4FF; border-radius: 12px 4px 12px 12px; color: #1D2939; }
+
 
     .bubble-audio { display: flex; align-items: center; gap: 5px; margin-top: 5px; }
     .audio-play { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; border: none; cursor: pointer; }
     .customer .audio-play { background: #D0D5DD; }
+    .agent .audio-play { background: #C7D7FE; }
     .audio-play svg { width: 10px; height: 10px; }
     .customer .audio-play svg { color: #344054; }
-    .audio-wave { display: flex; align-items: center; gap: 2px; height: 16px; }
-    .audio-wave span { display: block; width: 2px; border-radius: 1px; }
-    .customer .audio-wave span { background: #98A2B3; }
+    .agent .audio-play svg { color: #3538CD; }
 
     /* Footer nav */
-    .footer-nav { margin: 0 48px; padding: 16px 0 24px; display: flex; justify-content: space-between; flex-shrink: 0; }
+    .footer-nav { margin: 0 48px; padding: 16px 0 24px; display: flex; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
     .btn { padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; }
     .btn-secondary { background: #fff; border: 1.5px solid #D0D5DD; color: #344054; }
-    .btn-primary { background: #00B081; color: #fff; }
-    .btn-primary:hover { background: #00936b; }
+    .btn-primary { background: #3538CD; color: #fff; }
+    .btn-primary:hover { background: #2D31A6; }
 
     /* ── Dynamic screen section label in script thread ── */
     .script-screen-label { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; margin-top: 0; }
@@ -234,33 +242,31 @@
 <aside class="sidebar">
   <div class="sidebar-top">
     <div class="sidebar-logo">
-      <div class="logo-icon"><span>AO</span></div>
-      <span class="logo-name">Agents Only</span>
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2Z" fill="#fff" opacity="0.9"/></svg>
+      </div>
+      <div>
+        <div class="logo-name">Agents Only</div>
+        <div class="logo-sub">Admin Portal</div>
+      </div>
     </div>
-    <span class="env-badge">Staging</span>
+    <span class="env-badge">Development</span>
   </div>
-  <nav style="margin-top:12px;">
-    <div class="nav-item">
-      <div class="nav-dot">
-        <svg fill="none" viewBox="0 0 24 24" stroke="#667085" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7m-9 5v6m4-6v6m5-10.5V19a1 1 0 01-1 1H6a1 1 0 01-1-1v-6.5"/></svg>
-      </div>
-      Dashboard
-    </div>
-    <div class="nav-item active">
-      <div class="nav-dot">
-        <svg fill="none" viewBox="0 0 24 24" stroke="#00B081" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-      </div>
-      Training
-    </div>
-    <div class="nav-item">
-      <div class="nav-dot">
-        <svg fill="none" viewBox="0 0 24 24" stroke="#667085" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
-      </div>
-      Agents
-    </div>
+  <nav class="nav">
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">person</span>Agents</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">folder_open</span>Projects</div>
+    <div class="nav-item active"><span class="material-symbols-outlined nav-icon">layers</span>Training</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">account_balance_wallet</span>Wallet</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">account_balance</span>Deposits</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">group</span>Referrals</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">payments</span>Platform Rates</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">language</span>Country Admin</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">visibility</span>View as User</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">admin_panel_settings</span>Admin Users</div>
   </nav>
   <div class="sidebar-footer">
-    <div class="sidebar-version">v2.4.1</div>
+    <div class="nav-item" style="color:#667085;"><span class="material-symbols-outlined nav-icon" style="color:#667085;">logout</span>Logout</div>
+    <div class="sidebar-version">ao-admin-portal: v0.0.74</div>
   </div>
 </aside>
 
@@ -481,7 +487,7 @@
             <div style="display:flex;align-items:center;gap:6px;">
               <span style="font-size:12px;color:#444CE7;font-weight:500;">Agent</span>
               <div style="width:24px;height:24px;border-radius:50%;background:#EEF4FF;display:grid;place-items:center;flex-shrink:0;">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#444CE7" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                <span class="material-symbols-outlined" style="font-size:14px;color:#444CE7;line-height:1;">headphones</span>
               </div>
             </div>
           </div>
@@ -510,12 +516,7 @@
 
               <div class="bubble">Hi, I'd like to book a hotel room in Ohio for next weekend — checking in Apr 30, checking out May 1.</div>
               <div class="bubble-audio">
-                <button class="audio-play" title="Play audio">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <div class="audio-wave">
-                  <span style="height:4px"></span><span style="height:8px"></span><span style="height:12px"></span><span style="height:6px"></span><span style="height:10px"></span><span style="height:14px"></span><span style="height:8px"></span><span style="height:5px"></span><span style="height:10px"></span><span style="height:7px"></span>
-                </div>
+                <button class="audio-play" title="Play audio"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
               </div>
             </div>
           </div>
@@ -561,12 +562,7 @@
 
               <div class="bubble">Yes, Ohio — anywhere nearby works.</div>
               <div class="bubble-audio">
-                <button class="audio-play">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <div class="audio-wave">
-                  <span style="height:5px"></span><span style="height:9px"></span><span style="height:6px"></span><span style="height:11px"></span><span style="height:8px"></span><span style="height:13px"></span><span style="height:7px"></span><span style="height:9px"></span><span style="height:4px"></span><span style="height:7px"></span>
-                </div>
+                <button class="audio-play" title="Play audio"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
               </div>
             </div>
           </div>
@@ -612,12 +608,7 @@
 
               <div class="bubble">Great, I can see a few options. Holiday Inn Express looks nice — can we go with that one?</div>
               <div class="bubble-audio">
-                <button class="audio-play">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <div class="audio-wave">
-                  <span style="height:6px"></span><span style="height:10px"></span><span style="height:8px"></span><span style="height:13px"></span><span style="height:7px"></span><span style="height:11px"></span><span style="height:9px"></span><span style="height:5px"></span><span style="height:12px"></span><span style="height:7px"></span>
-                </div>
+                <button class="audio-play" title="Play audio"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
               </div>
             </div>
           </div>
@@ -650,12 +641,7 @@
 
               <div class="bubble">It's just for two adults. We'd prefer to pay at the hotel rather than upfront if that's an option.</div>
               <div class="bubble-audio">
-                <button class="audio-play">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <div class="audio-wave">
-                  <span style="height:8px"></span><span style="height:13px"></span><span style="height:7px"></span><span style="height:11px"></span><span style="height:5px"></span><span style="height:10px"></span><span style="height:9px"></span><span style="height:6px"></span><span style="height:12px"></span><span style="height:8px"></span>
-                </div>
+                <button class="audio-play" title="Play audio"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
               </div>
             </div>
           </div>
@@ -701,12 +687,7 @@
 
               <div class="bubble">Wonderful, thank you!</div>
               <div class="bubble-audio">
-                <button class="audio-play">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <div class="audio-wave">
-                  <span style="height:4px"></span><span style="height:7px"></span><span style="height:5px"></span><span style="height:9px"></span><span style="height:6px"></span><span style="height:8px"></span><span style="height:4px"></span><span style="height:6px"></span><span style="height:5px"></span><span style="height:7px"></span>
-                </div>
+                <button class="audio-play" title="Play audio"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
               </div>
             </div>
           </div>
@@ -737,12 +718,7 @@
 
               <div class="bubble">My name is Claire. Can you make sure the booking is under that name?</div>
               <div class="bubble-audio">
-                <button class="audio-play">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <div class="audio-wave">
-                  <span style="height:7px"></span><span style="height:11px"></span><span style="height:8px"></span><span style="height:13px"></span><span style="height:6px"></span><span style="height:10px"></span><span style="height:9px"></span><span style="height:5px"></span><span style="height:12px"></span><span style="height:8px"></span>
-                </div>
+                <button class="audio-play" title="Play audio"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
               </div>
             </div>
           </div>
@@ -788,12 +764,7 @@
 
               <div class="bubble">I see the confirmation on my end — booking number HC-4421. Thank you so much!</div>
               <div class="bubble-audio">
-                <button class="audio-play">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <div class="audio-wave">
-                  <span style="height:6px"></span><span style="height:10px"></span><span style="height:8px"></span><span style="height:13px"></span><span style="height:7px"></span><span style="height:11px"></span><span style="height:9px"></span><span style="height:6px"></span><span style="height:12px"></span><span style="height:8px"></span>
-                </div>
+                <button class="audio-play" title="Play audio"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
               </div>
             </div>
           </div>
@@ -950,6 +921,11 @@
     const s = SCREENS[screenNum];
     if (!s) return;
 
+    // Set active state on clicked card
+    document.querySelectorAll('.screen-summary-card').forEach(function(c) { c.classList.remove('active'); });
+    const clickedCard = document.getElementById('ssc-' + screenNum);
+    if (clickedCard) clickedCard.classList.add('active');
+
     // Get assigned script lines from live DOM state
     const assignedLines = getAssignedLines(screenNum);
 
@@ -1037,6 +1013,7 @@
 
   function closeModal() {
     document.getElementById('hsModalBackdrop').classList.remove('open');
+    document.querySelectorAll('.screen-summary-card').forEach(function(c) { c.classList.remove('active'); });
   }
 
   function closeModalOnBackdrop(e) {
@@ -1231,8 +1208,8 @@
     const countEl = document.getElementById('screenMappedCount');
     if (countEl) {
       countEl.textContent = mappedCount + ' of 6 mapped';
-      countEl.style.background = mappedCount === 6 ? '#E9FEF9' : '#F2F4F7';
-      countEl.style.color = mappedCount === 6 ? '#00B081' : '#667085';
+      countEl.style.background = mappedCount === 6 ? '#EEF4FF' : '#F2F4F7';
+      countEl.style.color = mappedCount === 6 ? '#3538CD' : '#667085';
     }
 
     // Detect which screens are sandwiched between two consecutive breaks (silent)
@@ -1273,11 +1250,12 @@
       if (!card) continue;
       const bottom = card.querySelector('.ssc-bottom');
       const count = counts[s] || 0;
+      const isActive = card.classList.contains('active');
       if (count === 0) {
-        card.className = 'screen-summary-card silent';
+        card.className = 'screen-summary-card silent' + (isActive ? ' active' : '');
         bottom.innerHTML = '<span class="ssc-lines-tag no-lines">No script lines</span>';
       } else {
-        card.className = 'screen-summary-card mapped';
+        card.className = 'screen-summary-card mapped' + (isActive ? ' active' : '');
         bottom.innerHTML = `<span class="ssc-lines-tag has-lines">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
           ${count} line${count !== 1 ? 's' : ''}
