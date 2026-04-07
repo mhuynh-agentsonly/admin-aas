@@ -555,6 +555,7 @@ body {
   min-height: 0;
   min-width: 0;
   overflow: hidden; /* contain inner scroll — result-body scrolls, header stays fixed */
+  background-color: #FCFCFE; background-image: radial-gradient(circle, rgba(180, 190, 220, 0.25) 1px, transparent 1px); background-size: 12px 12px;
 }
 
 .result-header {
@@ -564,6 +565,7 @@ body {
   align-items: flex-start;
   justify-content: space-between;
   flex-shrink: 0;
+  background-color: #FFFFFF;
 }
 
 .result-title { font-size: 14px; font-weight: 700; color: #101828; }
@@ -578,6 +580,10 @@ body {
   font-weight: 500;
   flex-shrink: 0;
   margin-top: 2px;
+  padding: 4px 8px;
+  background-color: #F2F4F7;
+  border-radius: 99px;
+
 }
 .draft-dot {
   width: 7px;
@@ -1166,7 +1172,7 @@ body {
                   Hello! I'm MAI, your AI Simulation Assistant. Tell me what criteria you want to measure during the trainee's simulation training, and I'll help you structure the scoring system.
                   <div class="tip-line">
                     <span class="tip-label">Tip: </span>
-                    <span class="tip-text">You can reference the project's hard metrics below — tell me which dimensions and thresholds you'd like to include, exclude, or override. You can also attach files to provide additional context or supporting materials.</span>
+                    <span class="tip-text">Reference the project’s hard metrics below — type @ to insert them. Specify which dimensions or thresholds to include, exclude, or override. Attach files for extra context if needed.</span>
                   </div>
                 </div>
               </div>
@@ -1207,7 +1213,7 @@ body {
           <div class="result-header">
             <div>
               <div class="result-title">Scoring Interpretation</div>
-              <div class="result-subtitle">AI-generated scoring structure in real-time</div>
+              <div class="result-subtitle">Review AI-generated scoring structure</div>
             </div>
             <div class="draft-badge">
               <div class="draft-dot" id="draftDot"></div>
