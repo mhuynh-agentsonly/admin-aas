@@ -35,7 +35,7 @@
     .page-title { font-size: 26px; font-weight: 700; color: #101828; }
 
     /* ── Progress bar ── */
-    .progress-bar { margin: 20px 48px 20px; background: #FEF3C7; border-radius: 10px; padding: 14px 0; display: flex; align-items: center; justify-content: center; }
+    .progress-bar { margin: 20px 48px 20px; margin-bottom: 0; background: #FEF3C7; border-radius: 10px 10px 0 0; padding: 14px 0; display: flex; align-items: center; justify-content: center; }
     .step { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: #667085; padding: 0 12px; }
     .step.done { color: #101828; font-weight: 700; }
     .step.active { color: #F79009; font-weight: 700; }
@@ -49,21 +49,32 @@
     .content-wrapper { margin: 0 48px 0; flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 0; }
 
     /* ── Top card: sim title + description ── */
-    .top-card { background: #fff; border-radius: 12px 12px 0 0; border: 1px solid #E4E7EC; border-bottom: none; padding: 24px 32px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .top-card { background: #fff; border: 1px solid #E4E7EC; border-bottom: none; border-top: none; padding: 24px 32px 20px; display: flex; align-items: center; justify-content: space-between; }
     .training-title-row { display: flex; align-items: center; gap: 10px; }
     .training-name { font-size: 20px; font-weight: 700; color: #101828; }
     .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
     .badge-audio-image { background: #EEF4FF; color: #3538CD; }
 
+    /* ── Step name ── */
+    .section-heading {
+  font-size: 14px;
+  font-weight: 600;
+  color: #344054;
+  padding: 0 32px 16px 32px;
+  background-color: #fff;
+  border-left: 1px solid #E4E7EC;
+  border-right: 1px solid #E4E7EC;
+}
+
     /* ── Two-column body ── */
-    .two-col-card { background: #fff; border-radius: 0 0 12px 12px; border: 1px solid #E4E7EC; display: flex; flex: 1; min-height: 0; overflow: hidden; }
+    .two-col-card { background: #fff; border: 1px solid #E4E7EC; border-bottom: none; display: flex; flex: 1; min-height: 0; overflow: hidden; }
 
     /* ── Left: Screen Summary Panel ── */
     .screen-panel { width: 280px; flex-shrink: 0; border-right: 1px solid #E4E7EC; display: flex; flex-direction: column; overflow: hidden; }
-    .screen-panel-header { padding: 16px 16px 14px; border-bottom: 1px solid #F2F4F7; flex-shrink: 0; }
+    .screen-panel-header { padding: 16px 32px 14px; padding-right: 14px; border-bottom: 1px solid #F2F4F7; flex-shrink: 0; }
     .panel-title { font-size: 13px; font-weight: 700; color: #101828; margin-bottom: 2px; }
     .panel-desc { font-size: 12px; color: #667085; line-height: 1.45; }
-    .screen-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; }
+    .screen-list { padding: 12px 12px; padding-left: 32px; display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; }
 
     /* Screen summary card — base */
     .screen-summary-card { border: 1.5px solid transparent; border-radius: 8px; overflow: hidden; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; cursor: pointer; flex-shrink: 0; }
@@ -98,8 +109,8 @@
 
     /* ── Right: Script Thread ── */
     .script-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; }
-    .script-panel-header { padding: 16px 16px 14px; border-bottom: 1px solid #F2F4F7; flex-shrink: 0; position: sticky; top: 0; background: #fff; z-index: 1; }
-    .script-thread { padding: 16px 16px 32px; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; position: relative; background-color: #FCFCFE; background-image: radial-gradient(circle, rgba(180, 190, 220, 0.25) 1px, transparent 1px); background-size: 12px 12px; }
+    .script-panel-header { padding: 16px 16px 14px; padding-right: 32px; border-bottom: 1px solid #F2F4F7; flex-shrink: 0; position: sticky; top: 0; background: #fff; z-index: 1; }
+    .script-thread { padding: 16px 16px 32px; margin-right: 32px; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; position: relative; background-color: #FCFCFE; background-image: radial-gradient(circle, rgba(180, 190, 220, 0.25) 1px, transparent 1px); background-size: 12px 12px; }
 
     /* Break zone between lines */
     .break-zone { display: flex; align-items: center; gap: 0; height: 28px; cursor: pointer; position: relative; }
@@ -151,7 +162,7 @@
     .agent .audio-play svg { color: #3538CD; }
 
     /* Footer nav */
-    .footer-nav { margin: 0 48px; padding: 16px 0 24px; display: flex; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
+    .footer-nav { background-color: #fff; border: 1px solid #E4E7EC; border-radius: 0 0 16px 16px; margin: 0 48px; padding: 16px 32px 24px 24px; display: flex; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
     .btn { padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; }
     .btn-secondary { background: #fff; border: 1.5px solid #D0D5DD; color: #344054; }
     .btn-primary { background: #3538CD; color: #fff; }
@@ -322,6 +333,7 @@
         <span class="badge badge-audio-image">Audio & Image</span>
       </div>
     </div>
+     <div class="section-heading">Mapping</div>
 
     <div class="two-col-card">
 
