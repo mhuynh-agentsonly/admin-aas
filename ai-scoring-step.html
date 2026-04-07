@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Scoring – Structured (Option 2)</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'DM Sans', sans-serif; background: #F2F4F7; display: flex; align-items: flex-start; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    .sidebar { width: 196px; height: 100vh; background: #fff; border-right: 1px solid #E4E7EC; flex-shrink: 0; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 20; overflow-y: auto; }
+    .sidebar-top { padding: 16px 12px 10px; }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .logo-icon { width: 30px; height: 30px; background: #3538CD; border-radius: 7px; display: grid; place-items: center; flex-shrink: 0; }
+    .logo-name { font-size: 12.5px; font-weight: 700; color: #101828; line-height: 1.2; }
+    .logo-sub { font-size: 11px; color: #667085; line-height: 1.2; }
+    .env-badge { font-size: 11px; font-weight: 500; color: #1570EF; background: #EFF8FF; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+    .nav { padding: 4px 8px; flex: 1; }
+    .nav-item { display: flex; align-items: center; gap: 7px; padding: 7px 10px; font-size: 13px; font-weight: 500; color: #344054; cursor: pointer; border-radius: 6px; margin: 1px 0; transition: background 0.12s; }
+    .nav-item:hover { background: #F9FAFB; }
+    .nav-item.active { background: #EEF4FF; color: #3538CD; font-weight: 600; border-radius: 6px 0 0 6px; border-right: 3px solid #3538CD; }
+    .nav-item .nav-icon { font-size: 17px; flex-shrink: 0; color: inherit; }
+    .sidebar-footer { margin-top: auto; padding: 6px 8px 12px; border-top: 1px solid #F2F4F7; }
+    .sidebar-version { padding: 4px 10px; font-size: 10.5px; color: #98A2B3; }
+
+    /* ── Main ── */
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100vh; overflow: hidden; margin-left: 196px; }
+    .page-header { padding: 24px 40px 0; display: flex; align-items: center; gap: 10px; }
+    .back-btn { display: flex; align-items: center; color: #344054; cursor: pointer; gap: 4px; font-size: 14px; font-weight: 500; }
+    .back-btn svg { width: 20px; height: 20px; }
+
+    /* Progress */
+    .progress-bar { margin: 16px 40px 16px; background: #FEF3C7; border-radius: 10px; padding: 12px 0; display: flex; align-items: center; justify-content: center; }
+    .step { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: #667085; padding: 0 12px; }
+    .step.done { color: #101828; font-weight: 700; }
+    .step.active { color: #F79009; font-weight: 700; }
+    .step-num { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+    .step.done .step-num   { background: #F79009; color: #fff; }
+    .step.active .step-num { background: #F79009; color: #fff; }
+    .step.inactive .step-num { background: #E4E7EC; color: #98A2B3; }
+    .step-divider { width: 24px; height: 1px; background: #D0D5DD; }
+
+    /* ── Content card ── */
+    .content-card { margin: 0 40px 0; background: #fff; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    .card-header { padding: 24px 28px 20px; border-bottom: 1px solid #E4E7EC; }
+    .training-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 2px; }
+    .training-name { font-size: 18px; font-weight: 700; color: #101828; }
+    .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+    .badge-audio-image { background: #EEF4FF; color: #3538CD; }
+    .step-label { font-size: 13px; color: #667085; }
+
+    /* ── Two-column body ── */
+    .two-col { display: flex; flex: 1; min-height: 0; height: auto; }
+
+    /* LEFT panel */
+    .left-panel { width: 300px; flex-shrink: 0; border-right: 1px solid #E4E7EC; display: flex; flex-direction: column; min-height: 0; height: 100%; overflow-y: auto; background: #fff; }
+    .left-panel-header { padding: 14px 16px 12px; border-bottom: 1px solid #F2F4F7; flex-shrink: 0; }
+    .left-panel-top-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .left-panel-title { font-size: 13px; font-weight: 700; color: #101828; }
+
+    /* Weight bar */
+    .weight-bar { display: flex; align-items: center; gap: 8px; }
+    .weight-bar-track { flex: 1; height: 6px; background: #F2F4F7; border-radius: 99px; overflow: hidden; }
+    .weight-bar-fill { height: 100%; border-radius: 99px; transition: width 0.25s, background 0.25s; }
+    .weight-label { font-size: 12px; font-weight: 700; white-space: nowrap; transition: color 0.25s; }
+    .weight-label.ok    { color: #00B081; }
+    .weight-label.warn  { color: #F79009; }
+    .weight-label.over  { color: #F04438; }
+    .weight-helper { font-size: 11px; color: #98A2B3; margin-top: 3px; }
+
+    .add-btn { display: flex; align-items: center; gap: 5px; background: #3538CD; color: #fff; border: none; border-radius: 7px; padding: 5px 11px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; flex-shrink: 0; }
+    .add-btn:hover { background: #2D31A6; }
+    .add-btn .material-symbols-outlined { font-size: 15px; }
+
+    .assistant-list { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+    .left-panel-body { flex: 1; min-height: 0; overflow-y: auto; }
+
+    /* Assistant card */
+    .assistant-card { border: 1.5px solid #E4E7EC; border-radius: 10px; padding: 11px 13px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; background: #fff; }
+    .assistant-card:hover { border-color: #A4BCFD; }
+    .assistant-card.selected { border-color: #A4BCFD; box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05), 0 0 0 4px #EAF0FF; }
+    .assistant-card.disabled { opacity: 0.5; }
+
+    .assistant-card-top { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; column-gap: 10px; margin-bottom: 10px; }
+    .assistant-identity { display: flex; align-items: flex-start; gap: 9px; min-width: 0; flex: 1; }
+    .assistant-avatar { width: 24px; height: 24px; min-width: 24px; min-height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+    .assistant-identity > div { min-width: 0; }
+    .assistant-name { font-size: 13px; font-weight: 700; color: #101828; white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; word-break: break-word; line-height: 1.35; }
+    .assistant-desc { font-size: 11px; color: #667085; margin-top: 1px; line-height: 1.4; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+
+    /* Card actions row: toggle only */
+    .card-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: 8px; }
+
+    /* Weight pill on card */
+    .card-weight-pill { display: inline-flex; align-items: center; background: #F2F4F7; border-radius: 99px; padding: 2px 8px; font-size: 12px; font-weight: 600; color: #344054; }
+
+    .assistant-card-bottom { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .terminal-badge { display: flex; align-items: center; gap: 4px; background: #FEF3F2; border-radius: 99px; padding: 2px 8px; font-size: 11px; font-weight: 500; color: #B42318; }
+    .terminal-badge .material-symbols-outlined { font-size: 12px; color: #B42318; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+    /* Toggle */
+    .toggle { position: relative; width: 34px; height: 19px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; border-radius: 99px; background: #D0D5DD; cursor: pointer; transition: background 0.2s; }
+    .toggle-slider::after { content: ''; position: absolute; width: 15px; height: 15px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(16,24,40,0.2); }
+    .toggle input:checked + .toggle-slider { background: #6172F3; }
+    .toggle input:checked + .toggle-slider::after { transform: translateX(15px); }
+
+    /* LEFT empty state */
+    .left-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 20px; text-align: center; }
+    .left-empty .material-symbols-outlined { font-size: 28px; color: #D0D5DD; margin-bottom: 10px; }
+    .left-empty-title { font-size: 13px; font-weight: 700; color: #667085; margin-bottom: 4px; }
+    .left-empty-desc { font-size: 12px; color: #98A2B3; line-height: 1.5; }
+
+    /* ── RIGHT panel ── */
+    .right-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; height: 100%; }
+    .right-panel-header { flex-shrink: 0; padding: 24px 28px 16px; border-bottom: 1px solid #E4E7EC; background: #fff; display: none; }
+    .right-panel-body { flex: 1; min-height: 0; overflow-y: auto; }
+    .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 32px; text-align: center; }
+    .empty-icon { width: 52px; height: 52px; border-radius: 12px; background: #F2F4F7; display: grid; place-items: center; margin-bottom: 14px; }
+    .empty-icon .material-symbols-outlined { font-size: 26px; color: #98A2B3; }
+    .empty-title { font-size: 15px; font-weight: 700; color: #344054; margin-bottom: 6px; }
+    .empty-desc { font-size: 13px; color: #667085; line-height: 1.6; max-width: 280px; }
+
+    .config-panel { padding: 24px 28px; display: flex; flex-direction: column; gap: 24px; }
+    .config-header { display: flex; align-items: center; justify-content: space-between; }
+    .config-header-left { display: flex; align-items: center; gap: 14px; }
+    .config-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .config-name { font-size: 16px; font-weight: 700; color: #101828; }
+    .config-subtitle { font-size: 12px; color: #667085; margin-top: 2px; }
+
+    /* Remove button in config header */
+    .config-remove-btn { display: flex; align-items: center; gap: 5px; background: none; border: 1.5px solid #FDA29B; border-radius: 7px; padding: 6px 12px; font-size: 12px; font-weight: 600; color: #B42318; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+    .config-remove-btn:hover { background: #FEF3F2; }
+    .config-remove-btn .material-symbols-outlined { font-size: 15px; }
+
+    .config-section { display: flex; flex-direction: column; gap: 10px; }
+    .config-section-label { font-size: 13px; font-weight: 700; color: #344054; display: flex; align-items: center; gap: 6px; }
+    .config-section-label .material-symbols-outlined { font-size: 16px; color: #667085; }
+
+    /* Weight section in config */
+    .weight-config-row { display: flex; align-items: center; gap: 12px; background: #F9FAFB; border: 1px solid #E4E7EC; border-radius: 8px; padding: 14px 16px; }
+    .weight-config-input { width: 72px; height: 36px; border: 1.5px solid #D0D5DD; border-radius: 7px; padding: 0 10px; font-size: 15px; font-weight: 700; color: #101828; font-family: 'DM Sans', sans-serif; text-align: center; }
+    .weight-config-input:focus { outline: none; border-color: #3538CD; box-shadow: 0 0 0 3px #C7D7FE; }
+    .weight-config-label { font-size: 13px; color: #667085; line-height: 1.5; }
+    .weight-config-label strong { color: #344054; }
+
+    .prompt-box { background: #F9FAFB; border: 1px solid #E4E7EC; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: #344054; line-height: 1.65; }
+    .prompt-box-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid #E4E7EC; }
+    .prompt-tag { font-size: 11px; font-weight: 500; color: #667085; background: #F2F4F7; border-radius: 4px; padding: 2px 7px; }
+    .edit-link { font-size: 12px; font-weight: 600; color: #444CE7; display: flex; align-items: center; gap: 4px; text-decoration: none; cursor: pointer; }
+    .edit-link .material-symbols-outlined { font-size: 14px; }
+    .edit-link:hover { color: #3538CD; }
+
+    .terminal-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; background: #FFF6F6; border: 1px solid #FDA29B; border-radius: 10px; padding: 14px 16px; }
+    .terminal-row.inactive { background: #F9FAFB; border-color: #E4E7EC; }
+    .terminal-row-left { display: flex; align-items: flex-start; gap: 10px; }
+    .terminal-row-left .t-icon { font-size: 18px; color: #B42318; margin-top: 1px; flex-shrink: 0; }
+    .terminal-row.inactive .terminal-row-left .t-icon { color: #98A2B3; }
+    .terminal-label { font-size: 13px; font-weight: 700; color: #101828; margin-bottom: 3px; }
+    .terminal-desc { font-size: 12px; color: #667085; line-height: 1.5; }
+    .threshold-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .threshold-label { font-size: 12px; color: #344054; font-weight: 500; }
+    .threshold-input { width: 64px; height: 32px; border: 1px solid #D0D5DD; border-radius: 7px; padding: 0 10px; font-size: 13px; font-weight: 600; color: #101828; font-family: 'DM Sans', sans-serif; text-align: center; }
+    .threshold-input:focus { outline: none; border-color: #3538CD; box-shadow: 0 0 0 2px #C7D7FE; }
+    .threshold-unit { font-size: 12px; color: #667085; }
+
+    .divider { height: 1px; background: #F2F4F7; }
+
+    /* Footer */
+    .card-footer { padding: 14px 28px; border-top: 1px solid #E4E7EC; display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-shrink: 0; background: #fff; }
+    .btn { height: 38px; padding: 0 20px; border-radius: 8px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; }
+    .btn-back { background: #fff; border: 1.5px solid #D0D5DD; color: #344054; }
+    .btn-back:hover { background: #F9FAFB; }
+    .btn-primary { background: #3538CD; color: #fff; }
+    .btn-primary:hover { background: #2D31A6; }
+
+    /* Modal */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(16,24,40,0.45); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.18s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: #fff; border-radius: 14px; width: 520px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(16,24,40,0.18); transform: scale(0.97) translateY(6px); transition: transform 0.18s; }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid #E4E7EC; display: flex; align-items: flex-start; justify-content: space-between; }
+    .modal-title { font-size: 16px; font-weight: 700; color: #101828; }
+    .modal-subtitle { font-size: 13px; color: #667085; margin-top: 3px; }
+    .modal-close { background: none; border: none; cursor: pointer; color: #667085; padding: 2px; display: grid; place-items: center; }
+    .modal-close .material-symbols-outlined { font-size: 20px; }
+    .modal-close:hover { color: #344054; }
+    .modal-body { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .assistant-option { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #E4E7EC; border-radius: 10px; cursor: pointer; transition: border-color 0.15s, background 0.15s, box-shadow 0.15s; }
+    .assistant-option:hover { border-color: #A4BCFD; background: #F5F8FF; }
+    .assistant-option:focus, .assistant-option.focused { border-color: #A4BCFD; background: #F5F8FF; box-shadow: 0 1px 2px 0 rgba(16,24,40,0.05), 0 0 0 4px #EAF0FF; outline: none; }
+    .assistant-option.already-added { opacity: 0.45; pointer-events: none; }
+    .option-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .option-info { flex: 1; }
+    .option-name { font-size: 14px; font-weight: 700; color: #101828; }
+    .option-desc { font-size: 12px; color: #667085; margin-top: 2px; line-height: 1.45; }
+    .option-added-chip { font-size: 11px; font-weight: 600; color: #667085; background: #F2F4F7; border-radius: 5px; padding: 3px 9px; }
+    .option-add-icon { color: #6172F3; }
+    .option-add-icon .material-symbols-outlined { font-size: 22px; }
+    .modal-footer { padding: 14px 20px; border-top: 1px solid #E4E7EC; }
+    .modal-note { font-size: 12px; color: #98A2B3; display: flex; align-items: center; gap: 5px; }
+    .modal-note .material-symbols-outlined { font-size: 15px; }
+
+    /* Confirm remove modal */
+    .confirm-modal { background: #fff; border-radius: 14px; width: 400px; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(16,24,40,0.18); transform: scale(0.97) translateY(6px); transition: transform 0.18s; overflow: hidden; }
+    .modal-overlay.open .confirm-modal { transform: scale(1) translateY(0); }
+    .confirm-body { padding: 24px; }
+    .confirm-icon { width: 44px; height: 44px; border-radius: 50%; background: #FEF3F2; display: grid; place-items: center; margin-bottom: 14px; }
+    .confirm-icon .material-symbols-outlined { font-size: 22px; color: #F04438; }
+    .confirm-title { font-size: 16px; font-weight: 700; color: #101828; margin-bottom: 6px; }
+    .confirm-desc { font-size: 13px; color: #667085; line-height: 1.6; }
+    .confirm-footer { padding: 14px 20px; border-top: 1px solid #E4E7EC; display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+    .btn-danger { background: #F04438; color: #fff; }
+    .btn-danger:hover { background: #D92D20; }
+    .btn-ghost { background: #fff; border: 1.5px solid #D0D5DD; color: #344054; }
+    .btn-ghost:hover { background: #F9FAFB; }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2Z" fill="#fff" opacity="0.9"/></svg>
+      </div>
+      <div>
+        <div class="logo-name">Agents Only</div>
+        <div class="logo-sub">Admin Portal</div>
+      </div>
+    </div>
+    <span class="env-badge">Development</span>
+  </div>
+  <nav class="nav">
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">person</span>Agents</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">folder_open</span>Projects</div>
+    <div class="nav-item active"><span class="material-symbols-outlined nav-icon">layers</span>Training</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">account_balance_wallet</span>Wallet</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">account_balance</span>Deposits</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">group</span>Referrals</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">payments</span>Platform Rates</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">language</span>Country Admin</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">visibility</span>View as User</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">admin_panel_settings</span>Admin Users</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="nav-item" style="color:#667085;"><span class="material-symbols-outlined nav-icon" style="color:#667085;">logout</span>Logout</div>
+    <div class="sidebar-version">ao-admin-portal: v0.0.74</div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="page-header">
+    <div class="back-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Exit Training Creation
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar">
+    <div class="step done"><div class="step-num">✓</div> Overview</div>
+    <div class="step-divider"></div>
+    <div class="step done"><div class="step-num">✓</div> Script &amp; Audio</div>
+    <div class="step-divider"></div>
+    <div class="step done"><div class="step-num">✓</div> Images</div>
+    <div class="step-divider"></div>
+    <div class="step done"><div class="step-num">✓</div> Mapping</div>
+    <div class="step-divider"></div>
+    <div class="step active"><div class="step-num">5</div> AI Scoring</div>
+    <div class="step-divider"></div>
+    <div class="step inactive"><div class="step-num">6</div> Summary</div>
+  </div>
+
+  <!-- Content card -->
+  <div class="content-card">
+    <div class="card-header">
+      <div class="training-title-row">
+        <span class="training-name">Hotel Training</span>
+        <span class="badge badge-audio-image">Audio &amp; Image</span>
+      </div>
+      <div class="step-label">AI Scoring — Configure which AI assistants will evaluate agent performance</div>
+    </div>
+
+    <div class="two-col">
+
+      <!-- LEFT -->
+      <div class="left-panel">
+        <div class="left-panel-header">
+          <div class="left-panel-top-row">
+            <div class="left-panel-title">AI Assistants <span id="assistantCount" style="color:#667085;font-weight:400;">(2)</span></div>
+            <button class="add-btn" onclick="openModal()">
+              <span class="material-symbols-outlined">add</span> Add
+            </button>
+          </div>
+          <!-- Weight bar -->
+          <div class="weight-bar">
+            <div class="weight-bar-track">
+              <div class="weight-bar-fill" id="weightBarFill" style="width:100%;background:#00B081;"></div>
+            </div>
+            <span class="weight-label ok" id="weightLabel">100%</span>
+          </div>
+          <div class="weight-helper" id="weightHelper">Total weight · must equal 100%</div>
+        </div>
+
+        <div class="left-panel-body">
+          <div class="assistant-list" id="assistantList">
+
+          <!-- Card 1 -->
+          <div class="assistant-card selected" id="card-1" onclick="selectAssistant(1)">
+            <div class="assistant-card-top">
+              <div class="assistant-identity">
+                <div class="assistant-avatar" style="background:#EEF4FF;">🎧</div>
+                <div>
+                  <div class="assistant-name">Conversation Quality Evaluator</div>
+                  <div class="assistant-desc">Soft skills and clarity</div>
+                </div>
+              </div>
+              <div class="card-actions" onclick="event.stopPropagation()">
+                <label class="toggle">
+                  <input type="checkbox" checked onchange="toggleAssistant(1, this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="assistant-card-bottom">
+              <div class="card-weight-pill" id="pill-1"><span id="pill-val-1">50</span>%</div>
+              <div class="terminal-badge" id="tbadge-1">
+                <span class="material-symbols-outlined" style="font-size:12px;color:#B42318;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;">stop</span> Terminal failure
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="assistant-card" id="card-2" onclick="selectAssistant(2)">
+            <div class="assistant-card-top">
+              <div class="assistant-identity">
+                <div class="assistant-avatar" style="background:#F4F3FF;">🖱️</div>
+                <div>
+                  <div class="assistant-name">Intent & Compliance Checker</div>
+                  <div class="assistant-desc">Steps and compliance</div>
+                </div>
+              </div>
+              <div class="card-actions" onclick="event.stopPropagation()">
+                <label class="toggle">
+                  <input type="checkbox" checked onchange="toggleAssistant(2, this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="assistant-card-bottom">
+              <div class="card-weight-pill" id="pill-2"><span id="pill-val-2">50</span>%</div>
+            </div>
+          </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="right-panel" id="rightPanel">
+        <div class="right-panel-header" id="rightPanelHeader"></div>
+        <div class="right-panel-body" id="rightPanelBody">
+
+        <!-- Config 1 (default visible) -->
+        <div class="config-panel" id="config-1">
+          
+          <!-- Weight -->
+          <div class="config-section">
+            <div class="config-section-label">
+              <span class="material-symbols-outlined">balance</span>
+              Scoring Weight
+            </div>
+            <div class="weight-config-row">
+              <input class="weight-config-input" type="number" id="weight-1" value="50" min="0" max="100" oninput="updateWeight(1, this.value)" />
+              <div class="weight-config-label">
+                <strong>% of total score</strong><br>
+                This assistant's score will count for this portion of the agent's overall result.
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Prompt -->
+          <div class="config-section">
+            <div class="config-section-label">
+              <span class="material-symbols-outlined">description</span>
+              Evaluation Prompt
+            </div>
+            <div class="prompt-box">
+              You are a Customer Service Quality Analyst AI.<br><br>
+              Evaluate the agent’s conversation in a hotel booking scenario.<br><br>
+              Focus ONLY on:<br>
+              1. Greeting &amp; tone (professional, polite, welcoming)<br>
+              2. Clarity of communication<br>
+              3. Active listening (did the agent acknowledge customer needs?)<br>
+              4. Proper questioning (did they gather all required booking details?)<br>
+              5. Closing (confirmation + polite ending)<br><br>
+              Scoring Rules:<br>
+              - Score each category from 0–5<br>
+              - Provide a total score out of 25<br>
+              - Be strict but fair<br>
+              - Do NOT consider system navigation or clicks<br><br>
+              Output format:<br>
+              {<br>
+              &nbsp;&nbsp;&quot;greeting_score&quot;: X,<br>
+              &nbsp;&nbsp;&quot;clarity_score&quot;: X,<br>
+              &nbsp;&nbsp;&quot;listening_score&quot;: X,<br>
+              &nbsp;&nbsp;&quot;questioning_score&quot;: X,<br>
+              &nbsp;&nbsp;&quot;closing_score&quot;: X,<br>
+              &nbsp;&nbsp;&quot;total_score&quot;: X,<br>
+              &nbsp;&nbsp;&quot;feedback&quot;: &quot;Concise explanation of strengths and weaknesses&quot;<br>
+              }
+              <div class="prompt-box-footer">
+                <span class="prompt-tag">Read-only · Last edited 2 days ago · Edit in Playground</span>
+                <a class="edit-link"><span class="material-symbols-outlined">open_in_new</span> Open in Playground</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Terminal failure -->
+          <div class="config-section">
+            <div class="config-section-label">
+              <span class="material-symbols-outlined" style="color:#B42318;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;">stop</span>
+              Terminal Failure
+            </div>
+            <div class="terminal-row" id="terminal-row-1">
+              <div class="terminal-row-left">
+                <div>
+                  <div class="terminal-label">Mark as terminal failure condition</div>
+                  <div class="terminal-desc">If this assistant's score falls below the threshold, the attempt is automatically failed — regardless of other scores.</div>
+                  <div class="threshold-row" id="threshold-row-1">
+                    <span class="threshold-label">Fail if score below</span>
+                    <input class="threshold-input" type="number" value="60" min="0" max="100" />
+                    <span class="threshold-unit">out of 100</span>
+                  </div>
+                </div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" checked onchange="toggleTerminal(1, this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Config 2 -->
+        <div class="config-panel" id="config-2" style="display:none;">
+
+          <div class="config-section">
+            <div class="config-section-label">
+              <span class="material-symbols-outlined">balance</span>
+              Scoring Weight
+            </div>
+            <div class="weight-config-row">
+              <input class="weight-config-input" type="number" id="weight-2" value="50" min="0" max="100" oninput="updateWeight(2, this.value)" />
+              <div class="weight-config-label">
+                <strong>% of total score</strong><br>
+                This assistant's score will count for this portion of the agent's overall result.
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="config-section">
+            <div class="config-section-label">
+              <span class="material-symbols-outlined">description</span>
+              Evaluation Prompt
+            </div>
+            <div class="prompt-box">
+              You are a Compliance and Process AI for hotel booking interactions.<br><br>
+              Analyze the conversation transcript and determine whether the agent correctly followed required steps.<br><br>
+              Required Steps:<br>
+              1. Verified customer dates<br>
+              2. Asked for number of guests<br>
+              3. Confirmed room type preference<br>
+              4. Provided pricing or availability<br>
+              5. Confirmed booking details before closing<br><br>
+              Rules:<br>
+              - Mark each step as:<br>
+              &nbsp;&nbsp;- &quot;completed&quot;<br>
+              &nbsp;&nbsp;- &quot;missed&quot;<br>
+              &nbsp;&nbsp;- &quot;incorrect&quot;<br><br>
+              Scoring:<br>
+              - Each step = 20 points<br>
+              - Total score out of 100<br>
+              - Deduct full points if missed<br>
+              - Deduct half points if incorrect<br><br>
+              Output format:<br>
+              {<br>
+              &nbsp;&nbsp;&quot;steps&quot;: {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&quot;dates_verified&quot;: &quot;completed/missed/incorrect&quot;,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&quot;guest_count&quot;: &quot;...&quot;,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&quot;room_type&quot;: &quot;...&quot;,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&quot;pricing&quot;: &quot;...&quot;,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&quot;confirmation&quot;: &quot;...&quot;<br>
+              &nbsp;&nbsp;},<br>
+              &nbsp;&nbsp;&quot;score&quot;: X,<br>
+              &nbsp;&nbsp;&quot;critical_fail&quot;: true/false,<br>
+              &nbsp;&nbsp;&quot;feedback&quot;: &quot;Explain missing or incorrect steps&quot;<br>
+              }<br><br>
+              Critical Fail Conditions:<br>
+              - Booking confirmed without verifying dates<br>
+              - Incorrect pricing communicated
+              <div class="prompt-box-footer">
+                <span class="prompt-tag">Read-only · Last edited 5 days ago · Edit in Playground</span>
+                <a class="edit-link"><span class="material-symbols-outlined">open_in_new</span> Open in Playground</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="config-section">
+            <div class="config-section-label">
+              <span class="material-symbols-outlined" style="color:#B42318;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;">stop</span>
+              Terminal Failure
+            </div>
+            <div class="terminal-row inactive" id="terminal-row-2">
+              <div class="terminal-row-left">
+                <div>
+                  <div class="terminal-label">Mark as terminal failure condition</div>
+                  <div class="terminal-desc">If this assistant's score falls below the threshold, the attempt is automatically failed — regardless of other scores.</div>
+                  <div class="threshold-row" id="threshold-row-2" style="display:none;">
+                    <span class="threshold-label">Fail if score below</span>
+                    <input class="threshold-input" type="number" value="60" min="0" max="100" />
+                    <span class="threshold-unit">out of 100</span>
+                  </div>
+                </div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" onchange="toggleTerminal(2, this.checked)">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty: no selection -->
+        <div class="empty-state" id="emptyConfig" style="display:none;">
+          <div class="empty-icon"><span class="material-symbols-outlined">smart_toy</span></div>
+          <div class="empty-title">Select an assistant to configure</div>
+          <div class="empty-desc">Click an assistant on the left to view its evaluation prompt and configure scoring settings.</div>
+        </div>
+
+        <!-- Empty: no assistants at all -->
+        <div class="empty-state" id="emptyAll" style="display:none;">
+          <div class="empty-icon"><span class="material-symbols-outlined">add_circle</span></div>
+          <div class="empty-title">No assistants added yet</div>
+          <div class="empty-desc">Click "+ Add" to select AI assistants from your Playground. Each assistant evaluates a different aspect of the agent's performance.</div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-back">Back</button>
+      <button class="btn btn-primary">Save &amp; Next</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add assistant modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Add AI Assistant</div>
+        <div class="modal-subtitle">Select an assistant from your Playground to add to this simulation's scoring</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="assistant-option already-added" data-id="1">
+        <div class="option-avatar" style="background:#EEF4FF;">🎧</div>
+        <div class="option-info"><div class="option-name">Conversation Quality Evaluator</div><div class="option-desc">Soft skills and clarity</div></div>
+        <span class="option-added-chip">Added</span>
+      </div>
+      <div class="assistant-option already-added" data-id="2">
+        <div class="option-avatar" style="background:#F4F3FF;">🖱️</div>
+        <div class="option-info"><div class="option-name">Intent & Compliance Checker</div><div class="option-desc">Steps and compliance</div></div>
+        <span class="option-added-chip">Added</span>
+      </div>
+      <div class="assistant-option" data-id="3" onclick="addAssistant(3)">
+        <div class="option-avatar" style="background:#ECFDF3;">📋</div>
+        <div class="option-info"><div class="option-name">UI Interaction & Accuracy Evaluator</div><div class="option-desc">Navigation accuracy</div></div>
+        <div class="option-add-icon"><span class="material-symbols-outlined">add_circle</span></div>
+      </div>
+      <div class="assistant-option" data-id="4" onclick="addAssistant(4)">
+        <div class="option-avatar" style="background:#FFF6ED;">⏱️</div>
+        <div class="option-info"><div class="option-name">Keyword & Accuracy (Audio Understanding)</div><div class="option-desc">Keyword accuracy</div></div>
+        <div class="option-add-icon"><span class="material-symbols-outlined">add_circle</span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-note">
+        <span class="material-symbols-outlined">info</span>
+        Assistants are created and managed in <strong style="color:#344054;">Playground</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm remove modal -->
+<div class="modal-overlay" id="confirmOverlay" onclick="closeConfirmOutside(event)">
+  <div class="confirm-modal">
+    <div class="confirm-body">
+      <div class="confirm-icon"><span class="material-symbols-outlined">delete</span></div>
+      <div class="confirm-title" id="confirmTitle">Remove assistant?</div>
+      <div class="confirm-desc" id="confirmDesc">This assistant will be removed from this simulation's scoring configuration. You can add it back at any time.</div>
+    </div>
+    <div class="confirm-footer">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="confirmRemoveBtn">Remove</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  let selectedId = 1;
+  let pendingRemoveId = null;
+
+  const assistantData = {
+    1: {
+      name: 'Conversation Quality Evaluator',
+      emoji: '🎧',
+      bg: '#EEF4FF',
+      desc: 'Evaluate soft skills, communication quality, and structure',
+      shortDesc: 'Soft skills and clarity',
+      lastEdited: 'Last edited 2 days ago',
+      terminalOn: true,
+      weight: 50,
+      prompt: `You are a Customer Service Quality Analyst AI.<br><br>
+        Evaluate the agent’s conversation in a hotel booking scenario.<br><br>
+        Focus ONLY on:<br>
+        1. Greeting &amp; tone (professional, polite, welcoming)<br>
+        2. Clarity of communication<br>
+        3. Active listening (did the agent acknowledge customer needs?)<br>
+        4. Proper questioning (did they gather all required booking details?)<br>
+        5. Closing (confirmation + polite ending)<br><br>
+        Scoring Rules:<br>
+        - Score each category from 0–5<br>
+        - Provide a total score out of 25<br>
+        - Be strict but fair<br>
+        - Do NOT consider system navigation or clicks<br><br>
+        Output format:<br>
+        {<br>
+        &nbsp;&nbsp;&quot;greeting_score&quot;: X,<br>
+        &nbsp;&nbsp;&quot;clarity_score&quot;: X,<br>
+        &nbsp;&nbsp;&quot;listening_score&quot;: X,<br>
+        &nbsp;&nbsp;&quot;questioning_score&quot;: X,<br>
+        &nbsp;&nbsp;&quot;closing_score&quot;: X,<br>
+        &nbsp;&nbsp;&quot;total_score&quot;: X,<br>
+        &nbsp;&nbsp;&quot;feedback&quot;: &quot;Concise explanation of strengths and weaknesses&quot;<br>
+        }`
+    },
+    2: {
+      name: 'Intent & Compliance Checker',
+      emoji: '🖱️',
+      bg: '#F4F3FF',
+      desc: 'Ensure the agent followed required business logic and compliance steps',
+      shortDesc: 'Steps and compliance',
+      lastEdited: 'Last edited 5 days ago',
+      terminalOn: false,
+      weight: 50,
+      prompt: `You are a Compliance and Process AI for hotel booking interactions.<br><br>
+        Analyze the conversation transcript and determine whether the agent correctly followed required steps.<br><br>
+        Required Steps:<br>
+        1. Verified customer dates<br>
+        2. Asked for number of guests<br>
+        3. Confirmed room type preference<br>
+        4. Provided pricing or availability<br>
+        5. Confirmed booking details before closing<br><br>
+        Rules:<br>
+        - Mark each step as:<br>
+        &nbsp;&nbsp;- &quot;completed&quot;<br>
+        &nbsp;&nbsp;- &quot;missed&quot;<br>
+        &nbsp;&nbsp;- &quot;incorrect&quot;<br><br>
+        Scoring:<br>
+        - Each step = 20 points<br>
+        - Total score out of 100<br>
+        - Deduct full points if missed<br>
+        - Deduct half points if incorrect<br><br>
+        Output format:<br>
+        {<br>
+        &nbsp;&nbsp;&quot;steps&quot;: {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&quot;dates_verified&quot;: &quot;completed/missed/incorrect&quot;,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&quot;guest_count&quot;: &quot;...&quot;,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&quot;room_type&quot;: &quot;...&quot;,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&quot;pricing&quot;: &quot;...&quot;,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&quot;confirmation&quot;: &quot;...&quot;<br>
+        &nbsp;&nbsp;},<br>
+        &nbsp;&nbsp;&quot;score&quot;: X,<br>
+        &nbsp;&nbsp;&quot;critical_fail&quot;: true/false,<br>
+        &nbsp;&nbsp;&quot;feedback&quot;: &quot;Explain missing or incorrect steps&quot;<br>
+        }<br><br>
+        Critical Fail Conditions:<br>
+        - Booking confirmed without verifying dates<br>
+        - Incorrect pricing communicated`
+    },
+    3: {
+      name: 'UI Interaction & Accuracy Evaluator',
+      emoji: '📋',
+      bg: '#ECFDF3',
+      desc: 'Score image-based system navigation and click accuracy',
+      shortDesc: 'Navigation accuracy',
+      lastEdited: 'Last edited today',
+      terminalOn: false,
+      weight: 0,
+      prompt: `You are a UI Interaction Scoring AI for a hotel booking system simulation.<br><br>
+        Analyze the agent’s screen interactions.<br><br>
+        Inputs:<br>
+        - List of all clicks and actions<br>
+        - Correct interaction path<br>
+        - Marked &quot;correct&quot;, &quot;penalty&quot;, and &quot;terminal&quot; actions<br><br>
+        Scoring Rules:<br>
+        - Correct Click = +10 points<br>
+        - Penalty Mistake = -5 points<br>
+        - Terminal Error = immediate score = 0<br><br>
+        Formula:<br>
+        Final Score = (Sum of Correct Points - Sum of Penalty Points) / Total Possible Correct Points * 100<br><br>
+        Additional Rules:<br>
+        - If terminal error occurs → final score = 0%<br>
+        - Track:<br>
+        &nbsp;&nbsp;- Correct Clicks<br>
+        &nbsp;&nbsp;- Penalty Mistakes<br>
+        &nbsp;&nbsp;- Terminal Clicks<br><br>
+        Output format:<br>
+        {<br>
+        &nbsp;&nbsp;&quot;correct_clicks&quot;: X,<br>
+        &nbsp;&nbsp;&quot;penalty_mistakes&quot;: X,<br>
+        &nbsp;&nbsp;&quot;terminal_clicks&quot;: X,<br>
+        &nbsp;&nbsp;&quot;final_score&quot;: X,<br>
+        &nbsp;&nbsp;&quot;feedback&quot;: &quot;Explain incorrect navigation or missed steps&quot;<br>
+        }`
+    },
+    4: {
+      name: 'Keyword & Accuracy (Audio Understanding)',
+      emoji: '⏱️',
+      bg: '#FFF6ED',
+      desc: 'Evaluate content accuracy using keyword and semantic matching',
+      shortDesc: 'Keyword accuracy',
+      lastEdited: 'Last edited 3 days ago',
+      terminalOn: false,
+      weight: 0,
+      prompt: `You are an AI that evaluates keyword and semantic accuracy in a hotel booking call.<br><br>
+        Compare the agent’s responses against expected key information.<br><br>
+        Expected Keywords / Concepts:<br>
+        - Dates confirmation<br>
+        - Guest count<br>
+        - Room type<br>
+        - Price explanation<br>
+        - Booking confirmation<br><br>
+        Rules:<br>
+        - Score each category from 0–100%<br>
+        - Use semantic understanding (not exact match required)<br>
+        - Penalize incorrect or misleading information<br><br>
+        Output format:<br>
+        {<br>
+        &nbsp;&nbsp;&quot;dates_accuracy&quot;: X,<br>
+        &nbsp;&nbsp;&quot;guest_info_accuracy&quot;: X,<br>
+        &nbsp;&nbsp;&quot;room_type_accuracy&quot;: X,<br>
+        &nbsp;&nbsp;&quot;pricing_accuracy&quot;: X,<br>
+        &nbsp;&nbsp;&quot;confirmation_accuracy&quot;: X,<br>
+        &nbsp;&nbsp;&quot;overall_score&quot;: X,<br>
+        &nbsp;&nbsp;&quot;feedback&quot;: &quot;Highlight missing or incorrect information&quot;<br>
+        }`
+    }
+  };
+
+  const state = {
+    addedIds: new Set([1, 2]),
+    disabledIds: new Set(),
+    weights: { 1: 50, 2: 50, 3: 0, 4: 0 },
+    terminalOn: { 1: true, 2: false, 3: false, 4: false }
+  };
+
+  function getAddedIds() {
+    return Array.from(state.addedIds).sort((a, b) => a - b);
+  }
+
+  function getEnabledIds() {
+    return getAddedIds().filter(id => !state.disabledIds.has(id));
+  }
+
+  function getTotalWeight() {
+    return getEnabledIds().reduce((sum, id) => sum + (Number(state.weights[id]) || 0), 0);
+  }
+
+  function updateHeaderCount() {
+    document.getElementById('assistantCount').textContent = `(${state.addedIds.size})`;
+  }
+
+  function updateWeightBar() {
+    const total = getTotalWeight();
+    const fill = document.getElementById('weightBarFill');
+    const label = document.getElementById('weightLabel');
+    const helper = document.getElementById('weightHelper');
+
+    fill.style.width = `${Math.min(total, 100)}%`;
+    label.textContent = `${total}%`;
+
+    if (total === 100) {
+      fill.style.background = '#00B081';
+      label.className = 'weight-label ok';
+      helper.textContent = 'Total weight · must equal 100%';
+    } else if (total < 100) {
+      fill.style.background = '#F79009';
+      label.className = 'weight-label warn';
+      helper.textContent = `${100 - total}% unassigned — weights must total 100%`;
+    } else {
+      fill.style.background = '#F04438';
+      label.className = 'weight-label over';
+      helper.textContent = `Over by ${total - 100}% — reduce weights to total 100%`;
+    }
+  }
+
+  function syncCardWeight(id) {
+    const pillVal = document.getElementById(`pill-val-${id}`);
+    if (!pillVal) return;
+    pillVal.textContent = state.disabledIds.has(id) ? '—' : String(state.weights[id] || 0);
+  }
+
+  function syncWeightInputs(id) {
+    const input = document.getElementById(`weight-${id}`);
+    if (!input) return;
+    input.value = state.disabledIds.has(id) ? '' : String(state.weights[id] || 0);
+  }
+
+  function redistributeEnabledWeights() {
+    const enabledIds = getEnabledIds();
+    if (!enabledIds.length) {
+      updateWeightBar();
+      return;
+    }
+    const base = Math.floor(100 / enabledIds.length);
+    const remainder = 100 - base * enabledIds.length;
+    enabledIds.forEach((id, index) => {
+      state.weights[id] = base + (index < remainder ? 1 : 0);
+    });
+    getAddedIds().forEach(id => {
+      syncCardWeight(id);
+      syncWeightInputs(id);
+    });
+    updateWeightBar();
+  }
+
+  function hideAllConfigs() {
+    document.querySelectorAll('.config-panel').forEach(el => {
+      el.style.display = 'none';
+    });
+  }
+
+  function renderRightPanelHeader(id) {
+    const header = document.getElementById('rightPanelHeader');
+    if (!header) return;
+    if (!id || !state.addedIds.has(id)) {
+      header.innerHTML = '';
+      header.style.display = 'none';
+      return;
+    }
+    const data = assistantData[id];
+    header.style.display = 'block';
+    header.innerHTML = `
+      <div class="config-header">
+        <div class="config-header-left">
+          <div class="config-avatar" style="background:${data.bg};">${data.emoji}</div>
+          <div>
+            <div class="config-name">${data.name}</div>
+            <div class="config-subtitle">${data.desc}</div>
+          </div>
+        </div>
+        <button class="config-remove-btn" onclick="confirmRemove(${id})">
+          <span class="material-symbols-outlined">delete</span> Remove
+        </button>
+      </div>
+    `;
+  }
+
+
+  function updateEmptyStates() {
+    const hasAssistants = state.addedIds.size > 0;
+    const emptyAll = document.getElementById('emptyAll');
+    const emptyConfig = document.getElementById('emptyConfig');
+
+    if (!hasAssistants) {
+      hideAllConfigs();
+      emptyAll.style.display = 'flex';
+      emptyConfig.style.display = 'none';
+      renderRightPanelHeader(null);
+      return;
+    }
+
+    emptyAll.style.display = 'none';
+    if (!state.addedIds.has(selectedId)) {
+      hideAllConfigs();
+      emptyConfig.style.display = 'flex';
+      renderRightPanelHeader(null);
+    } else {
+      emptyConfig.style.display = 'none';
+    }
+  }
+
+  function selectAssistant(id) {
+    if (!state.addedIds.has(id)) return;
+    selectedId = id;
+    document.querySelectorAll('.assistant-card').forEach(card => card.classList.remove('selected'));
+    const card = document.getElementById(`card-${id}`);
+    if (card) card.classList.add('selected');
+    hideAllConfigs();
+    const config = document.getElementById(`config-${id}`);
+    if (config) config.style.display = 'flex';
+    renderRightPanelHeader(id);
+    updateEmptyStates();
+  }
+
+  function toggleAssistant(id, isEnabled) {
+    if (isEnabled) {
+      state.disabledIds.delete(id);
+      document.getElementById(`card-${id}`)?.classList.remove('disabled');
+    } else {
+      state.disabledIds.add(id);
+      document.getElementById(`card-${id}`)?.classList.add('disabled');
+    }
+    redistributeEnabledWeights();
+    if (!state.addedIds.has(selectedId)) {
+      const first = getAddedIds()[0];
+      if (first) selectAssistant(first);
+    }
+  }
+
+  function updateWeight(id, rawValue) {
+    if (state.disabledIds.has(id)) return;
+    const value = Math.max(0, Math.min(100, parseInt(rawValue || '0', 10) || 0));
+    state.weights[id] = value;
+    syncCardWeight(id);
+    updateWeightBar();
+  }
+
+  function ensureTerminalBadge(id) {
+    const bottom = document.querySelector(`#card-${id} .assistant-card-bottom`);
+    if (!bottom) return;
+    let badge = document.getElementById(`tbadge-${id}`);
+    if (!badge) {
+      badge = document.createElement('div');
+      badge.className = 'terminal-badge';
+      badge.id = `tbadge-${id}`;
+      badge.innerHTML = '<span class="material-symbols-outlined" style="font-size:12px;color:#B42318;font-variation-settings:\'FILL\' 1,\'wght\' 400,\'GRAD\' 0,\'opsz\' 24;">stop</span> Terminal failure';
+      bottom.appendChild(badge);
+    }
+    badge.style.display = state.terminalOn[id] ? 'flex' : 'none';
+  }
+
+  function syncTerminalUI(id) {
+    const row = document.getElementById(`terminal-row-${id}`);
+    const threshold = document.getElementById(`threshold-row-${id}`);
+    const toggle = row?.querySelector('input[type="checkbox"]');
+    if (!row || !threshold || !toggle) return;
+
+    toggle.checked = !!state.terminalOn[id];
+    if (state.terminalOn[id]) {
+      row.classList.remove('inactive');
+      threshold.style.display = 'flex';
+    } else {
+      row.classList.add('inactive');
+      threshold.style.display = 'none';
+    }
+    ensureTerminalBadge(id);
+  }
+
+  function toggleTerminal(id, enabled) {
+    state.terminalOn[id] = enabled;
+    syncTerminalUI(id);
+  }
+
+  function buildCard(id) {
+    const data = assistantData[id];
+    const card = document.createElement('div');
+    card.className = 'assistant-card';
+    card.id = `card-${id}`;
+    card.onclick = () => selectAssistant(id);
+    card.innerHTML = `
+      <div class="assistant-card-top">
+        <div class="assistant-identity">
+          <div class="assistant-avatar" style="background:${data.bg};">${data.emoji}</div>
+          <div>
+            <div class="assistant-name">${data.name}</div>
+            <div class="assistant-desc">${data.shortDesc || data.desc}</div>
+          </div>
+        </div>
+        <div class="card-actions" onclick="event.stopPropagation()">
+          <label class="toggle">
+            <input type="checkbox" checked onchange="toggleAssistant(${id}, this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="assistant-card-bottom">
+        <div class="card-weight-pill" id="pill-${id}"><span id="pill-val-${id}">${state.weights[id] || 0}</span>%</div>
+      </div>
+    `;
+    return card;
+  }
+
+  function buildConfigPanel(id) {
+    const data = assistantData[id];
+    const panel = document.createElement('div');
+    panel.className = 'config-panel';
+    panel.id = `config-${id}`;
+    panel.style.display = 'none';
+    panel.innerHTML = `
+      <div class="config-section">
+        <div class="config-section-label">
+          <span class="material-symbols-outlined">balance</span>
+          Scoring Weight
+        </div>
+        <div class="weight-config-row">
+          <input class="weight-config-input" type="number" id="weight-${id}" value="${state.weights[id] || 0}" min="0" max="100" oninput="updateWeight(${id}, this.value)" />
+          <div class="weight-config-label">
+            <strong>% of total score</strong><br>
+            This assistant's score will count for this portion of the agent's overall result.
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="config-section">
+        <div class="config-section-label">
+          <span class="material-symbols-outlined">description</span>
+          Evaluation Prompt
+        </div>
+        <div class="prompt-box">
+          ${data.prompt}
+          <div class="prompt-box-footer">
+            <span class="prompt-tag">Read-only · ${data.lastEdited} · Edit in Playground</span>
+            <a class="edit-link"><span class="material-symbols-outlined">open_in_new</span> Open in Playground</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="config-section">
+        <div class="config-section-label">
+          <span class="material-symbols-outlined" style="color:#B42318;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;">stop</span>
+          Terminal Failure
+        </div>
+        <div class="terminal-row ${state.terminalOn[id] ? '' : 'inactive'}" id="terminal-row-${id}">
+          <div class="terminal-row-left">
+            <div>
+              <div class="terminal-label">Mark as terminal failure condition</div>
+              <div class="terminal-desc">If this assistant's score falls below the threshold, the attempt is automatically failed — regardless of other scores.</div>
+              <div class="threshold-row" id="threshold-row-${id}" style="display:${state.terminalOn[id] ? 'flex' : 'none'};">
+                <span class="threshold-label">Fail if score below</span>
+                <input class="threshold-input" type="number" value="60" min="0" max="100" />
+                <span class="threshold-unit">out of 100</span>
+              </div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" ${state.terminalOn[id] ? 'checked' : ''} onchange="toggleTerminal(${id}, this.checked)">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    `;
+    return panel;
+  }
+
+  function markModalOptionState(id, added) {
+    const option = document.querySelector(`.assistant-option[data-id="${id}"]`);
+    if (!option) return;
+    if (added) {
+      option.classList.add('already-added');
+      option.removeAttribute('onclick');
+      const icon = option.querySelector('.option-add-icon');
+      if (icon) icon.outerHTML = '<span class="option-added-chip">Added</span>';
+    } else {
+      option.classList.remove('already-added');
+      option.setAttribute('onclick', `addAssistant(${id})`);
+      const chip = option.querySelector('.option-added-chip');
+      if (chip) chip.outerHTML = '<div class="option-add-icon"><span class="material-symbols-outlined">add_circle</span></div>';
+    }
+  }
+
+  function addAssistant(id) {
+    if (state.addedIds.has(id)) return;
+
+    state.addedIds.add(id);
+    state.disabledIds.delete(id);
+    if (state.weights[id] === undefined) state.weights[id] = 0;
+
+    document.getElementById('assistantList').appendChild(buildCard(id));
+    const rightPanelBody = document.getElementById('rightPanelBody');
+    rightPanelBody.insertBefore(buildConfigPanel(id), document.getElementById('emptyConfig'));
+
+    markModalOptionState(id, true);
+    updateHeaderCount();
+    redistributeEnabledWeights();
+    closeModal();
+    selectAssistant(id);
+  }
+
+  function confirmRemove(id) {
+    pendingRemoveId = id;
+    document.getElementById('confirmTitle').textContent = `Remove "${assistantData[id].name}"?`;
+    document.getElementById('confirmDesc').textContent = `This assistant will be removed from this simulation's scoring configuration. You can add it back at any time.`;
+    document.getElementById('confirmRemoveBtn').onclick = () => doRemove(id);
+    document.getElementById('confirmOverlay').classList.add('open');
+  }
+
+  function doRemove(id) {
+    state.addedIds.delete(id);
+    state.disabledIds.delete(id);
+
+    document.getElementById(`card-${id}`)?.remove();
+    document.getElementById(`config-${id}`)?.remove();
+    markModalOptionState(id, false);
+    updateHeaderCount();
+
+    if (selectedId === id) {
+      selectedId = getAddedIds()[0] || null;
+    }
+
+    redistributeEnabledWeights();
+    closeConfirm();
+
+    if (selectedId) {
+      selectAssistant(selectedId);
+    } else {
+      updateEmptyStates();
+    }
+  }
+
+  function openModal() {
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    // Clear any focused state when modal closes
+    document.querySelectorAll('.assistant-option.focused').forEach(el => el.classList.remove('focused'));
+  }
+
+  // Focused (clicked/active) state for assistant options
+  document.addEventListener('mousedown', function(e) {
+    const option = e.target.closest('.assistant-option:not(.already-added)');
+    document.querySelectorAll('.assistant-option.focused').forEach(el => el.classList.remove('focused'));
+    if (option) option.classList.add('focused');
+  });
+  document.addEventListener('mouseup', function() {
+    setTimeout(() => {
+      document.querySelectorAll('.assistant-option.focused').forEach(el => el.classList.remove('focused'));
+    }, 200);
+  });
+
+  function closeModalOutside(event) {
+    if (event.target === document.getElementById('modalOverlay')) closeModal();
+  }
+
+  function closeConfirm() {
+    pendingRemoveId = null;
+    document.getElementById('confirmOverlay').classList.remove('open');
+  }
+
+  function closeConfirmOutside(event) {
+    if (event.target === document.getElementById('confirmOverlay')) closeConfirm();
+  }
+
+  function renameInitialText() {
+    const card1 = document.querySelector('#card-1 .assistant-name');
+    const card2 = document.querySelector('#card-2 .assistant-name');
+    const desc1 = document.querySelector('#card-1 .assistant-desc');
+    const desc2 = document.querySelector('#card-2 .assistant-desc');
+    if (card1) card1.textContent = assistantData[1].name;
+    if (card2) card2.textContent = assistantData[2].name;
+    if (desc1) desc1.textContent = assistantData[1].shortDesc || assistantData[1].desc;
+    if (desc2) desc2.textContent = assistantData[2].shortDesc || assistantData[2].desc;
+
+    const cfg1 = document.querySelector('#config-1 .config-name');
+    const cfg2 = document.querySelector('#config-2 .config-name');
+    if (cfg1) cfg1.textContent = assistantData[1].name;
+    if (cfg2) cfg2.textContent = assistantData[2].name;
+
+    const sub1 = document.querySelector('#config-1 .config-subtitle');
+    const sub2 = document.querySelector('#config-2 .config-subtitle');
+    if (sub1) sub1.textContent = assistantData[1].desc;
+    if (sub2) sub2.textContent = assistantData[2].desc;
+
+    const modal1 = document.querySelector('.assistant-option[data-id="1"] .option-name');
+    const modal2 = document.querySelector('.assistant-option[data-id="2"] .option-name');
+    const modal3 = document.querySelector('.assistant-option[data-id="3"] .option-name');
+    const modal4 = document.querySelector('.assistant-option[data-id="4"] .option-name');
+    const modalDesc1 = document.querySelector('.assistant-option[data-id="1"] .option-desc');
+    const modalDesc2 = document.querySelector('.assistant-option[data-id="2"] .option-desc');
+    const modalDesc3 = document.querySelector('.assistant-option[data-id="3"] .option-desc');
+    const modalDesc4 = document.querySelector('.assistant-option[data-id="4"] .option-desc');
+    if (modal1) modal1.textContent = assistantData[1].name;
+    if (modal2) modal2.textContent = assistantData[2].name;
+    if (modal3) modal3.textContent = assistantData[3].name;
+    if (modal4) modal4.textContent = assistantData[4].name;
+    if (modalDesc1) modalDesc1.textContent = assistantData[1].shortDesc || assistantData[1].desc;
+    if (modalDesc2) modalDesc2.textContent = assistantData[2].shortDesc || assistantData[2].desc;
+    if (modalDesc3) modalDesc3.textContent = assistantData[3].shortDesc || assistantData[3].desc;
+    if (modalDesc4) modalDesc4.textContent = assistantData[4].shortDesc || assistantData[4].desc;
+  }
+
+  function initialize() {
+    renameInitialText();
+    updateHeaderCount();
+    syncCardWeight(1);
+    syncCardWeight(2);
+    syncWeightInputs(1);
+    syncWeightInputs(2);
+    syncTerminalUI(1);
+    syncTerminalUI(2);
+    markModalOptionState(1, true);
+    markModalOptionState(2, true);
+    updateWeightBar();
+    selectAssistant(1);
+  }
+
+  initialize();
+</script>
+
+</body>
+</html>
