@@ -144,12 +144,9 @@ body {
 
 /* ─── Topbar ─── */
 .topbar {
-  height: 52px;
-  border-bottom: 1px solid #E4E7EC;
-  background: #fff;
   display: flex;
   align-items: center;
-  padding: 0 24px;
+  padding: 0 48px;
   flex-shrink: 0;
 }
 
@@ -158,11 +155,12 @@ body {
   align-items: center;
   gap: 6px;
   color: #344054;
-  font-weight: 600;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 26px;
   cursor: pointer;
   text-decoration: none;
   transition: color 0.15s;
+  padding: 28px 0 0;
 }
 .back-link:hover { color: #101828; }
 .back-link .material-symbols-outlined { font-size: 20px; }
@@ -170,12 +168,15 @@ body {
 /* ─── Progress Bar ─── */
 .progress-bar-wrap {
   background: #FEF3C7;
-  padding: 10px 24px;
+  padding: 14px 0;
+  margin: 20px 48px 20px;
+  margin-bottom: 0;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0;
+  border-radius: 10px 10px 0 0;
 }
 
 .step {
@@ -218,11 +219,26 @@ body {
   flex-shrink: 0;
 }
 
+/* ─── Page Sub-header (fixed, same pattern as progress bar) ─── */
+.page-subheader {
+  background-color: #fff;
+  border-left: 1px solid #E4E7EC;;
+  border-right: 1px solid #E4E7EC;;
+  margin: 0 48px;
+  padding: 24px 32px 16px;
+  border-bottom: 1px solid #E4E7EC;
+  flex-shrink: 0;
+}
+
 /* ─── Content Scroll ─── */
 .content-scroll {
+  background: #fff;
+  margin: 0 48px;
+  border-left: 1px solid #E4E7EC;;
+  border-right: 1px solid #E4E7EC;;
   flex: 1;
   overflow-y: auto;
-  padding: 20px 24px 24px;
+  padding: 16px 24px 24px;
 }
 
 /* ─── Page Header ─── */
@@ -243,7 +259,7 @@ body {
   background: #EEF4FF;
   color: #3538CD;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   padding: 3px 10px;
   border-radius: 20px;
 }
@@ -252,7 +268,7 @@ body {
   font-size: 14px;
   font-weight: 600;
   color: #344054;
-  margin: 4px 0 14px;
+  margin: 16px 0 0;
 }
 
 /* ─── Split Panel ─── */
@@ -260,19 +276,16 @@ body {
   Height = 100vh minus all fixed chrome:
     52px  topbar
   + 44px  progress bar
-  + 20px  content-scroll padding-top
-  + 28px  page-header (title row)
-  +  6px  margins between header and heading
-  + 30px  section-heading + its margin-bottom
+  + 54px  page-subheader (12px top + 28px title row + 4px + 22px heading + 10px bottom = ~54px)  + 16px  content-scroll padding-top
   + 57px  footer
-  = ~237px → use 242px to give a little breathing room
+  = ~223px → use 232px to give a little breathing room
 */
 .split-panel {
   display: flex;
   border: 1px solid #E4E7EC;
   border-radius: 16px;
   background: #fff;
-  height: calc(100vh - 242px);
+  height: calc(100vh - 232px);
   min-height: 460px;
   overflow: hidden;
 }
@@ -988,9 +1001,11 @@ body {
 /* ─── Footer ─── */
 /* Primary & secondary buttons per CLAUDE.md */
 .page-footer {
-  border-top: 1px solid #E4E7EC;
-  background: #fff;
+  border: 1px solid #E4E7EC;
+  border-radius: 0 0 16px 16px;
+  background-color: #fff;
   padding: 12px 24px;
+  margin: 0 48px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -1108,15 +1123,17 @@ body {
       </div>
     </div>
 
-    <!-- Content Scroll -->
-    <div class="content-scroll">
-
-      <!-- Page Header -->
+    <!-- Page Sub-header (fixed, same pattern as progress bar) -->
+    <div class="page-subheader">
       <div class="page-header">
         <div class="page-title">Hotel Training</div>
         <div class="sim-type-badge">Audio &amp; Image</div>
       </div>
       <div class="section-heading">AI Scoring</div>
+    </div>
+
+    <!-- Content Scroll -->
+    <div class="content-scroll">
 
       <!-- ═══ Split Panel ═══ -->
       <div class="split-panel">
