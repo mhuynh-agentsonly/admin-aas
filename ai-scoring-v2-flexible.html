@@ -230,14 +230,19 @@ body {
   flex-shrink: 0;
 }
 
-/* ─── Content Scroll ─── */
+/* ─── Single scroll container (below fixed headers) ─── */
+.scroll-area {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* ─── Content area — no scroll, just card styling ─── */
 .content-scroll {
   background: #fff;
   margin: 0 48px;
-  border-left: 1px solid #E4E7EC;;
-  border-right: 1px solid #E4E7EC;;
-  flex: 1;
-  overflow-y: auto;
+  border-left: 1px solid #E4E7EC;
+  border-right: 1px solid #E4E7EC;
   padding: 16px 24px 24px;
 }
 
@@ -273,19 +278,17 @@ body {
 
 /* ─── Split Panel ─── */
 /*
-  Height = 100vh minus all fixed chrome:
-    52px  topbar
-  + 44px  progress bar
-  + 54px  page-subheader (12px top + 28px title row + 4px + 22px heading + 10px bottom = ~54px)  + 16px  content-scroll padding-top
-  + 57px  footer
-  = ~223px → use 232px to give a little breathing room
+  Height set by JS (setSplitPanelHeight) at load + resize.
+  JS measures the exact pixel offset of .scroll-area from the viewport top
+  (captures topbar + progress + subheader + any margins, whatever their actual size)
+  then subtracts content padding-top + an accordion-peek allowance.
+  min-height is the CSS safety net before JS runs.
 */
 .split-panel {
   display: flex;
   border: 1px solid #E4E7EC;
   border-radius: 16px;
   background: #fff;
-  height: calc(100vh - 232px);
   min-height: 460px;
   overflow: hidden;
 }
@@ -1010,7 +1013,7 @@ body {
   justify-content: flex-end;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
+  /* no flex-shrink: 0 — footer flows naturally after the reference accordions */
 }
 .btn-secondary {
   padding: 10px 24px;
@@ -1132,7 +1135,9 @@ body {
       <div class="section-heading">AI Scoring</div>
     </div>
 
-    <!-- Content Scroll -->
+    <!-- Single scroll area: content + footer scroll together below the fixed headers -->
+    <div class="scroll-area">
+    <!-- Content -->
     <div class="content-scroll">
 
       <!-- ═══ Split Panel ═══ -->
@@ -1448,11 +1453,13 @@ body {
 
     </div><!-- end content-scroll -->
 
-    <!-- Footer — buttons per CLAUDE.md design system -->
+    <!-- Footer — flows naturally after accordions, no longer pinned -->
     <div class="page-footer">
       <button class="btn-secondary">Back</button>
       <button class="btn-primary" id="btnSaveNext" disabled>Save &amp; Next</button>
     </div>
+
+    </div><!-- end scroll-area -->
 
   </div><!-- end main-area -->
 </div><!-- end app-layout -->
@@ -1843,6 +1850,40 @@ function renderLinkedFiles() {
 function escHtml(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+/* ══════════════════════════════════════════
+   SPLIT PANEL HEIGHT — works on any screen size
+
+   Strategy: measure how far down the scroll-area actually starts
+   (accounts for topbar + progress bar + subheader + all their margins,
+   whatever their real rendered heights are), then subtract:
+     - content-scroll padding-top  (16px, matches CSS)
+     - accordion peek              (88px — enough to show the full first
+                                    accordion header + a sliver of the gap,
+                                    making the scroll affordance obvious)
+   Re-runs on every resize so it stays correct if the window changes.
+══════════════════════════════════════════ */
+const CONTENT_PADDING_TOP = 16; // must match .content-scroll padding-top
+const ACCORDION_PEEK      = 88; // px of reference section visible below panel
+
+function setSplitPanelHeight() {
+  const scrollArea = document.querySelector('.scroll-area');
+  const splitPanel = document.querySelector('.split-panel');
+  if (!scrollArea || !splitPanel) return;
+
+  // getBoundingClientRect().top = exact px from viewport top to scroll-area,
+  // including all rendered heights + margins of everything above it.
+  const scrollAreaTop = scrollArea.getBoundingClientRect().top;
+
+  const idealHeight = window.innerHeight - scrollAreaTop - CONTENT_PADDING_TOP - ACCORDION_PEEK;
+
+  // Clamp to min-height so the input is never hidden on very small screens
+  splitPanel.style.height = Math.max(460, idealHeight) + 'px';
+}
+
+// Run on load and on every resize
+setSplitPanelHeight();
+window.addEventListener('resize', setSplitPanelHeight);
 </script>
 </body>
 </html>
