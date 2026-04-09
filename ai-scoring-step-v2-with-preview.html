@@ -63,7 +63,7 @@
     /* Section headers */
     .panel-section { display: flex; flex-direction: column; }
     .panel-section + .panel-section { border-top: 1px solid #E4E7EC; }
-    .panel-section-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .panel-section-header { padding: 12px 16px 16px 28px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
     .panel-section-title { font-size: 12px; font-weight: 700; color: #667085; text-transform: uppercase; letter-spacing: 0.04em; }
     .panel-section-count { font-size: 11px; font-weight: 600; color: #667085; background: #F2F4F7; border-radius: 99px; padding: 1px 7px; }
 
@@ -71,7 +71,7 @@
     .add-btn:hover { background: #2D31A6; }
     .add-btn .material-symbols-outlined { font-size: 15px; }
 
-    .assistant-list { padding: 8px 10px; padding-bottom: 24px; display: flex; flex-direction: column; gap: 6px; }
+    .assistant-list { padding: 8px 16px 8px 28px; padding-bottom: 24px; display: flex; flex-direction: column; gap: 6px; }
 
     /* Assistant card */
     .assistant-card { border: 1.5px solid #E4E7EC; border-radius: 10px; padding: 11px 13px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; background: #fff; display: flex; align-items: center; gap: 10px; }
@@ -90,7 +90,7 @@
     .terminal-badge .material-symbols-outlined { font-size: 12px; color: #B42318; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 
     /* Empty slot — evaluator not yet selected */
-    .evaluator-empty-slot { margin: 8px 10px; border: 1.5px dashed #D0D5DD; border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 10px; color: #98A2B3; font-size: 12px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .evaluator-empty-slot { margin: 8px 16px 8px 28px; border: 1.5px dashed #D0D5DD; border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 10px; color: #98A2B3; font-size: 12px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
     .evaluator-empty-slot:hover { border-color: #A4BCFD; background: #F5F8FF; color: #3538CD; }
     .evaluator-empty-slot .material-symbols-outlined { font-size: 20px; }
 
@@ -667,12 +667,12 @@ Output format:
     <div class="modal-body">
       <div class="assistant-option" data-eval-id="20" onclick="selectEvaluator(20)">
         <div class="option-avatar" style="background:#F4F3FF;">🧠</div>
-        <div class="option-info"><div class="option-name">Master Evaluator</div><div class="option-desc">Synthesizes all specialist outputs into a final score and summary</div></div>
+        <div class="option-info"><div class="option-name">Master Evaluator</div><div class="option-desc">Combines all specialist scores</div></div>
         <div class="option-radio"></div>
       </div>
       <div class="assistant-option" data-eval-id="21" onclick="selectEvaluator(21)">
         <div class="option-avatar" style="background:#ECFDF3;">⚖️</div>
-        <div class="option-info"><div class="option-name">Balanced Scoring Evaluator</div><div class="option-desc">Weighted synthesis with emphasis on compliance outcomes</div></div>
+        <div class="option-info"><div class="option-name">Balanced Scoring Evaluator</div><div class="option-desc">Prioritizes compliance when calculating the final score</div></div>
         <div class="option-radio"></div>
       </div>
     </div>
@@ -1007,9 +1007,9 @@ Output format:
   };
 
   const evaluatorData = {
-    20: { name: 'Master Evaluator', desc: 'Synthesizes all specialist outputs into a final score and summary', avatar: '🧠', avatarBg: '#F4F3FF', lastEdited: '4 days ago',
+    20: { name: 'Master Evaluator', desc: 'Combines all specialist scores into one final result', avatar: '🧠', avatarBg: '#F4F3FF', lastEdited: '4 days ago',
           prompt: 'You will receive structured output from each specialist assistant. Synthesize their findings into a single coherent evaluation: an overall score, a pass/fail verdict, and a concise summary of strengths and areas for improvement. Weigh each specialist\'s output equally unless a critical failure is flagged.' },
-    21: { name: 'Balanced Scoring Evaluator', desc: 'Weighted synthesis with emphasis on compliance outcomes', avatar: '⚖️', avatarBg: '#ECFDF3', lastEdited: '1 week ago',
+    21: { name: 'Balanced Scoring Evaluator', desc: 'Prioritizes compliance when calculating the final score', avatar: '⚖️', avatarBg: '#ECFDF3', lastEdited: '1 week ago',
           prompt: 'Synthesize specialist outputs with a compliance-first approach. If any compliance violation is flagged by a specialist, reduce the final score significantly. Otherwise, aggregate scores proportionally and provide a final verdict with reasoning.' },
   };
 
@@ -1033,10 +1033,9 @@ Output format:
     const hint = document.getElementById('validationHint');
     btn.disabled = !ok;
     if (ok) {
-      hint.classList.add('met');
-      hint.innerHTML = '<span class="material-symbols-outlined">check_circle</span>Ready to continue';
+      hint.style.display = 'none';
     } else {
-      hint.classList.remove('met');
+      hint.style.display = 'flex';
       const missing = [];
       if (state.specialists.size === 0) missing.push('a specialist');
       if (!state.evaluatorId) missing.push('an evaluator');
