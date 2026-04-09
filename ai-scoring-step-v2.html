@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Scoring v2 – Specialist + Evaluator</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'DM Sans', sans-serif; background: #F2F4F7; display: flex; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    .sidebar { width: 196px; height: 100vh; background: #fff; border-right: 1px solid #E4E7EC; flex-shrink: 0; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 20; overflow-y: auto; }
+    .sidebar-top { padding: 16px 12px 10px; }
+    .sidebar-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .logo-icon { width: 30px; height: 30px; background: #3538CD; border-radius: 7px; display: grid; place-items: center; flex-shrink: 0; }
+    .logo-name { font-size: 12.5px; font-weight: 700; color: #101828; line-height: 1.2; }
+    .logo-sub { font-size: 11px; color: #667085; line-height: 1.2; }
+    .env-badge { font-size: 11px; font-weight: 500; color: #1570EF; background: #EFF8FF; border-radius: 4px; padding: 2px 8px; display: inline-block; }
+    .nav { padding: 4px 8px; flex: 1; }
+    .nav-item { display: flex; align-items: center; gap: 7px; padding: 7px 10px; font-size: 13px; font-weight: 500; color: #344054; cursor: pointer; border-radius: 6px; margin: 1px 0; transition: background 0.12s; }
+    .nav-item:hover { background: #F9FAFB; }
+    .nav-item.active { background: #EEF4FF; color: #3538CD; font-weight: 600; border-radius: 6px 0 0 6px; border-right: 3px solid #3538CD; }
+    .nav-item .nav-icon { font-size: 17px; flex-shrink: 0; color: inherit; }
+    .sidebar-footer { margin-top: auto; padding: 6px 8px 12px; border-top: 1px solid #F2F4F7; }
+    .sidebar-version { padding: 4px 10px; font-size: 10.5px; color: #98A2B3; }
+
+    /* ── Main ── */
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100vh; overflow: hidden; margin-left: 196px; }
+    .page-header { padding: 28px 48px 0; display: flex; align-items: center; gap: 10px; }
+    .back-btn { display: flex; align-items: center; color: #344054; cursor: pointer; }
+    .back-btn svg { width: 22px; height: 22px; }
+    .page-title { font-size: 26px; font-weight: 700; color: #101828; }
+
+    /* Progress */
+    .progress-bar { margin: 20px 48px 0; background: #FEF3C7; border-radius: 10px 10px 0 0; padding: 14px 0; display: flex; align-items: center; justify-content: center; }
+    .step { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: #667085; padding: 0 12px; }
+    .step.done { color: #101828; font-weight: 700; }
+    .step.active { color: #F79009; font-weight: 700; }
+    .step-num { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+    .step.done .step-num   { background: #F79009; color: #fff; }
+    .step.active .step-num { background: #F79009; color: #fff; }
+    .step.inactive .step-num { background: #E4E7EC; color: #98A2B3; }
+    .step-divider { width: 1px; height: 20px; background: #D0D5DD; }
+
+    /* ── Content card ── */
+    .content-card { margin: 0 48px 0; background: #fff; border-radius: 0 0 12px 12px; overflow: hidden; display: flex; flex-direction: column; flex: 1; min-height: 0; }
+    .card-header { padding: 24px 28px 20px; border-bottom: 1px solid #E4E7EC; flex-shrink: 0; }
+    .training-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 2px; }
+    .training-name { font-size: 18px; font-weight: 700; color: #101828; }
+    .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
+    .badge-audio-image { background: #EEF4FF; color: #3538CD; }
+    .step-label { font-size: 13px; color: #667085; }
+
+    /* ── Two-column body ── */
+    .two-col { display: flex; flex: 1; min-height: 0; }
+
+    /* ── LEFT panel ── */
+    .left-panel { width: 300px; flex-shrink: 0; border-right: 1px solid #E4E7EC; display: flex; flex-direction: column; min-height: 0; height: 100%; overflow-y: auto; background: #fff; }
+
+    /* Section headers */
+    .panel-section { display: flex; flex-direction: column; }
+    .panel-section + .panel-section { border-top: 1px solid #E4E7EC; }
+    .panel-section-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .panel-section-title { font-size: 12px; font-weight: 700; color: #667085; text-transform: uppercase; letter-spacing: 0.04em; }
+    .panel-section-count { font-size: 11px; font-weight: 600; color: #667085; background: #F2F4F7; border-radius: 99px; padding: 1px 7px; }
+
+    .add-btn { display: flex; align-items: center; gap: 4px; background: #3538CD; color: #fff; border: none; border-radius: 7px; padding: 5px 11px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; flex-shrink: 0; transition: background 0.12s; }
+    .add-btn:hover { background: #2D31A6; }
+    .add-btn .material-symbols-outlined { font-size: 15px; }
+
+    .assistant-list { padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+
+    /* Assistant card */
+    .assistant-card { border: 1.5px solid #E4E7EC; border-radius: 10px; padding: 11px 13px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; background: #fff; display: flex; align-items: center; gap: 10px; }
+    .assistant-card:hover { border-color: #A4BCFD; }
+    .assistant-card.active { border-color: #A4BCFD; box-shadow: 0 1px 2px 0 rgba(16,24,40,0.05), 0 0 0 4px #EAF0FF; }
+    .assistant-avatar { width: 32px; height: 32px; min-width: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .assistant-info { flex: 1; min-width: 0; }
+    .assistant-name { font-size: 13px; font-weight: 700; color: #101828; overflow-wrap: anywhere; line-height: 1.35; }
+    .assistant-desc { font-size: 11px; color: #667085; margin-top: 1px; line-height: 1.4; overflow-wrap: anywhere; }
+    .card-chevron { color: #D0D5DD; flex-shrink: 0; }
+    .card-chevron .material-symbols-outlined { font-size: 18px; }
+    .assistant-card.active .card-chevron { color: #3538CD; }
+
+    /* Terminal badge on card */
+    .terminal-badge { display: inline-flex; align-items: center; gap: 4px; background: #FEF3F2; border-radius: 99px; padding: 2px 8px; font-size: 11px; font-weight: 500; color: #B42318; margin-top: 5px; }
+    .terminal-badge .material-symbols-outlined { font-size: 12px; color: #B42318; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+    /* Empty slot — evaluator not yet selected */
+    .evaluator-empty-slot { margin: 8px 10px; border: 1.5px dashed #D0D5DD; border-radius: 10px; padding: 16px; display: flex; align-items: center; gap: 10px; color: #98A2B3; font-size: 12px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .evaluator-empty-slot:hover { border-color: #A4BCFD; background: #F5F8FF; color: #3538CD; }
+    .evaluator-empty-slot .material-symbols-outlined { font-size: 20px; }
+
+    /* Section empty state (for specialists) */
+    .section-empty { padding: 20px 16px; text-align: center; color: #98A2B3; font-size: 12px; line-height: 1.5; }
+
+    /* ── RIGHT panel ── */
+    .right-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; height: 100%; }
+    .right-panel-header { flex-shrink: 0; padding: 20px 28px 16px; border-bottom: 1px solid #E4E7EC; background: #fff; display: none; }
+    .right-panel-body { flex: 1; min-height: 0; overflow-y: auto; }
+
+    /* Right empty state */
+    .empty-state { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 32px; text-align: center; }
+    .empty-icon { width: 52px; height: 52px; border-radius: 12px; background: #F2F4F7; display: grid; place-items: center; margin-bottom: 14px; }
+    .empty-icon .material-symbols-outlined { font-size: 26px; color: #98A2B3; }
+    .empty-title { font-size: 15px; font-weight: 700; color: #344054; margin-bottom: 6px; }
+    .empty-desc { font-size: 13px; color: #667085; line-height: 1.6; max-width: 280px; }
+
+    /* Config panel */
+    .config-panel { padding: 24px 28px; display: flex; flex-direction: column; gap: 24px; }
+    .config-header { display: flex; align-items: center; justify-content: space-between; }
+    .config-header-left { display: flex; align-items: center; gap: 14px; }
+    .config-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+    .config-name { font-size: 16px; font-weight: 700; color: #101828; }
+    .config-subtitle { font-size: 12px; color: #667085; margin-top: 2px; }
+    .config-role-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; border-radius: 99px; padding: 2px 9px; margin-top: 4px; }
+    .config-role-badge.specialist { background: #EEF4FF; color: #3538CD; }
+    .config-role-badge.evaluator { background: #F4F3FF; color: #6941C6; }
+
+    .config-remove-btn { display: flex; align-items: center; gap: 5px; background: none; border: 1.5px solid #FDA29B; border-radius: 7px; padding: 6px 12px; font-size: 12px; font-weight: 600; color: #B42318; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: background 0.15s; }
+    .config-remove-btn:hover { background: #FEF3F2; }
+    .config-remove-btn .material-symbols-outlined { font-size: 15px; }
+
+    .config-section { display: flex; flex-direction: column; gap: 10px; }
+    .config-section-label { font-size: 13px; font-weight: 700; color: #344054; display: flex; align-items: center; gap: 6px; }
+    .config-section-label .material-symbols-outlined { font-size: 16px; color: #667085; }
+
+    .prompt-box { background: #F9FAFB; border: 1px solid #E4E7EC; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: #344054; line-height: 1.65; }
+    .prompt-box-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid #E4E7EC; }
+    .prompt-tag { font-size: 11px; font-weight: 500; color: #667085; background: #F2F4F7; border-radius: 4px; padding: 2px 7px; }
+    .edit-link { font-size: 12px; font-weight: 600; color: #444CE7; display: flex; align-items: center; gap: 4px; text-decoration: none; cursor: pointer; }
+    .edit-link .material-symbols-outlined { font-size: 14px; }
+    .edit-link:hover { color: #3538CD; }
+
+    /* Terminal failure row — Specialist only */
+    .terminal-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; background: #FFF6F6; border: 1px solid #FDA29B; border-radius: 10px; padding: 14px 16px; }
+    .terminal-row.inactive { background: #F9FAFB; border-color: #E4E7EC; }
+    .terminal-row-left { display: flex; align-items: flex-start; gap: 10px; }
+    .terminal-row-left .t-icon { font-size: 18px; color: #B42318; margin-top: 1px; flex-shrink: 0; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .terminal-row.inactive .terminal-row-left .t-icon { color: #98A2B3; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    .terminal-label { font-size: 13px; font-weight: 700; color: #101828; margin-bottom: 3px; }
+    .terminal-desc { font-size: 12px; color: #667085; line-height: 1.5; }
+    .threshold-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .threshold-label { font-size: 12px; color: #344054; font-weight: 500; }
+    .threshold-input { width: 64px; height: 32px; border: 1px solid #D0D5DD; border-radius: 7px; padding: 0 10px; font-size: 13px; font-weight: 600; color: #101828; font-family: 'DM Sans', sans-serif; text-align: center; }
+    .threshold-input:focus { outline: none; border-color: #3538CD; box-shadow: 0 0 0 2px #C7D7FE; }
+    .threshold-unit { font-size: 12px; color: #667085; }
+
+    /* Evaluator synthesis note */
+    .evaluator-note { background: #F4F3FF; border: 1px solid #D9D6FE; border-radius: 10px; padding: 14px 16px; display: flex; gap: 10px; }
+    .evaluator-note .material-symbols-outlined { font-size: 18px; color: #6941C6; flex-shrink: 0; margin-top: 1px; }
+    .evaluator-note-text { font-size: 12px; color: #42307D; line-height: 1.6; }
+    .evaluator-note-text strong { font-weight: 700; display: block; margin-bottom: 2px; font-size: 13px; }
+
+    /* Specialist inputs list in evaluator */
+    .specialist-inputs-list { display: flex; flex-direction: column; gap: 6px; }
+    .specialist-input-row { display: flex; align-items: center; gap: 8px; background: #F9FAFB; border: 1px solid #E4E7EC; border-radius: 8px; padding: 10px 14px; }
+    .specialist-input-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .specialist-input-name { font-size: 13px; font-weight: 600; color: #344054; flex: 1; }
+    .specialist-input-badge { font-size: 11px; font-weight: 500; color: #3538CD; background: #EEF4FF; border-radius: 4px; padding: 2px 7px; }
+    .specialist-inputs-empty { font-size: 12px; color: #98A2B3; font-style: italic; padding: 8px 0; }
+
+    /* Toggle */
+    .toggle { position: relative; width: 34px; height: 19px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; border-radius: 99px; background: #D0D5DD; cursor: pointer; transition: background 0.2s; }
+    .toggle-slider::after { content: ''; position: absolute; width: 15px; height: 15px; border-radius: 50%; background: #fff; top: 2px; left: 2px; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(16,24,40,0.2); }
+    .toggle input:checked + .toggle-slider { background: #6172F3; }
+    .toggle input:checked + .toggle-slider::after { transform: translateX(15px); }
+
+    .divider { height: 1px; background: #F2F4F7; }
+
+    /* Footer */
+    .card-footer { padding: 14px 28px; border-top: 1px solid #E4E7EC; display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-shrink: 0; background: #fff; }
+    .btn { height: 38px; padding: 0 20px; border-radius: 8px; font-size: 14px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; border: none; transition: background 0.12s; }
+    .btn-back { background: #fff; border: 1.5px solid #D0D5DD; color: #344054; }
+    .btn-back:hover { background: #F9FAFB; }
+    .btn-primary { background: #3538CD; color: #fff; }
+    .btn-primary:hover:not(:disabled) { background: #2D31A6; }
+    .btn-primary:disabled { background: #E4E7EC; color: #98A2B3; cursor: not-allowed; }
+
+    /* Validation hint */
+    .validation-hint { font-size: 12px; color: #98A2B3; margin-right: auto; display: flex; align-items: center; gap: 5px; }
+    .validation-hint .material-symbols-outlined { font-size: 15px; }
+    .validation-hint.met { color: #00B081; }
+
+    /* ── Modals ── */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(16,24,40,0.45); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.18s; }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal { background: #fff; border-radius: 14px; width: 520px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(16,24,40,0.18); transform: scale(0.97) translateY(6px); transition: transform 0.18s; }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+    .modal-header { padding: 20px 24px 16px; border-bottom: 1px solid #E4E7EC; display: flex; align-items: flex-start; justify-content: space-between; }
+    .modal-title { font-size: 16px; font-weight: 700; color: #101828; }
+    .modal-subtitle { font-size: 13px; color: #667085; margin-top: 3px; }
+    .modal-close { background: none; border: none; cursor: pointer; color: #667085; padding: 2px; display: grid; place-items: center; }
+    .modal-close .material-symbols-outlined { font-size: 20px; }
+    .modal-close:hover { color: #344054; }
+    .modal-body { padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .modal-footer { padding: 14px 20px; border-top: 1px solid #E4E7EC; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .modal-note { font-size: 12px; color: #98A2B3; display: flex; align-items: center; gap: 5px; }
+    .modal-note .material-symbols-outlined { font-size: 15px; }
+    .modal-confirm-btn { display: flex; align-items: center; gap: 5px; background: #3538CD; color: #fff; border: none; border-radius: 7px; padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: background 0.12s; }
+    .modal-confirm-btn:hover:not(:disabled) { background: #2D31A6; }
+    .modal-confirm-btn:disabled { background: #E4E7EC; color: #98A2B3; cursor: not-allowed; }
+
+    /* Options in modal */
+    .assistant-option { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #E4E7EC; border-radius: 10px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .assistant-option:hover { border-color: #A4BCFD; background: #F5F8FF; }
+    .assistant-option.selected { border-color: #3538CD; background: #EEF4FF; }
+    .assistant-option.selected:hover { border-color: #3538CD; background: #EEF4FF; }
+    .option-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .option-info { flex: 1; }
+    .option-name { font-size: 14px; font-weight: 700; color: #101828; }
+    .option-desc { font-size: 12px; color: #667085; margin-top: 2px; line-height: 1.45; }
+    /* Check circle — Specialist modal (multi-select) */
+    .option-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #D0D5DD; flex-shrink: 0; display: grid; place-items: center; transition: all 0.15s; background: #fff; }
+    .assistant-option.selected .option-check { background: #3538CD; border-color: #3538CD; }
+    .option-check .material-symbols-outlined { font-size: 14px; color: #fff; opacity: 0; transition: opacity 0.12s; font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 20; }
+    .assistant-option.selected .option-check .material-symbols-outlined { opacity: 1; }
+    /* Radio circle — Evaluator modal (single-select) */
+    .option-radio { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #D0D5DD; flex-shrink: 0; display: grid; place-items: center; transition: all 0.15s; background: #fff; }
+    .assistant-option.selected .option-radio { border-color: #6941C6; }
+    .option-radio::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #6941C6; opacity: 0; transition: opacity 0.12s; }
+    .assistant-option.selected .option-radio::after { opacity: 1; }
+
+    /* Confirm remove modal */
+    .confirm-modal { background: #fff; border-radius: 14px; width: 400px; display: flex; flex-direction: column; box-shadow: 0 20px 40px rgba(16,24,40,0.18); transform: scale(0.97) translateY(6px); transition: transform 0.18s; overflow: hidden; }
+    .modal-overlay.open .confirm-modal { transform: scale(1) translateY(0); }
+    .confirm-body { padding: 24px; }
+    .confirm-icon { width: 44px; height: 44px; border-radius: 50%; background: #FEF3F2; display: grid; place-items: center; margin-bottom: 14px; }
+    .confirm-icon .material-symbols-outlined { font-size: 22px; color: #F04438; }
+    .confirm-title { font-size: 16px; font-weight: 700; color: #101828; margin-bottom: 6px; }
+    .confirm-desc { font-size: 13px; color: #667085; line-height: 1.6; }
+    .confirm-footer { padding: 14px 20px; border-top: 1px solid #E4E7EC; display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+    .btn-danger { background: #F04438; color: #fff; }
+    .btn-danger:hover { background: #D92D20; }
+    .btn-ghost { background: #fff; border: 1.5px solid #D0D5DD; color: #344054; }
+    .btn-ghost:hover { background: #F9FAFB; }
+  </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-top">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2Z" fill="#fff" opacity="0.9"/></svg>
+      </div>
+      <div>
+        <div class="logo-name">Agents Only</div>
+        <div class="logo-sub">Admin Portal</div>
+      </div>
+    </div>
+    <span class="env-badge">Development</span>
+  </div>
+  <nav class="nav">
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">person</span>Agents</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">folder_open</span>Projects</div>
+    <div class="nav-item active"><span class="material-symbols-outlined nav-icon">layers</span>Training</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">account_balance_wallet</span>Wallet</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">account_balance</span>Deposits</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">group</span>Referrals</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">payments</span>Platform Rates</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">language</span>Country Admin</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">visibility</span>View as User</div>
+    <div class="nav-item"><span class="material-symbols-outlined nav-icon">admin_panel_settings</span>Admin Users</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="nav-item" style="color:#667085;"><span class="material-symbols-outlined nav-icon" style="color:#667085;">logout</span>Logout</div>
+    <div class="sidebar-version">ao-admin-portal: v0.0.74</div>
+  </div>
+</aside>
+
+<!-- Main -->
+<div class="main">
+  <div class="page-header">
+    <div class="back-btn">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+    </div>
+    <h1 class="page-title">Exit Training Creation</h1>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-bar">
+    <div class="step done"><div class="step-num">✓</div>Overview</div>
+    <div class="step-divider"></div>
+    <div class="step done"><div class="step-num">✓</div>Script &amp; Audio</div>
+    <div class="step-divider"></div>
+    <div class="step done"><div class="step-num">✓</div>Images</div>
+    <div class="step-divider"></div>
+    <div class="step done"><div class="step-num">✓</div>Mapping</div>
+    <div class="step-divider"></div>
+    <div class="step active"><div class="step-num">5</div>AI Scoring</div>
+    <div class="step-divider"></div>
+    <div class="step inactive"><div class="step-num">6</div>Summary</div>
+  </div>
+
+  <!-- Content card -->
+  <div class="content-card">
+    <div class="card-header">
+      <div class="training-title-row">
+        <span class="training-name">Hotel Training</span>
+        <span class="badge badge-audio-image">Audio &amp; Image</span>
+      </div>
+      <div class="step-label">AI Scoring</div>
+    </div>
+
+    <div class="two-col">
+
+      <!-- LEFT panel -->
+      <div class="left-panel">
+
+        <!-- Specialists section -->
+        <div class="panel-section" id="specialistsSection">
+          <div class="panel-section-header">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <span class="panel-section-title">Specialists</span>
+              <span class="panel-section-count" id="specialistCount">1</span>
+            </div>
+            <button class="add-btn" onclick="openSpecialistModal()">
+              <span class="material-symbols-outlined">add</span>Manage
+            </button>
+          </div>
+          <div class="assistant-list" id="specialistList">
+            <!-- Pre-added specialist -->
+            <div class="assistant-card active" id="card-1" onclick="selectAssistant(1)">
+              <div class="assistant-avatar" style="background:#EEF4FF;">🎧</div>
+              <div class="assistant-info">
+                <div class="assistant-name">Conversation Quality Evaluator</div>
+                <div class="assistant-desc">Soft skills and clarity</div>
+              </div>
+              <div class="card-chevron"><span class="material-symbols-outlined">chevron_right</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evaluator section -->
+        <div class="panel-section" id="evaluatorSection">
+          <div class="panel-section-header">
+            <span class="panel-section-title">Evaluator</span>
+            <button class="add-btn" id="evaluatorManageBtn" onclick="openEvaluatorModal()" style="display:none;">
+              <span class="material-symbols-outlined">swap_horiz</span>Replace
+            </button>
+          </div>
+          <!-- Empty slot (shown when no evaluator selected) -->
+          <div id="evaluatorEmptySlot" class="evaluator-empty-slot" onclick="openEvaluatorModal()">
+            <span class="material-symbols-outlined">add_circle</span>
+            Select an evaluator assistant
+          </div>
+          <!-- Evaluator card (hidden until selected) -->
+          <div class="assistant-list" id="evaluatorList" style="display:none;"></div>
+        </div>
+
+      </div><!-- /left-panel -->
+
+      <!-- RIGHT panel -->
+      <div class="right-panel">
+        <div class="right-panel-header" id="rightPanelHeader"></div>
+        <div class="right-panel-body" id="rightPanelBody">
+
+          <!-- Default empty state -->
+          <div class="empty-state" id="emptyConfig">
+            <div class="empty-icon"><span class="material-symbols-outlined">smart_toy</span></div>
+            <div class="empty-title">No assistant selected</div>
+            <div class="empty-desc">Select a Specialist or the Evaluator from the left panel to configure its prompt.</div>
+          </div>
+
+          <!-- Pre-built config for specialist 1 -->
+          <div class="config-panel" id="config-1" style="display:none;">
+            <div class="config-header">
+              <div class="config-header-left">
+                <div class="config-avatar" style="background:#EEF4FF;">🎧</div>
+                <div>
+                  <div class="config-name">Conversation Quality Evaluator</div>
+                  <div class="config-subtitle">Soft skills and clarity</div>
+                  <span class="config-role-badge specialist">Specialist</span>
+                </div>
+              </div>
+              <button class="config-remove-btn" onclick="confirmRemoveSpecialist(1)">
+                <span class="material-symbols-outlined">delete</span>Remove
+              </button>
+            </div>
+
+            <div class="config-section">
+              <div class="config-section-label"><span class="material-symbols-outlined">notes</span>Evaluation Prompt</div>
+              <div class="prompt-box">
+                Evaluate the agent's communication quality throughout the interaction. Assess clarity of language, appropriate tone and empathy, conciseness without omitting critical details, and ability to guide the customer confidently.
+                <div class="prompt-box-footer">
+                  <span class="prompt-tag">Specialist prompt</span>
+                  <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="config-section">
+              <div class="config-section-label"><span class="material-symbols-outlined">stop_circle</span>Terminal Failure</div>
+              <div class="terminal-row inactive" id="terminal-row-1">
+                <div class="terminal-row-left">
+                  <span class="material-symbols-outlined t-icon">stop_circle</span>
+                  <div>
+                    <div class="terminal-label">Fail simulation on critical error</div>
+                    <div class="terminal-desc">If this assistant's score falls below the threshold, the attempt is automatically failed — regardless of other scores.</div>
+                    <div class="threshold-row" id="threshold-row-1" style="display:none;">
+                      <span class="threshold-label">Fail if score below</span>
+                      <input class="threshold-input" type="number" value="90" min="1" max="100" />
+                      <span class="threshold-unit">%</span>
+                    </div>
+                  </div>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" id="terminal-toggle-1" onchange="toggleTerminal(1)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /right-panel-body -->
+      </div><!-- /right-panel -->
+
+    </div><!-- /two-col -->
+
+    <!-- Footer -->
+    <div class="card-footer">
+      <span class="validation-hint" id="validationHint">
+        <span class="material-symbols-outlined">info</span>
+        Select at least 1 specialist and 1 evaluator to continue
+      </span>
+      <button class="btn btn-back">Back</button>
+      <button class="btn btn-primary" id="saveNextBtn" disabled>Save &amp; Next</button>
+    </div>
+  </div><!-- /content-card -->
+</div><!-- /main -->
+
+<!-- ══ Specialist Modal ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="specialistModalOverlay" onclick="closeSpecialistModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Manage Specialists</div>
+        <div class="modal-subtitle">Select one or more specialist assistants (up to 5)</div>
+      </div>
+      <button class="modal-close" onclick="closeSpecialistModal()"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="assistant-option selected" data-id="1" onclick="toggleSpecialist(1)">
+        <div class="option-avatar" style="background:#EEF4FF;">🎧</div>
+        <div class="option-info"><div class="option-name">Conversation Quality Evaluator</div><div class="option-desc">Soft skills and clarity</div></div>
+        <div class="option-check"><span class="material-symbols-outlined">check</span></div>
+      </div>
+      <div class="assistant-option" data-id="2" onclick="toggleSpecialist(2)">
+        <div class="option-avatar" style="background:#F4F3FF;">🖱️</div>
+        <div class="option-info"><div class="option-name">Intent &amp; Compliance Checker</div><div class="option-desc">Steps and compliance</div></div>
+        <div class="option-check"><span class="material-symbols-outlined">check</span></div>
+      </div>
+      <div class="assistant-option" data-id="3" onclick="toggleSpecialist(3)">
+        <div class="option-avatar" style="background:#ECFDF3;">📋</div>
+        <div class="option-info"><div class="option-name">UI Interaction &amp; Accuracy Evaluator</div><div class="option-desc">Navigation accuracy</div></div>
+        <div class="option-check"><span class="material-symbols-outlined">check</span></div>
+      </div>
+      <div class="assistant-option" data-id="4" onclick="toggleSpecialist(4)">
+        <div class="option-avatar" style="background:#FFF6ED;">🎙️</div>
+        <div class="option-info"><div class="option-name">Audio Keyword &amp; Accuracy</div><div class="option-desc">Keyword accuracy and script adherence</div></div>
+        <div class="option-check"><span class="material-symbols-outlined">check</span></div>
+      </div>
+      <div class="assistant-option" data-id="5" onclick="toggleSpecialist(5)">
+        <div class="option-avatar" style="background:#FFF1F3;">⏱️</div>
+        <div class="option-info"><div class="option-name">Resolution Speed Specialist</div><div class="option-desc">Task completion efficiency</div></div>
+        <div class="option-check"><span class="material-symbols-outlined">check</span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-note">
+        <span class="material-symbols-outlined">info</span>
+        Managed in <strong style="color:#344054;">Playground</strong>
+      </div>
+      <button class="modal-confirm-btn" id="specialistConfirmBtn" disabled onclick="confirmSpecialistSelections()">Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Evaluator Modal ════════════════════════════════════════════ -->
+<div class="modal-overlay" id="evaluatorModalOverlay" onclick="closeEvaluatorModalOutside(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Select Evaluator</div>
+        <div class="modal-subtitle">Choose one evaluator assistant to synthesize specialist outputs</div>
+      </div>
+      <button class="modal-close" onclick="closeEvaluatorModal()"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div class="modal-body">
+      <div class="assistant-option" data-eval-id="10" onclick="selectEvaluator(10)">
+        <div class="option-avatar" style="background:#F4F3FF;">🧠</div>
+        <div class="option-info"><div class="option-name">Master Evaluator</div><div class="option-desc">Synthesizes all specialist outputs into a final score and summary</div></div>
+        <div class="option-radio"></div>
+      </div>
+      <div class="assistant-option" data-eval-id="11" onclick="selectEvaluator(11)">
+        <div class="option-avatar" style="background:#ECFDF3;">⚖️</div>
+        <div class="option-info"><div class="option-name">Balanced Scoring Evaluator</div><div class="option-desc">Weighted synthesis with emphasis on compliance outcomes</div></div>
+        <div class="option-radio"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="modal-note">
+        <span class="material-symbols-outlined">info</span>
+        Managed in <strong style="color:#344054;">Playground</strong>
+      </div>
+      <button class="modal-confirm-btn" id="evaluatorConfirmBtn" disabled onclick="confirmEvaluatorSelection()">Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Confirm Remove modal ═══════════════════════════════════════ -->
+<div class="modal-overlay" id="confirmOverlay" onclick="closeConfirmOutside(event)">
+  <div class="confirm-modal">
+    <div class="confirm-body">
+      <div class="confirm-icon"><span class="material-symbols-outlined">delete</span></div>
+      <div class="confirm-title" id="confirmTitle">Remove assistant?</div>
+      <div class="confirm-desc" id="confirmDesc">This assistant will be removed from this simulation's scoring configuration.</div>
+    </div>
+    <div class="confirm-footer">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="confirmRemoveBtn">Remove</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Data ─────────────────────────────────────────────────────
+  const specialistData = {
+    1: { name: 'Conversation Quality Evaluator', desc: 'Soft skills and clarity', avatar: '🎧', avatarBg: '#EEF4FF',
+         prompt: 'Evaluate the agent\'s communication quality throughout the interaction. Assess clarity of language, appropriate tone and empathy, conciseness without omitting critical details, and ability to guide the customer confidently.' },
+    2: { name: 'Intent & Compliance Checker', desc: 'Steps and compliance', avatar: '🖱️', avatarBg: '#F4F3FF',
+         prompt: 'Verify that the agent followed required procedural steps and complied with policy. Flag any skipped mandatory steps, incorrect information provided, or non-compliant actions taken during the interaction.' },
+    3: { name: 'UI Interaction & Accuracy Evaluator', desc: 'Navigation accuracy', avatar: '📋', avatarBg: '#ECFDF3',
+         prompt: 'Assess the accuracy of UI interactions: correct fields filled, correct navigation paths taken, appropriate selections made. Identify any misclicks, skipped screens, or incorrect data entry.' },
+    4: { name: 'Audio Keyword & Accuracy', desc: 'Keyword accuracy and script adherence', avatar: '🎙️', avatarBg: '#FFF6ED',
+         prompt: 'Analyze the audio transcript for required keyword usage, script adherence, and accurate verbal responses. Flag missing keywords, incorrect answers, or significant deviations from the expected script.' },
+    5: { name: 'Resolution Speed Specialist', desc: 'Task completion efficiency', avatar: '⏱️', avatarBg: '#FFF1F3',
+         prompt: 'Evaluate the efficiency with which the agent completed the task. Assess time-to-resolution, unnecessary steps taken, and overall workflow efficiency compared to the optimal path.' },
+  };
+
+  const evaluatorData = {
+    10: { name: 'Master Evaluator', desc: 'Synthesizes all specialist outputs into a final score and summary', avatar: '🧠', avatarBg: '#F4F3FF',
+          prompt: 'You will receive structured output from each specialist assistant. Synthesize their findings into a single coherent evaluation: an overall score, a pass/fail verdict, and a concise summary of strengths and areas for improvement. Weigh each specialist\'s output equally unless a critical failure is flagged.' },
+    11: { name: 'Balanced Scoring Evaluator', desc: 'Weighted synthesis with emphasis on compliance outcomes', avatar: '⚖️', avatarBg: '#ECFDF3',
+          prompt: 'Synthesize specialist outputs with a compliance-first approach. If any compliance violation is flagged by a specialist, reduce the final score significantly. Otherwise, aggregate scores proportionally and provide a final verdict with reasoning.' },
+  };
+
+  // ── State ─────────────────────────────────────────────────────
+  const state = {
+    specialists: new Set([1]),   // currently added specialist IDs
+    evaluatorId: null,           // currently selected evaluator ID
+  };
+
+  let selectedId = 1;            // which config panel is active (can be specialist or evaluator ID)
+  let selectedRole = 'specialist';
+
+  // Modal state
+  let modalSpecialistChecked = new Set();
+  let modalEvaluatorSelected = null;
+
+  // ── Validation ────────────────────────────────────────────────
+  function updateValidation() {
+    const ok = state.specialists.size >= 1 && state.evaluatorId !== null;
+    const btn = document.getElementById('saveNextBtn');
+    const hint = document.getElementById('validationHint');
+    btn.disabled = !ok;
+    if (ok) {
+      hint.classList.add('met');
+      hint.innerHTML = '<span class="material-symbols-outlined">check_circle</span>Ready to continue';
+    } else {
+      hint.classList.remove('met');
+      const missing = [];
+      if (state.specialists.size === 0) missing.push('a specialist');
+      if (!state.evaluatorId) missing.push('an evaluator');
+      hint.innerHTML = `<span class="material-symbols-outlined">info</span>Select ${missing.join(' and ')} to continue`;
+    }
+  }
+
+  // ── Left panel rendering ──────────────────────────────────────
+  function buildSpecialistCard(id) {
+    const d = specialistData[id];
+    const card = document.createElement('div');
+    card.className = 'assistant-card';
+    card.id = `card-${id}`;
+    card.onclick = () => selectAssistant(id, 'specialist');
+    card.innerHTML = `
+      <div class="assistant-avatar" style="background:${d.avatarBg};">${d.avatar}</div>
+      <div class="assistant-info">
+        <div class="assistant-name">${d.name}</div>
+        <div class="assistant-desc">${d.desc}</div>
+      </div>
+      <div class="card-chevron"><span class="material-symbols-outlined">chevron_right</span></div>
+    `;
+    return card;
+  }
+
+  function buildEvaluatorCard(id) {
+    const d = evaluatorData[id];
+    const card = document.createElement('div');
+    card.className = 'assistant-card';
+    card.id = `eval-card-${id}`;
+    card.onclick = () => selectAssistant(id, 'evaluator');
+    card.innerHTML = `
+      <div class="assistant-avatar" style="background:${d.avatarBg};">${d.avatar}</div>
+      <div class="assistant-info">
+        <div class="assistant-name">${d.name}</div>
+        <div class="assistant-desc">${d.desc}</div>
+      </div>
+      <div class="card-chevron"><span class="material-symbols-outlined">chevron_right</span></div>
+    `;
+    return card;
+  }
+
+  function updateSpecialistCount() {
+    document.getElementById('specialistCount').textContent = state.specialists.size;
+  }
+
+  // ── Config panel rendering ────────────────────────────────────
+  function buildSpecialistConfig(id) {
+    const d = specialistData[id];
+    const panel = document.createElement('div');
+    panel.className = 'config-panel';
+    panel.id = `config-${id}`;
+    panel.style.display = 'none';
+    panel.innerHTML = `
+      <div class="config-header">
+        <div class="config-header-left">
+          <div class="config-avatar" style="background:${d.avatarBg};">${d.avatar}</div>
+          <div>
+            <div class="config-name">${d.name}</div>
+            <div class="config-subtitle">${d.desc}</div>
+            <span class="config-role-badge specialist">Specialist</span>
+          </div>
+        </div>
+        <button class="config-remove-btn" onclick="confirmRemoveSpecialist(${id})">
+          <span class="material-symbols-outlined">delete</span>Remove
+        </button>
+      </div>
+      <div class="config-section">
+        <div class="config-section-label"><span class="material-symbols-outlined">notes</span>Evaluation Prompt</div>
+        <div class="prompt-box">
+          ${d.prompt}
+          <div class="prompt-box-footer">
+            <span class="prompt-tag">Specialist prompt</span>
+            <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="config-section">
+        <div class="config-section-label"><span class="material-symbols-outlined">stop_circle</span>Terminal Failure</div>
+        <div class="terminal-row inactive" id="terminal-row-${id}">
+          <div class="terminal-row-left">
+            <span class="material-symbols-outlined t-icon">stop_circle</span>
+            <div>
+              <div class="terminal-label">Fail simulation on critical error</div>
+              <div class="terminal-desc">If this assistant's score falls below the threshold, the attempt is automatically failed — regardless of other scores.</div>
+              <div class="threshold-row" id="threshold-row-${id}" style="display:none;">
+                <span class="threshold-label">Fail if score below</span>
+                <input class="threshold-input" type="number" value="90" min="1" max="100" />
+                <span class="threshold-unit">%</span>
+              </div>
+            </div>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="terminal-toggle-${id}" onchange="toggleTerminal(${id})">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    `;
+    return panel;
+  }
+
+  function buildEvaluatorConfig(id) {
+    const d = evaluatorData[id];
+    const panel = document.createElement('div');
+    panel.className = 'config-panel';
+    panel.id = `eval-config-${id}`;
+    panel.style.display = 'none';
+    panel.innerHTML = `
+      <div class="config-header">
+        <div class="config-header-left">
+          <div class="config-avatar" style="background:${d.avatarBg};">${d.avatar}</div>
+          <div>
+            <div class="config-name">${d.name}</div>
+            <div class="config-subtitle">${d.desc}</div>
+            <span class="config-role-badge evaluator">Evaluator</span>
+          </div>
+        </div>
+        <button class="config-remove-btn" onclick="confirmRemoveEvaluator(${id})">
+          <span class="material-symbols-outlined">delete</span>Remove
+        </button>
+      </div>
+      <div class="evaluator-note">
+        <span class="material-symbols-outlined">info</span>
+        <div class="evaluator-note-text">
+          <strong>Receives Specialist outputs</strong>
+          This assistant does not see raw sim data directly. It receives the structured output from each Specialist and synthesizes them into a final score and feedback.
+        </div>
+      </div>
+      <div class="config-section">
+        <div class="config-section-label"><span class="material-symbols-outlined">notes</span>Evaluation Prompt</div>
+        <div class="prompt-box">
+          ${d.prompt}
+          <div class="prompt-box-footer">
+            <span class="prompt-tag">Evaluator prompt</span>
+            <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
+          </div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="config-section">
+        <div class="config-section-label"><span class="material-symbols-outlined">hub</span>Specialist Inputs</div>
+        <div class="specialist-inputs-list" id="eval-inputs-${id}"></div>
+      </div>
+    `;
+    return panel;
+  }
+
+  function refreshEvaluatorInputs(evalId) {
+    const list = document.getElementById(`eval-inputs-${evalId}`);
+    if (!list) return;
+    if (state.specialists.size === 0) {
+      list.innerHTML = '<div class="specialist-inputs-empty">No specialists added yet — add specialists to see them listed here.</div>';
+      return;
+    }
+    list.innerHTML = [...state.specialists].map(sid => {
+      const s = specialistData[sid];
+      return `<div class="specialist-input-row">
+        <div class="specialist-input-avatar" style="background:${s.avatarBg};">${s.avatar}</div>
+        <span class="specialist-input-name">${s.name}</span>
+        <span class="specialist-input-badge">Specialist</span>
+      </div>`;
+    }).join('');
+  }
+
+  // ── Select / highlight ────────────────────────────────────────
+  function selectAssistant(id, role) {
+    selectedId = id;
+    selectedRole = role;
+
+    // Deactivate all cards
+    document.querySelectorAll('.assistant-card').forEach(c => c.classList.remove('active'));
+    const cardEl = role === 'evaluator'
+      ? document.getElementById(`eval-card-${id}`)
+      : document.getElementById(`card-${id}`);
+    if (cardEl) cardEl.classList.add('active');
+
+    // Hide all config panels
+    document.querySelectorAll('.config-panel').forEach(p => p.style.display = 'none');
+    document.getElementById('emptyConfig').style.display = 'none';
+
+    const panelId = role === 'evaluator' ? `eval-config-${id}` : `config-${id}`;
+    const panel = document.getElementById(panelId);
+    if (panel) {
+      panel.style.display = 'flex';
+      if (role === 'evaluator') refreshEvaluatorInputs(id);
+    }
+  }
+
+  // ── Terminal failure toggle ───────────────────────────────────
+  function toggleTerminal(id) {
+    const checked = document.getElementById(`terminal-toggle-${id}`).checked;
+    const row = document.getElementById(`terminal-row-${id}`);
+    const thresholdRow = document.getElementById(`threshold-row-${id}`);
+    if (checked) {
+      row.classList.remove('inactive');
+      if (thresholdRow) thresholdRow.style.display = 'flex';
+    } else {
+      row.classList.add('inactive');
+      if (thresholdRow) thresholdRow.style.display = 'none';
+    }
+    // Update badge on card
+    const card = document.getElementById(`card-${id}`);
+    if (!card) return;
+    let badge = card.querySelector('.terminal-badge');
+    if (checked && !badge) {
+      const info = card.querySelector('.assistant-info');
+      badge = document.createElement('div');
+      badge.className = 'terminal-badge';
+      badge.innerHTML = '<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 1,\'wght\' 400,\'GRAD\' 0,\'opsz\' 24;">stop_circle</span>Terminal failure';
+      info.appendChild(badge);
+    } else if (!checked && badge) {
+      badge.remove();
+    }
+  }
+
+  // ── Specialist modal ──────────────────────────────────────────
+  function openSpecialistModal() {
+    modalSpecialistChecked = new Set(state.specialists);
+    document.querySelectorAll('.assistant-option[data-id]').forEach(opt => {
+      const id = parseInt(opt.dataset.id);
+      opt.classList.toggle('selected', modalSpecialistChecked.has(id));
+    });
+    updateSpecialistConfirmBtn();
+    document.getElementById('specialistModalOverlay').classList.add('open');
+  }
+
+  function closeSpecialistModal() {
+    document.getElementById('specialistModalOverlay').classList.remove('open');
+  }
+
+  function closeSpecialistModalOutside(e) {
+    if (e.target === document.getElementById('specialistModalOverlay')) closeSpecialistModal();
+  }
+
+  function toggleSpecialist(id) {
+    if (modalSpecialistChecked.has(id)) {
+      if (modalSpecialistChecked.size === 1) return; // must keep at least 1 if already saved — but in modal it's fine to uncheck all, validation is on save
+      modalSpecialistChecked.delete(id);
+    } else {
+      if (modalSpecialistChecked.size >= 5) return; // max 5
+      modalSpecialistChecked.add(id);
+    }
+    const opt = document.querySelector(`.assistant-option[data-id="${id}"]`);
+    if (opt) opt.classList.toggle('selected', modalSpecialistChecked.has(id));
+    updateSpecialistConfirmBtn();
+  }
+
+  function updateSpecialistConfirmBtn() {
+    const btn = document.getElementById('specialistConfirmBtn');
+    const same = modalSpecialistChecked.size === state.specialists.size &&
+      [...modalSpecialistChecked].every(id => state.specialists.has(id));
+    btn.disabled = same || modalSpecialistChecked.size === 0;
+  }
+
+  function confirmSpecialistSelections() {
+    // Remove unchecked
+    [...state.specialists].forEach(id => {
+      if (!modalSpecialistChecked.has(id)) removeSpecialist(id);
+    });
+    // Add newly checked
+    [...modalSpecialistChecked].forEach(id => {
+      if (!state.specialists.has(id)) addSpecialist(id);
+    });
+    closeSpecialistModal();
+    // Select first specialist if current selection was removed
+    if (!state.specialists.has(selectedId)) {
+      const first = [...state.specialists][0];
+      if (first) selectAssistant(first, 'specialist');
+      else showEmptyConfig();
+    }
+    updateValidation();
+  }
+
+  function addSpecialist(id) {
+    state.specialists.add(id);
+    const card = buildSpecialistCard(id);
+    document.getElementById('specialistList').appendChild(card);
+    const config = buildSpecialistConfig(id);
+    document.getElementById('rightPanelBody').insertBefore(config, document.getElementById('emptyConfig'));
+    updateSpecialistCount();
+    // Refresh evaluator inputs if evaluator is configured
+    if (state.evaluatorId) refreshEvaluatorInputs(state.evaluatorId);
+  }
+
+  function removeSpecialist(id) {
+    state.specialists.delete(id);
+    document.getElementById(`card-${id}`)?.remove();
+    document.getElementById(`config-${id}`)?.remove();
+    updateSpecialistCount();
+    if (state.evaluatorId) refreshEvaluatorInputs(state.evaluatorId);
+  }
+
+  // ── Evaluator modal ───────────────────────────────────────────
+  function openEvaluatorModal() {
+    modalEvaluatorSelected = state.evaluatorId;
+    document.querySelectorAll('.assistant-option[data-eval-id]').forEach(opt => {
+      const id = parseInt(opt.dataset.evalId);
+      opt.classList.toggle('selected', id === modalEvaluatorSelected);
+    });
+    updateEvaluatorConfirmBtn();
+    document.getElementById('evaluatorModalOverlay').classList.add('open');
+  }
+
+  function closeEvaluatorModal() {
+    document.getElementById('evaluatorModalOverlay').classList.remove('open');
+  }
+
+  function closeEvaluatorModalOutside(e) {
+    if (e.target === document.getElementById('evaluatorModalOverlay')) closeEvaluatorModal();
+  }
+
+  function selectEvaluator(id) {
+    modalEvaluatorSelected = id;
+    document.querySelectorAll('.assistant-option[data-eval-id]').forEach(opt => {
+      opt.classList.toggle('selected', parseInt(opt.dataset.evalId) === id);
+    });
+    updateEvaluatorConfirmBtn();
+  }
+
+  function updateEvaluatorConfirmBtn() {
+    const btn = document.getElementById('evaluatorConfirmBtn');
+    btn.disabled = modalEvaluatorSelected === state.evaluatorId || modalEvaluatorSelected === null;
+  }
+
+  function confirmEvaluatorSelection() {
+    // Remove old evaluator if any
+    if (state.evaluatorId) {
+      document.getElementById(`eval-card-${state.evaluatorId}`)?.remove();
+      document.getElementById(`eval-config-${state.evaluatorId}`)?.remove();
+    }
+    state.evaluatorId = modalEvaluatorSelected;
+    const card = buildEvaluatorCard(state.evaluatorId);
+    const list = document.getElementById('evaluatorList');
+    list.innerHTML = '';
+    list.appendChild(card);
+    list.style.display = 'flex';
+    document.getElementById('evaluatorEmptySlot').style.display = 'none';
+    document.getElementById('evaluatorManageBtn').style.display = 'flex';
+
+    const config = buildEvaluatorConfig(state.evaluatorId);
+    document.getElementById('rightPanelBody').appendChild(config);
+
+    closeEvaluatorModal();
+    selectAssistant(state.evaluatorId, 'evaluator');
+    updateValidation();
+  }
+
+  // ── Remove via confirm dialog ─────────────────────────────────
+  function confirmRemoveSpecialist(id) {
+    const name = specialistData[id].name;
+    document.getElementById('confirmTitle').textContent = `Remove "${name}"?`;
+    document.getElementById('confirmDesc').textContent = `This specialist will be removed from this simulation's scoring configuration. You can add it back at any time.`;
+    document.getElementById('confirmRemoveBtn').onclick = () => {
+      removeSpecialist(id);
+      if (selectedId === id) {
+        const first = [...state.specialists][0];
+        if (first) selectAssistant(first, 'specialist');
+        else if (state.evaluatorId) selectAssistant(state.evaluatorId, 'evaluator');
+        else showEmptyConfig();
+      }
+      updateValidation();
+      closeConfirm();
+    };
+    document.getElementById('confirmOverlay').classList.add('open');
+  }
+
+  function confirmRemoveEvaluator(id) {
+    const name = evaluatorData[id].name;
+    document.getElementById('confirmTitle').textContent = `Remove "${name}"?`;
+    document.getElementById('confirmDesc').textContent = `The evaluator will be removed. You'll need to select a new one before saving.`;
+    document.getElementById('confirmRemoveBtn').onclick = () => {
+      document.getElementById(`eval-card-${id}`)?.remove();
+      document.getElementById(`eval-config-${id}`)?.remove();
+      document.getElementById('evaluatorList').style.display = 'none';
+      document.getElementById('evaluatorEmptySlot').style.display = 'flex';
+      document.getElementById('evaluatorManageBtn').style.display = 'none';
+      state.evaluatorId = null;
+      const first = [...state.specialists][0];
+      if (first) selectAssistant(first, 'specialist');
+      else showEmptyConfig();
+      updateValidation();
+      closeConfirm();
+    };
+    document.getElementById('confirmOverlay').classList.add('open');
+  }
+
+  function closeConfirm() {
+    document.getElementById('confirmOverlay').classList.remove('open');
+  }
+
+  function closeConfirmOutside(e) {
+    if (e.target === document.getElementById('confirmOverlay')) closeConfirm();
+  }
+
+  // ── Empty state ───────────────────────────────────────────────
+  function showEmptyConfig() {
+    document.querySelectorAll('.config-panel').forEach(p => p.style.display = 'none');
+    document.getElementById('emptyConfig').style.display = 'flex';
+    document.querySelectorAll('.assistant-card').forEach(c => c.classList.remove('active'));
+  }
+
+  // ── Init ──────────────────────────────────────────────────────
+  function initialize() {
+    selectAssistant(1, 'specialist');
+    updateValidation();
+  }
+
+  initialize();
+</script>
+</body>
+</html>
