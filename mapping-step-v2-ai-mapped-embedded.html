@@ -223,6 +223,7 @@
     .modal-script-line .msl-role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; white-space: nowrap; padding-top: 1px; flex-shrink: 0; width: 60px; }
     .modal-script-line .msl-role.customer { color: #667085; }
     .modal-script-line .msl-role.agent { color: #444CE7; }
+    .modal-script-line.agent-line { background: #EEF4FF; border-color: #E0EAFF; }
     .modal-script-line .msl-text { font-size: 12px; color: #344054; line-height: 1.5; }
 
     /* ── Screen picker popover ── */
@@ -971,7 +972,7 @@
       assignedLines.forEach(function(line) {
         const role = line.classList.contains('customer') ? 'customer' : 'agent';
         const text = line.querySelector('.bubble').textContent.trim();
-        linesHtml += '<div class="modal-script-line">'
+        linesHtml += '<div class="modal-script-line' + (role === 'agent' ? ' agent-line' : '') + '">'
           + '<div class="msl-role ' + role + '">' + role + '</div>'
           + '<div class="msl-text">' + text + '</div>'
           + '</div>';
