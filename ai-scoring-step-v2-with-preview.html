@@ -63,7 +63,7 @@
     /* Section headers */
     .panel-section { display: flex; flex-direction: column; }
     .panel-section + .panel-section { border-top: 1px solid #E4E7EC; }
-    .panel-section-header { padding: 12px 16px 16px 28px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .panel-section-header { padding: 24px 16px 8px 28px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
     .panel-section-title { font-size: 12px; font-weight: 700; color: #667085; text-transform: uppercase; letter-spacing: 0.04em; }
     .panel-section-count { font-size: 11px; font-weight: 600; color: #667085; background: #F2F4F7; border-radius: 99px; padding: 1px 7px; }
 
@@ -234,7 +234,7 @@
     .preview-script-row { display: flex; align-items: flex-start; gap: 8px; border-radius: 8px; padding: 7px 10px; }
     .preview-script-row.customer { background: #F9FAFB; border: 1px solid #F2F4F7; }
     .preview-script-row.agent { background: #EEF4FF; border: 1px solid #E0EAFF; }
-    .preview-script-role { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; width: 50px; padding-top: 2px; }
+    .preview-script-role { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; width: 60px; padding-top: 2px; }
     .preview-script-row.customer .preview-script-role { color: #667085; }
     .preview-script-row.agent .preview-script-role { color: #444CE7; }
     .preview-script-bubble { font-size: 11px; color: #344054; line-height: 1.55; flex: 1; }
@@ -286,7 +286,6 @@
     /* Options in modal */
     .assistant-option { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #E4E7EC; border-radius: 10px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
     .assistant-option:hover { border-color: #A4BCFD; background: #F5F8FF; }
-    .assistant-option.maxed { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
     .specialist-max-hint { font-size: 11.5px; color: #F04438; text-align: right; }
     .assistant-option.selected { border-color: #3538CD; background: #EEF4FF; }
     .assistant-option.selected:hover { border-color: #3538CD; background: #EEF4FF; }
@@ -509,28 +508,6 @@ Output format:
               </div>
             </div>
 
-            <div class="divider"></div>
-
-            <div class="config-section">
-              <div class="config-section-label"><span class="material-symbols-outlined" style="color:#B42318;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;">crop_square</span>Terminal Failure</div>
-              <div class="terminal-row inactive" id="terminal-row-1">
-                <div class="terminal-row-left">
-                  <div>
-                    <div class="terminal-label">Mark as terminal failure condition</div>
-                    <div class="terminal-desc">If this assistant's score falls below the threshold, the attempt is automatically failed — regardless of other scores.</div>
-                    <div class="threshold-row" id="threshold-row-1" style="display:none;">
-                      <span class="threshold-label">Fail if score below</span>
-                      <input class="threshold-input" type="number" value="90" min="1" max="100" />
-                      <span class="threshold-unit">%</span>
-                    </div>
-                  </div>
-                </div>
-                <label class="toggle">
-                  <input type="checkbox" id="terminal-toggle-1" onchange="toggleTerminal(1)">
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-            </div>
           </div>
 
         </div><!-- /right-panel-body -->
@@ -1122,27 +1099,6 @@ Output format:
           </div>
         </div>
       </div>
-      <div class="divider"></div>
-      <div class="config-section">
-        <div class="config-section-label"><span class="material-symbols-outlined" style="color:#B42318;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24;">crop_square</span>Terminal Failure</div>
-        <div class="terminal-row inactive" id="terminal-row-${id}">
-          <div class="terminal-row-left">
-            <div>
-              <div class="terminal-label">Mark as terminal failure condition</div>
-              <div class="terminal-desc">If this assistant's score falls below the threshold, the attempt is automatically failed — regardless of other scores.</div>
-              <div class="threshold-row" id="threshold-row-${id}" style="display:none;">
-                <span class="threshold-label">Fail if score below</span>
-                <input class="threshold-input" type="number" value="90" min="1" max="100" />
-                <span class="threshold-unit">%</span>
-              </div>
-            </div>
-          </div>
-          <label class="toggle">
-            <input type="checkbox" id="terminal-toggle-${id}" onchange="toggleTerminal(${id})">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-      </div>
     `;
     return panel;
   }
@@ -1233,32 +1189,6 @@ Output format:
     }
   }
 
-  // ── Terminal failure toggle ───────────────────────────────────
-  function toggleTerminal(id) {
-    const checked = document.getElementById(`terminal-toggle-${id}`).checked;
-    const row = document.getElementById(`terminal-row-${id}`);
-    const thresholdRow = document.getElementById(`threshold-row-${id}`);
-    if (checked) {
-      row.classList.remove('inactive');
-      if (thresholdRow) thresholdRow.style.display = 'flex';
-    } else {
-      row.classList.add('inactive');
-      if (thresholdRow) thresholdRow.style.display = 'none';
-    }
-    // Update badge on card
-    const card = document.getElementById(`card-${id}`);
-    if (!card) return;
-    let badge = card.querySelector('.terminal-badge');
-    if (checked && !badge) {
-      const info = card.querySelector('.assistant-info');
-      badge = document.createElement('div');
-      badge.className = 'terminal-badge';
-      badge.innerHTML = '<span class="material-symbols-outlined" style="font-variation-settings:\'FILL\' 1,\'wght\' 400,\'GRAD\' 0,\'opsz\' 24;color:#B42318;">crop_square</span>Terminal failure';
-      info.appendChild(badge);
-    } else if (!checked && badge) {
-      badge.remove();
-    }
-  }
 
   // ── Specialist modal ──────────────────────────────────────────
   function openSpecialistModal() {
@@ -1285,7 +1215,6 @@ Output format:
     if (modalSpecialistChecked.has(id)) {
       modalSpecialistChecked.delete(id);
     } else {
-      if (modalSpecialistChecked.size >= 5) return; // max 5 — maxed options have pointer-events:none so this is a safety guard
       modalSpecialistChecked.add(id);
     }
     const opt = document.querySelector(`.assistant-option[data-id="${id}"]`);
@@ -1297,20 +1226,19 @@ Output format:
     const btn = document.getElementById('specialistConfirmBtn');
     const hint = document.getElementById('specialistMaxHint');
     const count = modalSpecialistChecked.size;
-    const atMax = count >= 5;
+    const overLimit = count > 5;
 
-    // Show/hide max hint and grey out unselected options
-    hint.style.display = atMax ? 'block' : 'none';
-    document.querySelectorAll('.assistant-option[data-id]').forEach(opt => {
-      const id = parseInt(opt.dataset.id);
-      const isSelected = modalSpecialistChecked.has(id);
-      opt.classList.toggle('maxed', atMax && !isSelected);
-    });
+    // Over-limit: show error, disable Update
+    if (overLimit) {
+      hint.textContent = `${count} selected — reduce to 5 or fewer to update`;
+      hint.style.display = 'block';
+      btn.disabled = true;
+      return;
+    }
 
-    // Disable Update only if selection is identical to current saved state
-    const same = count === state.specialists.size &&
-      [...modalSpecialistChecked].every(id => state.specialists.has(id));
-    btn.disabled = same;
+    // Within limit: hide hint, always enable
+    hint.style.display = 'none';
+    btn.disabled = false;
   }
 
   function confirmSpecialistSelections() {
