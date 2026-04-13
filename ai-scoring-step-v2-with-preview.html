@@ -74,10 +74,12 @@
     .assistant-list { padding: 8px 16px 8px 28px; padding-bottom: 24px; display: flex; flex-direction: column; gap: 6px; }
 
     /* Assistant card */
-    .assistant-card { border: 1.5px solid #E4E7EC; border-radius: 10px; padding: 11px 13px; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; background: #fff; display: flex; align-items: center; gap: 10px; }
-    .assistant-card:hover { border-color: #A4BCFD; }
-    .assistant-card.active { border-color: #A4BCFD; box-shadow: 0 1px 2px 0 rgba(16,24,40,0.05), 0 0 0 4px #EAF0FF; }
-    .assistant-avatar { width: 32px; height: 32px; min-width: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .assistant-card { border: 1.5px solid #E4E7EC; border-radius: 10px; padding: 11px 13px; cursor: pointer; transition: border-color 0.12s, background 0.12s, box-shadow 0.12s; background: #fff; display: flex; align-items: center; gap: 10px; }
+    .assistant-card:hover { border-color: #A4BCFD; background: #FFF; }
+    .assistant-card:active:not(.active) { border-color: #A4BCFD; background: #FFF; }
+    .assistant-card.active { border-color: #A4BCFD; background: #F5F8FF; }
+    .assistant-avatar { width: 32px; height: 32px; min-width: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .assistant-avatar .material-symbols-outlined { font-size: 16px; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
     .assistant-info { flex: 1; min-width: 0; }
     .assistant-name { font-size: 13px; font-weight: 700; color: #101828; overflow-wrap: anywhere; line-height: 1.35; }
     .assistant-desc { font-size: 11px; color: #667085; margin-top: 1px; line-height: 1.4; overflow-wrap: anywhere; }
@@ -110,7 +112,7 @@
     .empty-desc { font-size: 13px; color: #667085; line-height: 1.6; max-width: 280px; }
 
     /* Config panel */
-    .config-panel { padding: 24px 28px; display: flex; flex-direction: column; gap: 24px; }
+    .config-panel { padding: 24px 28px; display: flex; flex-direction: column; gap: 40px; }
     .config-header { display: flex; align-items: flex-start; justify-content: space-between; }
     .config-header-left { display: flex; flex-direction: column; gap: 3px; }
     .config-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
@@ -160,7 +162,8 @@
     /* Specialist inputs list in evaluator */
     .specialist-inputs-list { display: flex; flex-direction: column; gap: 6px; }
     .specialist-input-row { display: flex; align-items: center; gap: 8px; background: #F9FAFB; border: 1px solid #E4E7EC; border-radius: 8px; padding: 10px 14px; }
-    .specialist-input-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .specialist-input-avatar { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .specialist-input-avatar .material-symbols-outlined { font-size: 14px; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
     .specialist-input-name { font-size: 13px; font-weight: 600; color: #344054; flex: 1; }
     .specialist-input-badge { font-size: 11px; font-weight: 500; color: #3538CD; background: #EEF4FF; border-radius: 4px; padding: 2px 7px; }
     .specialist-inputs-empty { font-size: 12px; color: #98A2B3; font-style: italic; padding: 8px 0; }
@@ -210,7 +213,7 @@
     .modal-sim-only .preview-script-bubble { font-size: 12px; }
     .modal-sim-only .preview-script-role { font-size: 10px; }
     .modal-sim-only .preview-hotspot-meta { font-size: 12px; }
-    .modal-sim-only .preview-outcome-row { font-size: 11px; }
+    .modal-sim-only .preview-outcome-row { font-size: 12px; }
 
     /* Sim output preview pane */
     .preview-pane { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
@@ -224,46 +227,41 @@
     .preview-screen-card-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #F9FAFB; border-radius: 10px 10px 0 0; border-bottom: 1px solid #F2F4F7; }
     .preview-screen-thumb { width: 38px; height: 26px; border-radius: 4px; background: #E4E7EC; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
     .preview-screen-thumb .material-symbols-outlined { font-size: 14px; color: #98A2B3; }
-    .preview-screen-name { font-size: 12px; font-weight: 700; color: #101828; }
-    .preview-screen-sub { font-size: 11px; color: #98A2B3; margin-top: 1px; }
+    .preview-screen-name { font-size: 12px; font-weight: 700; color: #101828; line-height: 1.35; }
+    .preview-screen-sub { font-size: 10.5px; color: #98A2B3; margin-top: 2px; }
     .preview-screen-body { padding: 10px 14px; display: flex; flex-direction: column; }
 
     /* Script section inside card */
     .preview-script-section { display: flex; flex-direction: column; gap: 5px; padding-bottom: 9px; }
-    .preview-script-label { font-size: 10px; font-weight: 700; color: #98A2B3; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+    .preview-script-label { font-size: 11px; font-weight: 600; color: #344054; margin-bottom: 4px; }
     .preview-script-row { display: flex; align-items: flex-start; gap: 8px; border-radius: 8px; padding: 7px 10px; }
     .preview-script-row.customer { background: #F9FAFB; border: 1px solid #F2F4F7; }
     .preview-script-row.agent { background: #EEF4FF; border: 1px solid #E0EAFF; }
     .preview-script-role { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; width: 60px; padding-top: 2px; }
     .preview-script-row.customer .preview-script-role { color: #667085; }
     .preview-script-row.agent .preview-script-role { color: #444CE7; }
-    .preview-script-bubble { font-size: 11px; color: #344054; line-height: 1.55; flex: 1; }
+    .preview-script-bubble { font-size: 14px; color: #344054; line-height: 1.55; flex: 1; }
 
     /* Hotspot section inside card */
-    .preview-hotspot-section { display: flex; flex-direction: column; gap: 8px; padding-top: 9px; border-top: 1px solid #F2F4F7; }
-    .preview-hotspot-label-row { font-size: 10px; font-weight: 700; color: #98A2B3; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1px; }
+    .preview-hotspot-section { display: flex; flex-direction: column; gap: 10px; padding-top: 10px; border-top: 1px solid #F2F4F7; }
+    .preview-hotspot-label-row { font-size: 11px; font-weight: 600; color: #344054; margin-bottom: 1px; }
     /* Each hotspot item: header row + indented outcomes */
-    .preview-hotspot-item { display: flex; flex-direction: column; gap: 3px; }
-    .preview-hotspot-header { display: flex; align-items: flex-start; gap: 7px; }
-    .preview-hotspot-icon { width: 16px; height: 16px; border-radius: 3px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-    .preview-hotspot-icon .material-symbols-outlined { font-size: 11px; color: #fff; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
-    .preview-hotspot-icon.tf { background: #7F56D9; }
-    .preview-hotspot-icon.dd { background: #7F56D9; }
-    .preview-hotspot-icon.click-ok { background: #00B081; }
-    .preview-hotspot-icon.click-bad { background: #B42318; }
-    .preview-hotspot-meta { font-size: 11px; color: #344054; line-height: 1.4; }
-    .preview-hotspot-meta strong { font-weight: 600; }
-    .preview-hotspot-meta .hs-answer { color: #667085; font-weight: 400; }
-    /* Outcome bullet rows */
-    .preview-outcomes { display: flex; flex-direction: column; gap: 2px; padding-left: 23px; }
-    .preview-outcome-row { display: flex; align-items: center; gap: 5px; font-size: 10.5px; color: #667085; }
-    .preview-outcome-bullet { color: #C4C9D4; flex-shrink: 0; font-size: 9px; line-height: 1; }
-    .preview-outcome-text { flex: 1; }
+    .preview-hotspot-item { display: flex; flex-direction: column; gap: 4px; }
+    .preview-hotspot-header { display: flex; align-items: flex-start; gap: 6px; }
+    .preview-hotspot-icon { width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0; }
+    .preview-hotspot-icon .material-symbols-outlined { font-size: 15px; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; color: #667085; }
+    .preview-hotspot-meta { font-size: 12px; font-weight: 400; color: #667085; line-height: 1.45; }
+    .preview-hotspot-meta .hs-name { font-size: 12px; font-weight: 700 !important; color: #344054; }
+    .preview-hotspot-meta .hs-answer { font-size: 12px; color: #98A2B3; font-weight: 400; }
+    /* Outcome rows */
+    .preview-outcomes { display: flex; flex-direction: column; gap: 3px; padding-left: 24px; margin-top: 1px; }
+    .preview-outcome-row { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #98A2B3; }
+    .preview-outcome-text { flex: 1; font-size: 12px; font-weight: 400; line-height: 1.4; color: #344054; }
     /* Score badges */
-    .preview-badge { display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
-    .preview-badge.badge-correct { background: #ECFDF3; color: #027A48; border-radius: 10px; padding: 1px 5px; }
-    .preview-badge.badge-penalty { background: #FFF6ED; color: #B54708; border-radius: 10px; padding: 1px 5px; }
-    .preview-badge.badge-terminal { width: 10px; height: 10px; background: #B42318; border-radius: 2px; }
+    .preview-badge { display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; white-space: nowrap; }
+    .preview-badge.badge-correct { background: #ECFDF3; color: #027A48; border-radius: 20px; padding: 2px 7px; }
+    .preview-badge.badge-penalty { background: #FFF6ED; color: #B54708; border-radius: 20px; padding: 2px 7px; }
+    .preview-badge.badge-terminal { width: 12px; height: 12px; background: #B42318; border-radius: 3px; flex-shrink: 0; }
 
     /* View sim output link in Specialist config */
     .view-sim-link { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: #444CE7; cursor: pointer; text-decoration: none; margin-top: 2px; }
@@ -287,9 +285,34 @@
     .assistant-option { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid #E4E7EC; border-radius: 10px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
     .assistant-option:hover { border-color: #A4BCFD; background: #F5F8FF; }
     .specialist-max-hint { font-size: 11.5px; color: #F04438; text-align: right; }
+
+    /* Result screens section */
+    .preview-result-section { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #E4E7EC; padding-top: 16px; }
+    .preview-result-section-label { font-size: 10px; font-weight: 700; color: #444CE7; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+    .preview-result-card { border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+    .preview-result-card.pass { border: 1.5px dashed #6CE9A6; background: #fff; }
+    .preview-result-card.fail { border: 1.5px dashed #FEC84B; background: #fff; }
+    .preview-result-card.crit { border: 1.5px dashed #FDA29B; background: #fff; }
+    .preview-result-status { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; }
+    .preview-result-card.pass .preview-result-status { color: #027A48; }
+    .preview-result-card.fail .preview-result-status { color: #B54708; }
+    .preview-result-card.crit .preview-result-status { color: #B42318; }
+    .preview-result-status .material-symbols-outlined { font-size: 15px; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    .preview-result-message { font-size: 11.5px; font-weight: 600; line-height: 1.4; }
+    .preview-result-card.pass .preview-result-message { color: #027A48; }
+    .preview-result-card.fail .preview-result-message { color: #B54708; }
+    .preview-result-card.crit .preview-result-message { color: #B42318; }
+    .preview-result-passmark { font-size: 10.5px; color: #98A2B3; }
+    .preview-result-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .preview-result-stat { background: #fff; border: 1px solid #E4E7EC; border-radius: 7px; padding: 7px 10px; display: flex; flex-direction: column; gap: 1px; }
+    .preview-result-stat-label { font-size: 10px; color: #667085; }
+    .preview-result-stat-value { font-size: 13px; font-weight: 700; color: #101828; }
+    .preview-result-stat-value.green { color: #027A48; }
+    .preview-result-stat-value.red   { color: #B42318; }
     .assistant-option.selected { border-color: #3538CD; background: #EEF4FF; }
     .assistant-option.selected:hover { border-color: #3538CD; background: #EEF4FF; }
     .option-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .option-avatar .material-symbols-outlined { font-size: 20px; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
     .option-info { flex: 1; }
     .option-name { font-size: 14px; font-weight: 700; color: #101828; }
     .option-desc { font-size: 12px; color: #667085; margin-top: 2px; line-height: 1.45; }
@@ -411,7 +434,7 @@
           <div class="assistant-list" id="specialistList">
             <!-- Pre-added specialist -->
             <div class="assistant-card active" id="card-1" onclick="selectAssistant(1)">
-              <div class="assistant-avatar" style="background:#EEF4FF;">🎧</div>
+              <div class="assistant-avatar" style="background:#EEF4FF;"><span class="material-symbols-outlined" style="color:#6172F3;">chat</span></div>
               <div class="assistant-info">
                 <div class="assistant-name">Conversation Quality Evaluator</div>
                 <div class="assistant-desc">Soft skills and clarity</div>
@@ -541,52 +564,52 @@ Output format:
       <!-- Options list -->
       <div class="modal-body">
         <div class="assistant-option selected" data-id="1" onclick="toggleSpecialist(1)">
-          <div class="option-avatar" style="background:#EEF4FF;">🎧</div>
+          <div class="option-avatar" style="background:#EEF4FF;"><span class="material-symbols-outlined" style="color:#6172F3;">chat</span></div>
           <div class="option-info"><div class="option-name">Conversation Quality Evaluator</div><div class="option-desc">Soft skills and clarity</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="2" onclick="toggleSpecialist(2)">
-          <div class="option-avatar" style="background:#F4F3FF;">🖱️</div>
+          <div class="option-avatar" style="background:#F4F3FF;"><span class="material-symbols-outlined" style="color:#7F56D9;">policy</span></div>
           <div class="option-info"><div class="option-name">Intent &amp; Compliance Checker</div><div class="option-desc">Steps and compliance</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="3" onclick="toggleSpecialist(3)">
-          <div class="option-avatar" style="background:#ECFDF3;">📋</div>
+          <div class="option-avatar" style="background:#ECFDF3;"><span class="material-symbols-outlined" style="color:#00B081;">highlight_mouse_cursor</span></div>
           <div class="option-info"><div class="option-name">UI Interaction &amp; Accuracy Evaluator</div><div class="option-desc">Navigation accuracy</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="4" onclick="toggleSpecialist(4)">
-          <div class="option-avatar" style="background:#FFF6ED;">🎙️</div>
+          <div class="option-avatar" style="background:#FFF6ED;"><span class="material-symbols-outlined" style="color:#F79009;">record_voice_over</span></div>
           <div class="option-info"><div class="option-name">Audio Keyword &amp; Accuracy</div><div class="option-desc">Keyword accuracy and script adherence</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="5" onclick="toggleSpecialist(5)">
-          <div class="option-avatar" style="background:#FFF1F3;">⏱️</div>
+          <div class="option-avatar" style="background:#FFF1F3;"><span class="material-symbols-outlined" style="color:#F63D68;">speed</span></div>
           <div class="option-info"><div class="option-name">Resolution Speed Specialist</div><div class="option-desc">Task completion efficiency</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="6" onclick="toggleSpecialist(6)">
-          <div class="option-avatar" style="background:#FFF6ED;">💬</div>
+          <div class="option-avatar" style="background:#FFF6ED;"><span class="material-symbols-outlined" style="color:#F79009;">favorite</span></div>
           <div class="option-info"><div class="option-name">Empathy &amp; Rapport Specialist</div><div class="option-desc">Emotional tone and customer rapport</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="7" onclick="toggleSpecialist(7)">
-          <div class="option-avatar" style="background:#F4F3FF;">🔒</div>
+          <div class="option-avatar" style="background:#F4F3FF;"><span class="material-symbols-outlined" style="color:#7F56D9;">database</span></div>
           <div class="option-info"><div class="option-name">Data Privacy &amp; PII Checker</div><div class="option-desc">Sensitive data handling compliance</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="8" onclick="toggleSpecialist(8)">
-          <div class="option-avatar" style="background:#ECFDF3;">🏷️</div>
+          <div class="option-avatar" style="background:#ECFDF3;"><span class="material-symbols-outlined" style="color:#00B081;">percent_discount</span></div>
           <div class="option-info"><div class="option-name">Upsell &amp; Offer Awareness</div><div class="option-desc">Upsell opportunities and offer communication</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="9" onclick="toggleSpecialist(9)">
-          <div class="option-avatar" style="background:#EEF4FF;">📚</div>
+          <div class="option-avatar" style="background:#EEF4FF;"><span class="material-symbols-outlined" style="color:#6172F3;">school</span></div>
           <div class="option-info"><div class="option-name">Knowledge Accuracy Verifier</div><div class="option-desc">Factual correctness of agent responses</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="10" onclick="toggleSpecialist(10)">
-          <div class="option-avatar" style="background:#F2F4F7;">♿</div>
+          <div class="option-avatar" style="background:#F2F4F7;"><span class="material-symbols-outlined" style="color:#667085;">accessible</span></div>
           <div class="option-info"><div class="option-name">Accessibility &amp; Clarity Checker</div><div class="option-desc">Language simplicity and inclusivity</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
@@ -595,7 +618,6 @@ Output format:
       <!-- Sim output preview pane (inside Manage modal) -->
       <div class="preview-pane">
         <div class="preview-pane-header">
-          <span class="material-symbols-outlined" style="font-size:15px;color:#667085;">monitor</span>
           <div>
             <div class="preview-pane-title">Sim output preview</div>
             <div class="preview-pane-desc">Screens, script lines &amp; hotspots this specialist receives</div>
@@ -645,12 +667,12 @@ Output format:
     </div>
     <div class="modal-body">
       <div class="assistant-option" data-eval-id="20" onclick="selectEvaluator(20)">
-        <div class="option-avatar" style="background:#F4F3FF;">🧠</div>
+        <div class="option-avatar" style="background:#F4F3FF;"><span class="material-symbols-outlined" style="color:#7F56D9;">workspace_premium</span></div>
         <div class="option-info"><div class="option-name">Master Evaluator</div><div class="option-desc">Combines all specialist scores</div></div>
         <div class="option-radio"></div>
       </div>
       <div class="assistant-option" data-eval-id="21" onclick="selectEvaluator(21)">
-        <div class="option-avatar" style="background:#ECFDF3;">⚖️</div>
+        <div class="option-avatar" style="background:#ECFDF3;"><span class="material-symbols-outlined" style="color:#00B081;">balance</span></div>
         <div class="option-info"><div class="option-name">Balanced Scoring Evaluator</div><div class="option-desc">Prioritizes compliance when calculating the final score</div></div>
         <div class="option-radio"></div>
       </div>
@@ -683,7 +705,7 @@ Output format:
 <script>
   // ── Data ─────────────────────────────────────────────────────
   const specialistData = {
-    1: { name: 'Conversation Quality Evaluator', desc: 'Soft skills and clarity', avatar: '🎧', avatarBg: '#EEF4FF', lastEdited: '2 days ago',
+    1: { name: 'Conversation Quality Evaluator', desc: 'Soft skills and clarity', avatar: 'chat', avatarBg: '#EEF4FF', avatarColor: '#6172F3', lastEdited: '2 days ago',
          prompt: `You are a Customer Service Quality Analyst AI.
 Evaluate the agent's conversation in a hotel booking scenario.
 
@@ -710,7 +732,7 @@ Output format:
   "total_score": X,
   "feedback": "Concise explanation of strengths and weaknesses"
 }` },
-    2: { name: 'Intent & Compliance Checker', desc: 'Steps and compliance', avatar: '🖱️', avatarBg: '#F4F3FF', lastEdited: '5 days ago',
+    2: { name: 'Intent & Compliance Checker', desc: 'Steps and compliance', avatar: 'policy', avatarBg: '#F4F3FF', avatarColor: '#7F56D9', lastEdited: '5 days ago',
          prompt: `You are a Compliance and Process AI for hotel booking interactions.
 Analyze the conversation transcript and determine whether the agent correctly followed required steps.
 
@@ -747,7 +769,7 @@ Output format:
 Critical Fail Conditions:
 - Booking confirmed without verifying dates
 - Incorrect pricing communicated` },
-    3: { name: 'UI Interaction & Accuracy Evaluator', desc: 'Navigation accuracy', avatar: '📋', avatarBg: '#ECFDF3', lastEdited: '1 week ago',
+    3: { name: 'UI Interaction & Accuracy Evaluator', desc: 'Navigation accuracy', avatar: 'highlight_mouse_cursor', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '1 week ago',
          prompt: `You are a UI Interaction Scoring AI for a hotel booking system simulation.
 Analyze the agent's screen interactions.
 
@@ -776,7 +798,7 @@ Output format:
   "final_score": X,
   "feedback": "Explain incorrect navigation or missed steps"
 }` },
-    4: { name: 'Audio Keyword & Accuracy', desc: 'Keyword accuracy and script adherence', avatar: '🎙️', avatarBg: '#FFF6ED', lastEdited: '3 days ago',
+    4: { name: 'Audio Keyword & Accuracy', desc: 'Keyword accuracy and script adherence', avatar: 'record_voice_over', avatarBg: '#FFF6ED', avatarColor: '#F79009', lastEdited: '3 days ago',
          prompt: `You are an AI that evaluates keyword and semantic accuracy in a hotel booking call.
 Compare the agent's responses against expected key information.
 
@@ -802,7 +824,7 @@ Output format:
   "overall_score": X,
   "feedback": "Highlight missing or incorrect information"
 }` },
-    5: { name: 'Resolution Speed Specialist', desc: 'Task completion efficiency', avatar: '⏱️', avatarBg: '#FFF1F3', lastEdited: '2 weeks ago',
+    5: { name: 'Resolution Speed Specialist', desc: 'Task completion efficiency', avatar: 'speed', avatarBg: '#FFF1F3', avatarColor: '#F63D68', lastEdited: '2 weeks ago',
          prompt: `You are a Task Efficiency Analyst AI for hotel booking simulations.
 Evaluate how efficiently the agent completed the booking process.
 
@@ -831,7 +853,7 @@ Output format:
   "final_score": X,
   "feedback": "Explain inefficiencies or unnecessary detours taken"
 }` },
-    6: { name: 'Empathy & Rapport Specialist', desc: 'Emotional tone and customer rapport', avatar: '💬', avatarBg: '#FFF6ED', lastEdited: '3 days ago',
+    6: { name: 'Empathy & Rapport Specialist', desc: 'Emotional tone and customer rapport', avatar: 'favorite', avatarBg: '#FFF6ED', avatarColor: '#F79009', lastEdited: '3 days ago',
          prompt: `You are an Empathy and Rapport Analyst AI for customer service interactions.
 Evaluate the emotional quality of the agent's communication throughout the hotel booking call.
 
@@ -857,7 +879,7 @@ Output format:
   "total_score": X,
   "feedback": "Highlight cold, dismissive, or robotic moments in the interaction"
 }` },
-    7: { name: 'Data Privacy & PII Checker', desc: 'Sensitive data handling compliance', avatar: '🔒', avatarBg: '#F4F3FF', lastEdited: '1 week ago',
+    7: { name: 'Data Privacy & PII Checker', desc: 'Sensitive data handling compliance', avatar: 'database', avatarBg: '#F4F3FF', avatarColor: '#7F56D9', lastEdited: '1 week ago',
          prompt: `You are a Data Privacy Compliance AI for hotel booking contact center simulations.
 Verify that the agent handled customer information in accordance with privacy best practices.
 
@@ -890,7 +912,7 @@ Output format:
 Critical Fail Conditions:
 - Agent verbally repeated full card or ID details
 - Agent shared guest information without consent` },
-    8: { name: 'Upsell & Offer Awareness', desc: 'Upsell opportunities and offer communication', avatar: '🏷️', avatarBg: '#ECFDF3', lastEdited: '5 days ago',
+    8: { name: 'Upsell & Offer Awareness', desc: 'Upsell opportunities and offer communication', avatar: 'percent_discount', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '5 days ago',
          prompt: `You are an Upsell and Offer Awareness AI for hotel booking interactions.
 Evaluate whether the agent appropriately identified and communicated relevant upsell opportunities.
 
@@ -923,7 +945,7 @@ Output format:
   "score": X,
   "feedback": "Note missed opportunities and any inappropriate upsell attempts"
 }` },
-    9: { name: 'Knowledge Accuracy Verifier', desc: 'Factual correctness of agent responses', avatar: '📚', avatarBg: '#EEF4FF', lastEdited: '2 days ago',
+    9: { name: 'Knowledge Accuracy Verifier', desc: 'Factual correctness of agent responses', avatar: 'school', avatarBg: '#EEF4FF', avatarColor: '#6172F3', lastEdited: '2 days ago',
          prompt: `You are a Knowledge Accuracy Verification AI for hotel booking simulations.
 Assess whether the agent provided factually correct information throughout the interaction.
 
@@ -957,7 +979,7 @@ Output format:
   "critical_fail": true/false,
   "feedback": "Detail any incorrect or misleading information provided by the agent"
 }` },
-    10: { name: 'Accessibility & Clarity Checker', desc: 'Language simplicity and inclusivity', avatar: '♿', avatarBg: '#F2F4F7', lastEdited: '4 days ago',
+    10: { name: 'Accessibility & Clarity Checker', desc: 'Language simplicity and inclusivity', avatar: 'accessible', avatarBg: '#F2F4F7', avatarColor: '#667085', lastEdited: '4 days ago',
          prompt: `You are an Accessibility and Language Clarity AI for customer service simulations.
 Evaluate whether the agent communicated in a way that is inclusive, simple, and accessible to all customers.
 
@@ -986,9 +1008,9 @@ Output format:
   };
 
   const evaluatorData = {
-    20: { name: 'Master Evaluator', desc: 'Combines all specialist scores into one final result', avatar: '🧠', avatarBg: '#F4F3FF', lastEdited: '4 days ago',
+    20: { name: 'Master Evaluator', desc: 'Combines all specialist scores into one final result', avatar: 'workspace_premium', avatarBg: '#F4F3FF', avatarColor: '#7F56D9', lastEdited: '4 days ago',
           prompt: 'You will receive structured output from each specialist assistant. Synthesize their findings into a single coherent evaluation: an overall score, a pass/fail verdict, and a concise summary of strengths and areas for improvement. Weigh each specialist\'s output equally unless a critical failure is flagged.' },
-    21: { name: 'Balanced Scoring Evaluator', desc: 'Prioritizes compliance when calculating the final score', avatar: '⚖️', avatarBg: '#ECFDF3', lastEdited: '1 week ago',
+    21: { name: 'Balanced Scoring Evaluator', desc: 'Prioritizes compliance when calculating the final score', avatar: 'balance', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '1 week ago',
           prompt: 'Synthesize specialist outputs with a compliance-first approach. If any compliance violation is flagged by a specialist, reduce the final score significantly. Otherwise, aggregate scores proportionally and provide a final verdict with reasoning.' },
   };
 
@@ -1030,7 +1052,7 @@ Output format:
     card.id = `card-${id}`;
     card.onclick = () => selectAssistant(id, 'specialist');
     card.innerHTML = `
-      <div class="assistant-avatar" style="background:${d.avatarBg};">${d.avatar}</div>
+      <div class="assistant-avatar" style="background:${d.avatarBg};"><span class="material-symbols-outlined" style="color:${d.avatarColor};">${d.avatar}</span></div>
       <div class="assistant-info">
         <div class="assistant-name">${d.name}</div>
         <div class="assistant-desc">${d.desc}</div>
@@ -1047,7 +1069,7 @@ Output format:
     card.id = `eval-card-${id}`;
     card.onclick = () => selectAssistant(id, 'evaluator');
     card.innerHTML = `
-      <div class="assistant-avatar" style="background:${d.avatarBg};">${d.avatar}</div>
+      <div class="assistant-avatar" style="background:${d.avatarBg};"><span class="material-symbols-outlined" style="color:${d.avatarColor};">${d.avatar}</span></div>
       <div class="assistant-info">
         <div class="assistant-name">${d.name}</div>
         <div class="assistant-desc">${d.desc}</div>
@@ -1139,7 +1161,23 @@ Output format:
           </div>
         </div>
       </div>
-      <div class="divider"></div>
+      <div class="config-section">
+        <div class="config-section-label"><span class="material-symbols-outlined">data_object</span>Required Output Format</div>
+        <div class="prompt-box">
+          <div class="prompt-text" style="font-size:12px;">{
+  "overall_score": 0–100,
+  "pass": true/false,
+  "critical_fail": true/false,
+  "specialist_scores": {
+    "[specialist_name]": {
+      "score": 0–100,
+      "feedback": "..."
+    }
+  },
+  "summary": "Overall feedback shown to the agent"
+}</div>
+        </div>
+      </div>
       <div class="config-section">
         <div class="config-section-label"><span class="material-symbols-outlined">hub</span>Specialist Inputs</div>
         <div class="specialist-inputs-list" id="eval-inputs-${id}"></div>
@@ -1158,9 +1196,8 @@ Output format:
     list.innerHTML = [...state.specialists].map(sid => {
       const s = specialistData[sid];
       return `<div class="specialist-input-row">
-        <div class="specialist-input-avatar" style="background:${s.avatarBg};">${s.avatar}</div>
+        <div class="specialist-input-avatar" style="background:${s.avatarBg};"><span class="material-symbols-outlined" style="color:${s.avatarColor};">${s.avatar}</span></div>
         <span class="specialist-input-name">${s.name}</span>
-        <span class="specialist-input-badge">Specialist</span>
       </div>`;
     }).join('');
   }
@@ -1391,14 +1428,13 @@ Output format:
     const IMG_S6 = 'data:image/jpeg;base64,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';
 
     // Badge helpers
-    const bdgOk  = (v) => `<span class="preview-badge badge-correct">+${v}</span>`;
-    const bdgBad = (v) => `<span class="preview-badge badge-penalty">−${v}</span>`;
+    const bdgOk  = (v) => `<span class="preview-badge badge-correct">+${v} pt</span>`;
+    const bdgBad = (v) => `<span class="preview-badge badge-penalty">−${v} pt</span>`;
     const bdgEnd = ()  => `<span class="preview-badge badge-terminal"></span>`;
 
-    // Single outcome bullet row
+    // Single outcome row
     const out = (label, dest, badge) =>
       `<div class="preview-outcome-row">
-        <span class="preview-outcome-bullet">●</span>
         ${badge}
         <span class="preview-outcome-text">${label} → ${dest}</span>
       </div>`;
@@ -1408,7 +1444,7 @@ Output format:
       `<div class="preview-hotspot-item">
         <div class="preview-hotspot-header">
           <div class="preview-hotspot-icon ${cls}"><span class="material-symbols-outlined">${icon}</span></div>
-          <div class="preview-hotspot-meta"><strong>“${name}”</strong> — ${type}${answerKey ? ` <span class="hs-answer">· Answer: “${answerKey}”</span>` : ''}</div>
+          <div class="preview-hotspot-meta"><span class="hs-name" style="font-weight:700;color:#344054;">“${name}”</span> — ${type}${answerKey ? `<span class="hs-answer"> • Answer key: “${answerKey}”</span>` : ''}</div>
         </div>
         <div class="preview-outcomes">${outcomes}</div>
       </div>`;
@@ -1427,7 +1463,7 @@ Output format:
         </div>
         <div class="preview-screen-body">
           <div class="preview-script-section">
-            <div class="preview-script-label">Script</div>
+            <div class="preview-script-label">Script lines</div>
             ${script}
           </div>
           <div class="preview-hotspot-section">
@@ -1438,7 +1474,7 @@ Output format:
       </div>`;
 
     return [
-      card('HP Landing Page', 'Screen 1 · 4 hotspots · 2 script lines', IMG_S1,
+      card('Screen 1 — HP Landing Page', '4 hotspots · 2 script lines', IMG_S1,
         bubble('customer', 'Hi, I\'d like to book a hotel room in Ohio for next weekend — checking in Apr 30, checking out May 1.') +
         bubble('agent', 'Of course! Let me look that up for you. Could you confirm the city? I want to make sure I search the right area.'),
         hs('title','tf','Hotel Location','Text field','Ohio',
@@ -1453,13 +1489,13 @@ Output format:
         hs('web_traffic','click-ok','Find Hotels','Click',null,
           out('Correct','Screen 2', bdgOk(1)))),
 
-      card('Search Results', 'Screen 2 · 1 hotspot · 2 script lines', IMG_S2,
+      card('Screen 2 — Search Results', '1 hotspot · 2 script lines', IMG_S2,
         bubble('customer', 'Yes, Ohio — anywhere nearby works.') +
         bubble('agent', 'Perfect, I\'ll search Ohio. And the dates were Apr 30 to May 1 — I\'ll enter those now.'),
         hs('web_traffic','click-ok','Select Hotel','Click',null,
           out('Correct','Screen 3', bdgOk(1)))),
 
-      card('Hotel Detail', 'Screen 3 · 3 hotspots · 4 script lines', IMG_S3,
+      card('Screen 3 — Hotel Detail', '3 hotspots · 4 script lines', IMG_S3,
         bubble('customer', 'Great, I can see a few options. Holiday Inn Express looks nice — can we go with that one?') +
         bubble('agent', 'Sure! I\'ll select Holiday Inn Express for you now.') +
         bubble('customer', 'It\'s just for two adults. We\'d prefer to pay at the hotel rather than upfront if that\'s an option.') +
@@ -1472,12 +1508,12 @@ Output format:
         hs('web_traffic','click-ok','Pay at Hotel','Click',null,
           out('Correct','Screen 4', bdgOk(1)))),
 
-      card('Room Selection', 'Screen 4 · 1 hotspot · 1 script line', IMG_S4,
+      card('Screen 4 — Room Selection', '1 hotspot · 1 script line', IMG_S4,
         bubble('customer', 'Wonderful, thank you!'),
         hs('web_traffic','click-ok','Confirm Room','Click',null,
           out('Correct','Screen 5', bdgOk(1)))),
 
-      card('Guest Details &amp; Payment', 'Screen 5 · 2 hotspots · 2 script lines', IMG_S5,
+      card('Screen 5 — Guest Details &amp; Payment', '4 hotspots · 2 script lines', IMG_S5,
         bubble('customer', 'My name is Claire. Can you make sure the booking is under that name?') +
         bubble('agent', 'Of course — I\'ll enter “Claire” as the guest name and complete the booking now.'),
         hs('title','tf','Guest Name','Text field','Claire',
@@ -1486,12 +1522,51 @@ Output format:
         hs('web_traffic','click-ok','Complete Booking','Click',null,
           out('Correct','Screen 6', bdgOk(1)))),
 
-      card('Booking Confirmation', 'Screen 6 · 1 hotspot · 2 script lines', IMG_S6,
+      card('Screen 6 — Booking Confirmation', '1 hotspot · 2 script lines', IMG_S6,
         bubble('customer', 'I see the confirmation on my end — booking number HC-4421. Thank you so much!') +
         bubble('agent', 'You\'re all set, Sarah! Your confirmation number is HC-4421. Is there anything else I can help you with today?'),
         hs('web_traffic','click-ok','Confirmation','Click',null,
           out('Correct','Result Screen', bdgOk(1)))),
-    ].join('');
+    ].join('') + `
+    <div class="preview-result-section">
+      <div class="preview-result-section-label">Result Screens</div>
+
+      <div class="preview-result-card pass">
+        <div class="preview-result-status"><span class="material-symbols-outlined">verified</span>Passed</div>
+        <div class="preview-result-message">Great job completing the simulation!</div>
+        <div class="preview-result-passmark">Required Pass Mark: 75%</div>
+        <div class="preview-result-stats">
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Completion Time</div><div class="preview-result-stat-value">5:23</div></div>
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Overall Score</div><div class="preview-result-stat-value">90%</div></div>
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Correct Clicks</div><div class="preview-result-stat-value green">+8 pts</div></div>
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Penalty Mistakes</div><div class="preview-result-stat-value red">−1 pts</div></div>
+        </div>
+      </div>
+
+      <div class="preview-result-card fail">
+        <div class="preview-result-status"><span class="material-symbols-outlined">close</span>Not passed</div>
+        <div class="preview-result-message">Almost there — this result doesn't meet the pass mark yet</div>
+        <div class="preview-result-passmark">Required Pass Mark: 75%</div>
+        <div class="preview-result-stats">
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Completion Time</div><div class="preview-result-stat-value">5:23</div></div>
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Overall Score</div><div class="preview-result-stat-value">2%</div></div>
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Correct Clicks</div><div class="preview-result-stat-value green">+3 pts</div></div>
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Penalty Mistakes</div><div class="preview-result-stat-value red">−1 pts</div></div>
+        </div>
+      </div>
+
+      <div class="preview-result-card crit">
+        <div class="preview-result-status"><span class="material-symbols-outlined">chat_info</span>Critical failure</div>
+        <div class="preview-result-message">You failed — a critical error ended the simulation</div>
+        <div class="preview-result-passmark">Required Pass Mark: 75%</div>
+        <div class="preview-result-stats">
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Completion Time</div><div class="preview-result-stat-value">5:23</div></div>
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Overall Score</div><div class="preview-result-stat-value">0%</div></div>
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Correct Clicks</div><div class="preview-result-stat-value green">+8 pts</div></div>
+          <div class="preview-result-stat"><div class="preview-result-stat-label">Penalty Mistakes</div><div class="preview-result-stat-value red">−1 pts</div></div>
+        </div>
+      </div>
+    </div>`;
   }
 
   // ── Sim-data-only modal ───────────────────────────────────────
