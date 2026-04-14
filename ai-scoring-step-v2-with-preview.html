@@ -12,43 +12,47 @@
     body { font-family: 'DM Sans', sans-serif; background: #F2F4F7; display: flex; overflow: hidden; }
 
     /* ── Sidebar ── */
-    .sidebar { width: 196px; height: 100vh; background: #fff; border-right: 1px solid #E4E7EC; flex-shrink: 0; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 20; overflow-y: auto; }
-    .sidebar-top { padding: 16px 12px 10px; }
-    .sidebar-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .logo-icon { width: 30px; height: 30px; background: #3538CD; border-radius: 7px; display: grid; place-items: center; flex-shrink: 0; }
-    .logo-name { font-size: 12.5px; font-weight: 700; color: #101828; line-height: 1.2; }
-    .logo-sub { font-size: 11px; color: #667085; line-height: 1.2; }
-    .env-badge { font-size: 11px; font-weight: 500; color: #1570EF; background: #EFF8FF; border-radius: 4px; padding: 2px 8px; display: inline-block; }
-    .nav { padding: 4px 8px; flex: 1; }
-    .nav-item { display: flex; align-items: center; gap: 7px; padding: 7px 10px; font-size: 13px; font-weight: 500; color: #344054; cursor: pointer; border-radius: 6px; margin: 1px 0; transition: background 0.12s; }
-    .nav-item:hover { background: #F9FAFB; }
-    .nav-item.active { background: #EEF4FF; color: #3538CD; font-weight: 600; border-radius: 6px 0 0 6px; border-right: 3px solid #3538CD; }
-    .nav-item .nav-icon { font-size: 17px; flex-shrink: 0; color: inherit; }
-    .sidebar-footer { margin-top: auto; padding: 6px 8px 12px; border-top: 1px solid #F2F4F7; }
-    .sidebar-version { padding: 4px 10px; font-size: 10.5px; color: #98A2B3; }
+    .sidebar { width: 280px; height: 100vh; background: #fff; border-right: 1px solid #E4E7EC; flex-shrink: 0; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 20; overflow-y: auto; }
+    .sidebar-content { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .sidebar-top-nav { padding-top: 32px; display: flex; flex-direction: column; gap: 48px; }
+    .sidebar-header-section { display: flex; flex-direction: column; gap: 24px; }
+    .sidebar-portal-title { font-size: 24px; font-weight: 700; color: #101828; }
+    .env-badge { display: inline-flex; background: #EEF4FF; border-radius: 16px; padding: 4px 12px; font-size: 16px; font-weight: 500; color: #3538CD; }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 12px; }
+    .nav-item { width: 280px; min-height: 48px; padding: 6px 24px; box-sizing: border-box; display: flex; align-items: center; gap: 16px; cursor: pointer; background: white; transition: background 0.12s; }
+    .nav-item:hover:not(.active) { background: #F9FAFB; }
+    .nav-item.active { background: #FFFAEB; border-right: 6px solid #FDB022; }
+    .nav-icon-circle { width: 36px; height: 36px; min-width: 36px; border-radius: 99px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-label { font-size: 16px; font-weight: 700; color: #213C50; }
+    .sidebar-footer { padding-bottom: 32px; display: flex; flex-direction: column; gap: 24px; }
+    .sidebar-footer-inner { display: flex; flex-direction: column; gap: 8px; }
+    .sidebar-version { padding: 0 24px; font-size: 12px; font-weight: 400; color: #667085; }
 
     /* ── Main ── */
-    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100vh; overflow: hidden; margin-left: 196px; }
+    .main { flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100vh; overflow: hidden; margin-left: 280px; }
     .page-header { padding: 28px 48px 0; display: flex; align-items: center; gap: 10px; }
     .back-btn { display: flex; align-items: center; color: #344054; cursor: pointer; }
     .back-btn svg { width: 22px; height: 22px; }
     .page-title { font-size: 26px; font-weight: 700; color: #101828; }
 
     /* Progress */
-    .progress-bar { margin: 20px 48px 0; background: #FEF3C7; border-radius: 10px 10px 0 0; padding: 14px 0; display: flex; align-items: center; justify-content: center; }
-    .step { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: #667085; padding: 0 12px; }
-    .step.done { color: #101828; font-weight: 700; }
-    .step.active { color: #F79009; font-weight: 700; }
-    .step-num { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-    .step.done .step-num   { background: #F79009; color: #fff; }
-    .step.active .step-num { background: #F79009; color: #fff; }
-    .step.inactive .step-num { background: #E4E7EC; color: #98A2B3; }
-    .step-divider { width: 1px; height: 20px; background: #D0D5DD; }
+    .progress-bar { margin: 20px 48px 0; background: #FFEECE; border-radius: 8px 8px 0 0; height: 64px; box-shadow: 0px 4px 4px rgba(110,129,141,0.05), 0px 0px 2px rgba(110,129,141,0.10); display: flex; align-items: center; justify-content: center; }
+    .progress-steps { display: flex; align-items: center; gap: 16px; }
+    .step { display: flex; align-items: center; gap: 8px; }
+    .step.inactive { opacity: 0.20; }
+    .step-num { width: 32px; height: 32px; border-radius: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .step.done .step-num, .step.inactive .step-num { background: #F79009; }
+    .step.active .step-num { background: #DC6803; outline: 4px solid #FEC84B; outline-offset: -2px; }
+    .step-num-val { color: #fff; font-size: 15px; font-weight: 700; letter-spacing: 0.9px; line-height: 24px; width: 16px; text-align: center; }
+    .step-label { font-size: 16px; font-weight: 700; color: #1D2939; }
+    .step.done .step-label { color: #1D2939; }
+    .step.active .step-label { color: #B54708; }
+    .step-divider { width: 1px; height: 32px; background: #FEC84B; border-radius: 1px; }
 
     /* ── Content card ── */
     .content-card { margin: 0 48px 0; background: #fff; border-radius: 0 0 12px 12px; overflow: hidden; display: flex; flex-direction: column; flex: 1; min-height: 0; }
     .card-header { padding: 24px 28px 20px; border-bottom: 1px solid #E4E7EC; flex-shrink: 0; }
-    .training-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 2px; }
+    .training-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
     .training-name { font-size: 18px; font-weight: 700; color: #101828; }
     .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
     .badge-audio-image { background: #EEF4FF; color: #3538CD; }
@@ -346,34 +350,104 @@
 
 <!-- Sidebar -->
 <aside class="sidebar">
-  <div class="sidebar-top">
-    <div class="sidebar-logo">
-      <div class="logo-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L14 13H2L8 2Z" fill="#fff" opacity="0.9"/></svg>
+  <div class="sidebar-content">
+    <div class="sidebar-top-nav">
+
+      <!-- Header: logo + title + badge -->
+      <div class="sidebar-header-section">
+        <div style="padding: 0 20px 0 24px;">
+          <!-- Agents Only wordmark -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="94" height="32" viewBox="0 0 94 32" fill="none"> <path fill-rule="evenodd" clip-rule="evenodd" d="M17.8597 4.26142C17.8597 6.1865 16.3072 7.74708 14.3921 7.74708C12.477 7.74706 10.9246 6.18648 10.9246 4.2614C10.9246 2.33633 12.477 0.775757 14.3921 0.77574C16.3072 0.775734 17.8596 2.33635 17.8597 4.26142Z" fill="#00D0A3"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M17.8606 14.4499C17.8606 16.375 16.3082 17.9356 14.3931 17.9356C12.478 17.9356 10.9256 16.375 10.9256 14.4499C10.9255 12.5248 12.478 10.9642 14.3931 10.9642C16.3082 10.9643 17.8606 12.5248 17.8606 14.4499Z" fill="#00D0A3"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M17.86 24.639C17.86 26.5641 16.3075 28.1247 14.3924 28.1247C12.4773 28.1247 10.9249 26.5641 10.9249 24.639C10.9249 22.714 12.4773 21.1534 14.3924 21.1534C16.3075 21.1534 17.86 22.7139 17.86 24.639Z" fill="#00D0A3"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9963 4.26102C27.9963 6.1861 26.4439 7.74671 24.5288 7.74672C22.6137 7.74669 21.0613 6.18611 21.0613 4.26104C21.0613 2.33597 22.6138 0.77539 24.5288 0.775373C26.4439 0.775368 27.9963 2.33595 27.9963 4.26102Z" fill="#00D0A3"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M7.72457 4.26118C7.72457 6.18625 6.17211 7.74682 4.25703 7.74684C2.34199 7.74685 0.789489 6.18624 0.789493 4.26116C0.789497 2.33608 2.34199 0.775502 4.25703 0.775497C6.17211 0.77548 7.72457 2.3361 7.72457 4.26118Z" fill="#00D0A3"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M7.72453 14.4499C7.72453 16.375 6.17207 17.9356 4.25699 17.9356C2.34196 17.9356 0.789462 16.375 0.789466 14.45C0.78947 12.5249 2.34195 10.9643 4.257 10.9643C6.17208 10.9643 7.72454 12.5249 7.72453 14.4499Z" fill="#00D0A3"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M7.72453 24.6389C7.72452 26.564 6.17208 28.1246 4.257 28.1246C2.34195 28.1246 0.789458 26.564 0.789463 24.6389C0.789467 22.7138 2.34196 21.1532 4.257 21.1532C6.17208 21.1532 7.72453 22.7138 7.72453 24.6389Z" fill="#00D0A3"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9957 14.4502C27.9957 16.3753 26.4432 17.9359 24.5282 17.9359C22.6131 17.9359 21.0606 16.3753 21.0606 14.4502C21.0606 12.5251 22.6131 10.9645 24.5282 10.9645C26.4432 10.9645 27.9957 12.5251 27.9957 14.4502Z" fill="#00D0A3"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M27.9967 24.6388C27.9967 26.5639 26.4442 28.1245 24.5292 28.1245C22.6141 28.1245 21.0616 26.5639 21.0616 24.6389C21.0616 22.7138 22.6141 21.1532 24.5292 21.1532C26.4442 21.1532 27.9967 22.7138 27.9967 24.6388Z" fill="#00D0A3"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M38.475 12.7598L42.7946 0.886439L45.2245 0.886444L49.5441 12.7598L47.2493 12.7598L46.3044 10.012L41.6979 10.012L40.7361 12.7598L38.475 12.7598ZM42.2884 8.31577L45.7138 8.31578L43.9927 3.37984L42.2884 8.31577Z" fill="#213C50"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M54.1818 10.2491C53.7768 10.2491 53.4 10.2039 53.0512 10.1134L52.4269 10.741C52.6182 10.8427 52.8769 10.9276 53.2031 10.9954C53.5293 11.0632 54.0581 11.1311 54.7892 11.199C55.9028 11.3007 56.7128 11.5665 57.2191 11.9962C57.7253 12.4259 57.9783 13.0195 57.9783 13.7772C57.9783 14.2747 57.8434 14.744 57.5733 15.185C57.3035 15.6373 56.8872 15.9992 56.3247 16.2706C55.7623 16.5533 55.0423 16.6946 54.1649 16.6946C52.9725 16.6946 52.0107 16.4685 51.2795 16.0162C50.5483 15.5751 50.1827 14.908 50.1827 14.0146C50.1827 13.257 50.5483 12.6011 51.2795 12.047C51.0545 11.9453 50.8576 11.8378 50.6889 11.7248C50.5314 11.6117 50.3908 11.493 50.2671 11.3686L50.2671 10.9785L51.7351 9.41796C51.0826 8.84124 50.7564 8.10057 50.7564 7.19594C50.7564 6.63052 50.8914 6.11605 51.1614 5.6524C51.4426 5.18877 51.8363 4.82126 52.3425 4.54987C52.8487 4.2785 53.4618 4.14278 54.1818 4.1428C54.6543 4.1428 55.0929 4.21064 55.4979 4.34637L58.6702 4.34636L58.6702 5.66939L57.236 5.77116C57.461 6.20084 57.5733 6.67575 57.5733 7.19594C57.5733 7.76134 57.4384 8.27585 57.1683 8.73948C56.8985 9.20311 56.5048 9.57061 55.9873 9.842C55.481 10.1134 54.8792 10.2491 54.1818 10.2491ZM54.1818 8.58682C54.6205 8.58683 54.9805 8.46812 55.2617 8.23064C55.5542 7.99316 55.7004 7.65393 55.7004 7.21292C55.7004 6.77191 55.5542 6.43267 55.2617 6.19517C54.9805 5.9577 54.6205 5.83901 54.1818 5.83899C53.7206 5.83899 53.3494 5.9577 53.0681 6.19519C52.7869 6.43267 52.6463 6.77191 52.6463 7.21292C52.6463 7.65393 52.7869 7.99315 53.0681 8.23062C53.3494 8.46811 53.7206 8.58685 54.1818 8.58682ZM52.1569 13.7941C52.1569 14.2125 52.3482 14.5235 52.7306 14.727C53.1244 14.9419 53.6025 15.0493 54.1649 15.0493C54.7049 15.0493 55.1436 14.9362 55.4811 14.7101C55.8185 14.4952 55.9873 14.2012 55.9873 13.828C55.9873 13.5227 55.8748 13.2683 55.6498 13.0648C55.4361 12.8612 55.0029 12.7368 54.3505 12.6916C53.8893 12.6577 53.4618 12.6068 53.0681 12.539C52.7419 12.7199 52.5057 12.9178 52.3594 13.1326C52.2244 13.3475 52.1569 13.568 52.1569 13.7941Z" fill="#213C50"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M63.3805 12.9632C62.5368 12.9632 61.7888 12.7823 61.1362 12.4204C60.4838 12.0586 59.972 11.5497 59.6008 10.8938C59.2295 10.238 59.0438 9.48036 59.0438 8.62095C59.0438 7.75023 59.2238 6.97565 59.5839 6.29718C59.9551 5.61871 60.4613 5.09288 61.1024 4.71971C61.7548 4.33525 62.5199 4.14302 63.3974 4.143C64.2184 4.14299 64.9441 4.32392 65.574 4.68582C66.204 5.04766 66.6933 5.54521 67.042 6.17845C67.4019 6.80041 67.582 7.49584 67.582 8.26477C67.582 8.38913 67.5763 8.51919 67.5652 8.65487C67.5652 8.79058 67.5594 8.93191 67.5483 9.07894L61.1868 9.07895C61.2318 9.73477 61.4568 10.2493 61.8618 10.6225C62.278 10.9956 62.7787 11.1822 63.3636 11.1822C63.8023 11.1822 64.1678 11.0861 64.4603 10.8938C64.7641 10.6903 64.9891 10.4302 65.1353 10.1136L67.3289 10.1136C67.1713 10.6451 66.907 11.1313 66.5358 11.5723C66.1759 12.002 65.7258 12.3413 65.1859 12.59C64.6571 12.8388 64.0553 12.9632 63.3805 12.9632ZM63.3974 5.90705C62.8686 5.90708 62.4017 6.0597 61.9967 6.36502C61.5917 6.65904 61.333 7.11134 61.2207 7.72198L65.3883 7.72199C65.3546 7.16788 65.1522 6.72691 64.781 6.39895C64.4097 6.07101 63.9486 5.90708 63.3974 5.90705Z" fill="#213C50"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M68.7969 12.7598L68.7969 4.34668L70.7035 4.34666L70.8722 5.7715C71.1309 5.27391 71.5022 4.87816 71.9859 4.58415C72.481 4.29015 73.0602 4.14316 73.7239 4.14315C74.7588 4.14313 75.5632 4.47106 76.1369 5.12693C76.7105 5.78278 76.9974 6.74395 76.9974 8.01043L76.9974 12.7598L74.8376 12.7598L74.8376 8.21399C74.8376 7.4903 74.6914 6.9362 74.3989 6.55171C74.1065 6.16727 73.6509 5.97503 73.0322 5.97501C72.4246 5.97503 71.924 6.18984 71.5304 6.61955C71.1478 7.04929 70.9567 7.6486 70.9567 8.41754L70.9567 12.7598L68.7969 12.7598Z" fill="#213C50"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M82.1918 12.7595C81.3144 12.7595 80.6114 12.5446 80.0826 12.115C79.554 11.6853 79.2895 10.922 79.2895 9.8251L79.2895 6.16133L77.8553 6.16133L77.8553 4.34639L79.2895 4.34639L79.5427 2.09046L81.4495 2.09048L81.4495 4.34639L83.7105 4.34641L83.7105 6.16132L81.4495 6.16133L81.4495 9.84207C81.4495 10.2491 81.5338 10.5318 81.7025 10.6901C81.8825 10.8372 82.1863 10.9107 82.6136 10.9107L83.6599 10.9107L83.6599 12.7595L82.1918 12.7595Z" fill="#213C50"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M88.4222 12.9633C87.6797 12.9633 87.0273 12.8446 86.4648 12.6071C85.9023 12.3583 85.4524 12.0191 85.1149 11.5894C84.7774 11.1597 84.575 10.6621 84.5074 10.0967L86.6841 10.0967C86.7517 10.4247 86.9317 10.7074 87.2241 10.9448C87.5279 11.171 87.9158 11.2841 88.3885 11.2841C88.8609 11.2841 89.204 11.188 89.4177 10.9957C89.6427 10.8035 89.7552 10.583 89.7552 10.3342C89.7552 9.97238 89.5976 9.72924 89.2828 9.60485C88.9677 9.46913 88.529 9.3391 87.9666 9.21474C87.6065 9.13558 87.241 9.03945 86.8698 8.92637C86.4985 8.8133 86.1554 8.67196 85.8403 8.5023C85.5368 8.3214 85.2893 8.09523 85.098 7.82383C84.9068 7.54115 84.8111 7.19624 84.8111 6.78915C84.8111 6.04284 85.1036 5.41524 85.6886 4.90638C86.2848 4.39752 87.1172 4.14312 88.1859 4.14314C89.1758 4.14313 89.9633 4.37492 90.5483 4.83853C91.1443 5.30217 91.4987 5.94105 91.6112 6.75524L89.5695 6.75524C89.4458 6.13333 88.979 5.82235 88.169 5.82235C87.764 5.82234 87.4491 5.90147 87.2241 6.05982C87.0104 6.21811 86.9035 6.41601 86.9035 6.6535C86.9035 6.90225 87.0666 7.10015 87.3928 7.24712C87.719 7.39415 88.1521 7.52984 88.6921 7.65423C89.277 7.78993 89.8113 7.94257 90.2951 8.1122C90.7901 8.27051 91.1838 8.51363 91.4763 8.84157C91.7688 9.15819 91.915 9.61614 91.915 10.2155C91.9263 10.7356 91.7912 11.2049 91.51 11.6233C91.2289 12.0417 90.8239 12.3696 90.2951 12.6071C89.7663 12.8446 89.1421 12.9633 88.4222 12.9633Z" fill="#213C50"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M44.0101 27.8049C42.829 27.8049 41.7941 27.5449 40.9054 27.0247C40.028 26.5045 39.3361 25.7865 38.8299 24.8705C38.335 23.9433 38.0875 22.8747 38.0875 21.6647C38.0875 20.4548 38.335 19.3918 38.8299 18.4759C39.3361 17.5486 40.028 16.8249 40.9054 16.3048C41.7941 15.7846 42.829 15.5245 44.0101 15.5245C45.1801 15.5245 46.2093 15.7846 47.0981 16.3048C47.9867 16.8249 48.6785 17.5486 49.1735 18.4759C49.6685 19.3918 49.9159 20.4548 49.9159 21.6647C49.9159 22.8746 49.6684 23.9433 49.1735 24.8705C48.6785 25.7865 47.9867 26.5045 47.0981 27.0247C46.2094 27.5448 45.1801 27.8049 44.0101 27.8049ZM44.0101 25.8543C45.1351 25.8543 46.0294 25.4811 46.6931 24.7348C47.368 23.9885 47.7055 22.9651 47.7055 21.6647C47.7055 20.3643 47.368 19.3409 46.6931 18.5946C46.0294 17.8483 45.1351 17.4751 44.0102 17.4751C42.8852 17.4751 41.9853 17.8483 41.3103 18.5946C40.6354 19.3409 40.2979 20.3643 40.2979 21.6647C40.2979 22.9651 40.6354 23.9885 41.3103 24.7348C41.9853 25.4811 42.8852 25.8543 44.0101 25.8543Z" fill="#213C50"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M51.1708 27.6015L51.1707 19.1884L53.0775 19.1884L53.2462 20.6132C53.505 20.1156 53.8762 19.7198 54.3599 19.4258C54.8548 19.1318 55.4342 18.9848 56.0979 18.9848C57.1327 18.9848 57.9371 19.3127 58.5108 19.9686C59.0846 20.6245 59.3713 21.5857 59.3713 22.8521L59.3713 27.6015L57.2115 27.6015L57.2115 23.0557C57.2115 22.332 57.0652 21.7779 56.7728 21.3934C56.4803 21.0089 56.0248 20.8167 55.4061 20.8167C54.7986 20.8167 54.298 21.0316 53.9043 21.4613C53.5218 21.891 53.3306 22.4903 53.3306 23.2592L53.3306 27.6015L51.1708 27.6015Z" fill="#213C50"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M61.0991 27.6014L61.0991 15.3888L63.259 15.3888L63.259 27.6014L61.0991 27.6014Z" fill="#213C50"/> <path fill-rule="evenodd" clip-rule="evenodd" d="M65.9115 31.3328L67.8521 27.0415L67.3459 27.0415L64.0892 19.1881L66.4347 19.1881L68.7801 25.1078L71.2268 19.1881L73.5215 19.1881L68.2064 31.3328L65.9115 31.3328Z" fill="#213C50"/> </svg>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;padding:0 20px 0 24px;">
+          <div class="sidebar-portal-title">Admin Portal</div>
+          <span class="env-badge">Development</span>
+        </div>
       </div>
-      <div>
-        <div class="logo-name">Agents Only</div>
-        <div class="logo-sub">Admin Portal</div>
+
+      <!-- Navigation -->
+      <nav class="sidebar-nav">
+        <div class="nav-item">
+          <div class="nav-icon-circle" style="background:#E9FEF9;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M23.1 22.05V19.95C23.1 17.993 21.7615 16.3486 19.95 15.8823M16.275 3.45532C17.8142 4.07838 18.9 5.5874 18.9 7.35002C18.9 9.11265 17.8142 10.6217 16.275 11.2447M17.85 22.05C17.85 20.0931 17.85 19.1146 17.5303 18.3428C17.104 17.3136 16.2864 16.496 15.2573 16.0697C14.4854 15.75 13.507 15.75 11.55 15.75H8.40001C6.44305 15.75 5.46457 15.75 4.69274 16.0697C3.66362 16.496 2.84599 17.3136 2.41971 18.3428C2.10001 19.1146 2.10001 20.0931 2.10001 22.05M14.175 7.35002C14.175 9.66962 12.2946 11.55 9.97501 11.55C7.65541 11.55 5.77501 9.66962 5.77501 7.35002C5.77501 5.03043 7.65541 3.15002 9.97501 3.15002C12.2946 3.15002 14.175 5.03043 14.175 7.35002Z" stroke="#00B081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">Agents</span>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon-circle" style="background:#F0F9FF;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M14.7 2.38298V6.72005C14.7 7.30811 14.7 7.60213 14.8144 7.82674C14.9151 8.02431 15.0757 8.18494 15.2733 8.28561C15.4979 8.40005 15.7919 8.40005 16.38 8.40005H20.7171M16.8 13.65H8.4M16.8 17.85H8.4M10.5 9.44998H8.4M14.7 2.09998H9.24C7.47583 2.09998 6.59375 2.09998 5.91993 2.44331C5.32722 2.74531 4.84533 3.22719 4.54333 3.81991C4.2 4.49373 4.2 5.37581 4.2 7.13998V18.06C4.2 19.8241 4.2 20.7062 4.54333 21.38C4.84533 21.9728 5.32722 22.4546 5.91993 22.7566C6.59375 23.1 7.47583 23.1 9.24 23.1H15.96C17.7242 23.1 18.6062 23.1 19.2801 22.7566C19.8728 22.4546 20.3547 21.9728 20.6567 21.38C21 20.7062 21 19.8241 21 18.06V8.39998L14.7 2.09998Z" stroke="#36BFFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">Projects</span>
+        </div>
+        <div class="nav-item active">
+          <div class="nav-icon-circle" style="background:#fff;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M2.10001 17.85L12.6 23.1L23.1 17.85M2.10001 12.6L12.6 17.85L23.1 12.6M12.6 2.09998L2.10001 7.34998L12.6 12.6L23.1 7.34998L12.6 2.09998Z" stroke="#FDB022" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">Training</span>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon-circle" style="background:#E9FEF9;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M3.14999 22.05H22.05M6.29999 18.9V10.5M10.5 18.9V10.5M14.7 18.9V10.5M18.9 18.9V10.5M21 7.34999L13.0452 2.37824C12.8837 2.27729 12.8029 2.22682 12.7163 2.20714C12.6397 2.18974 12.5602 2.18974 12.4837 2.20714C12.3971 2.22682 12.3163 2.27729 12.1548 2.37824L4.19999 7.34999H21Z" stroke="#00B081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">Wallet</span>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon-circle" style="background:#F0F9FF;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M14.7 2.38298V6.72005C14.7 7.30811 14.7 7.60213 14.8144 7.82674C14.9151 8.02431 15.0757 8.18494 15.2733 8.28561C15.4979 8.40005 15.7919 8.40005 16.38 8.40005H20.7171M9.45 15.75L12.6 18.9M12.6 18.9L15.75 15.75M12.6 18.9L12.6 12.6M14.7 2.09998H9.24C7.47583 2.09998 6.59375 2.09998 5.91993 2.44331C5.32722 2.74531 4.84533 3.22719 4.54333 3.81991C4.2 4.49373 4.2 5.37581 4.2 7.13998V18.06C4.2 19.8241 4.2 20.7062 4.54333 21.38C4.84533 21.9728 5.32722 22.4546 5.91993 22.7566C6.59375 23.1 7.47583 23.1 9.24 23.1H15.96C17.7242 23.1 18.6062 23.1 19.2801 22.7566C19.8728 22.4546 20.3547 21.9728 20.6567 21.38C21 20.7062 21 19.8241 21 18.06V8.39998L14.7 2.09998Z" stroke="#36BFFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">Deposits</span>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon-circle" style="background:#FFFAEB;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M12.6 16.275H7.87501C6.40967 16.275 5.67699 16.275 5.08081 16.4559C3.73848 16.8631 2.68805 17.9135 2.28086 19.2558C2.10001 19.852 2.10001 20.5847 2.10001 22.05M19.95 22.05V15.75M16.8 18.9H23.1M15.225 7.87502C15.225 10.4846 13.1096 12.6 10.5 12.6C7.89046 12.6 5.77501 10.4846 5.77501 7.87502C5.77501 5.26548 7.89046 3.15002 10.5 3.15002C13.1096 3.15002 15.225 5.26548 15.225 7.87502Z" stroke="#FDB022" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">Referrals</span>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon-circle" style="background:#E9FEF9;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M14.7 2.38298V6.72005C14.7 7.30811 14.7 7.60213 14.8144 7.82674C14.9151 8.02431 15.0757 8.18494 15.2733 8.28561C15.4979 8.40005 15.7919 8.40005 16.38 8.40005H20.7171M16.8 19.425L15.225 17.85M14.7 2.09998H9.24C7.47583 2.09998 6.59375 2.09998 5.91993 2.44331C5.32722 2.74531 4.84533 3.22719 4.54333 3.81991C4.2 4.49373 4.2 5.37581 4.2 7.13998V18.06C4.2 19.8241 4.2 20.7062 4.54333 21.38C4.84533 21.9728 5.32722 22.4546 5.91993 22.7566C6.59375 23.1 7.47583 23.1 9.24 23.1H15.96C17.7242 23.1 18.6062 23.1 19.2801 22.7566C19.8728 22.4546 20.3547 21.9728 20.6567 21.38C21 20.7062 21 19.8241 21 18.06V8.39998L14.7 2.09998ZM16.275 15.225C16.275 17.2546 14.6296 18.9 12.6 18.9C10.5704 18.9 8.925 17.2546 8.925 15.225C8.925 13.1953 10.5704 11.55 12.6 11.55C14.6296 11.55 16.275 13.1953 16.275 15.225Z" stroke="#00B081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">Platform Rates</span>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon-circle" style="background:#F0F9FF;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M2.10001 12.6H23.1M2.10001 12.6C2.10001 18.399 6.80102 23.1 12.6 23.1M2.10001 12.6C2.10001 6.80099 6.80102 2.09998 12.6 2.09998M23.1 12.6C23.1 18.399 18.399 23.1 12.6 23.1M23.1 12.6C23.1 6.80099 18.399 2.09998 12.6 2.09998M12.6 2.09998C15.2263 4.97525 16.7189 8.70661 16.8 12.6C16.7189 16.4933 15.2263 20.2247 12.6 23.1M12.6 2.09998C9.97366 4.97525 8.48112 8.70661 8.40001 12.6C8.48112 16.4933 9.97366 20.2247 12.6 23.1" stroke="#36BFFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">Country Admin</span>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon-circle" style="background:#FFFAEB;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M2.54113 13.3488C2.39814 13.1224 2.32664 13.0092 2.28662 12.8346C2.25655 12.7034 2.25655 12.4966 2.28662 12.3654C2.32664 12.1908 2.39814 12.0776 2.54113 11.8512C3.72281 9.98008 7.24018 5.25 12.6004 5.25C17.9607 5.25 21.478 9.98008 22.6597 11.8512C22.8027 12.0776 22.8742 12.1908 22.9142 12.3654C22.9443 12.4966 22.9443 12.7034 22.9142 12.8346C22.8742 13.0092 22.8027 13.1224 22.6597 13.3488C21.478 15.2199 17.9607 19.95 12.6004 19.95C7.24018 19.95 3.72281 15.2199 2.54113 13.3488Z" stroke="#FDB022" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.6004 15.75C14.3401 15.75 15.7504 14.3397 15.7504 12.6C15.7504 10.8603 14.3401 9.45 12.6004 9.45C10.8607 9.45 9.45043 10.8603 9.45043 12.6C9.45043 14.3397 10.8607 15.75 12.6004 15.75Z" stroke="#FDB022" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">View as User</span>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon-circle" style="background:#E9FEF9;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M6.30001 6.29998L11.025 11.025M6.30001 6.29998H3.15001L2.10001 3.14998L3.15001 2.09998L6.30001 3.14998V6.29998ZM20.2219 2.87804L17.4629 5.63704C17.0471 6.05285 16.8392 6.26076 16.7613 6.50051C16.6928 6.71139 16.6928 6.93856 16.7613 7.14944C16.8392 7.38919 17.0471 7.5971 17.4629 8.01291L17.7121 8.26204C18.1279 8.67785 18.3358 8.88576 18.5755 8.96366C18.7864 9.03218 19.0136 9.03218 19.2245 8.96366C19.4642 8.88576 19.6721 8.67785 20.0879 8.26204L22.6688 5.68123C22.9467 6.35761 23.1 7.09839 23.1 7.87498C23.1 11.0644 20.5144 13.65 17.325 13.65C16.9405 13.65 16.5647 13.6124 16.2013 13.5407C15.6908 13.44 15.4356 13.3897 15.2809 13.4051C15.1164 13.4215 15.0353 13.4462 14.8895 13.5242C14.7524 13.5975 14.6149 13.7351 14.3399 14.0101L6.82501 21.525C5.95516 22.3948 4.54486 22.3948 3.67501 21.525C2.80516 20.6551 2.80516 19.2448 3.67501 18.375L11.1899 10.8601C11.4649 10.5851 11.6024 10.4475 11.6758 10.3104C11.7538 10.1647 11.7785 10.0836 11.7949 9.91913C11.8103 9.7644 11.7599 9.50918 11.6593 8.99873C11.5876 8.63524 11.55 8.25949 11.55 7.87498C11.55 4.68553 14.1356 2.09998 17.325 2.09998C18.3808 2.09998 19.3704 2.38329 20.2219 2.87804ZM12.6001 15.7499L18.375 21.5249C19.2448 22.3947 20.6551 22.3947 21.525 21.5249C22.3948 20.655 22.3948 19.2447 21.525 18.3749L16.7741 13.624C16.4378 13.5922 16.1098 13.5315 15.7928 13.4445C15.3843 13.3324 14.9362 13.4138 14.6366 13.7133L12.6001 15.7499Z" stroke="#00B081" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">Admin Users</span>
+        </div>
+      </nav>
+
+    </div><!-- /sidebar-top-nav -->
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+      <div style="padding: 0 24px;">
+        <svg width="232" height="1" viewBox="0 0 232 1" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M232 1H0V0H232V1Z" fill="#E4E7EC"/></svg>
+      </div>
+      <div class="sidebar-footer-inner">
+        <div class="nav-item">
+          <div class="nav-icon-circle" style="background:#EEF4FF;">
+            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M16.8 17.85L22.05 12.6M22.05 12.6L16.8 7.35001M22.05 12.6H9.44999M12.6 17.85C12.6 18.1604 12.6 18.3155 12.5885 18.45C12.4686 19.8471 11.4396 20.9967 10.0643 21.2701C9.93197 21.2965 9.77761 21.3136 9.46926 21.3479L8.39678 21.467C6.78559 21.646 5.97996 21.7356 5.33994 21.5308C4.48657 21.2577 3.78988 20.6341 3.42423 19.8161C3.14999 19.2026 3.14999 18.3921 3.14999 16.7709V8.42908C3.14999 6.80796 3.14999 5.99739 3.42423 5.3839C3.78988 4.56591 4.48657 3.94234 5.33994 3.66926C5.97997 3.46445 6.78557 3.55396 8.39678 3.73298L9.46926 3.85215C9.77772 3.88642 9.93195 3.90356 10.0643 3.92987C11.4396 4.20332 12.4686 5.35295 12.5885 6.75004C12.6 6.88447 12.6 7.03965 12.6 7.35001" stroke="#3538CD" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="nav-label">Logout</span>
+        </div>
+        <div class="sidebar-version">ao-admin-portal: v0.0.74</div>
       </div>
     </div>
-    <span class="env-badge">Development</span>
-  </div>
-  <nav class="nav">
-    <div class="nav-item"><span class="material-symbols-outlined nav-icon">person</span>Agents</div>
-    <div class="nav-item"><span class="material-symbols-outlined nav-icon">folder_open</span>Projects</div>
-    <div class="nav-item active"><span class="material-symbols-outlined nav-icon">layers</span>Training</div>
-    <div class="nav-item"><span class="material-symbols-outlined nav-icon">account_balance_wallet</span>Wallet</div>
-    <div class="nav-item"><span class="material-symbols-outlined nav-icon">account_balance</span>Deposits</div>
-    <div class="nav-item"><span class="material-symbols-outlined nav-icon">group</span>Referrals</div>
-    <div class="nav-item"><span class="material-symbols-outlined nav-icon">payments</span>Platform Rates</div>
-    <div class="nav-item"><span class="material-symbols-outlined nav-icon">language</span>Country Admin</div>
-    <div class="nav-item"><span class="material-symbols-outlined nav-icon">visibility</span>View as User</div>
-    <div class="nav-item"><span class="material-symbols-outlined nav-icon">admin_panel_settings</span>Admin Users</div>
-  </nav>
-  <div class="sidebar-footer">
-    <div class="nav-item" style="color:#667085;"><span class="material-symbols-outlined nav-icon" style="color:#667085;">logout</span>Logout</div>
-    <div class="sidebar-version">ao-admin-portal: v0.0.74</div>
-  </div>
+
+  </div><!-- /sidebar-content -->
 </aside>
 
 <!-- Main -->
@@ -387,17 +461,19 @@
 
   <!-- Progress -->
   <div class="progress-bar">
-    <div class="step done"><div class="step-num">✓</div>Overview</div>
-    <div class="step-divider"></div>
-    <div class="step done"><div class="step-num">✓</div>Script &amp; Audio</div>
-    <div class="step-divider"></div>
-    <div class="step done"><div class="step-num">✓</div>Images</div>
-    <div class="step-divider"></div>
-    <div class="step done"><div class="step-num">✓</div>Mapping</div>
-    <div class="step-divider"></div>
-    <div class="step active"><div class="step-num">5</div>AI Scoring</div>
-    <div class="step-divider"></div>
-    <div class="step inactive"><div class="step-num">6</div>Summary</div>
+    <div class="progress-steps">
+      <div class="step done"><div class="step-num"><span class="step-num-val">1</span></div><span class="step-label">Overview</span></div>
+      <div class="step-divider"></div>
+      <div class="step done"><div class="step-num"><span class="step-num-val">2</span></div><span class="step-label">Script &amp; Audio</span></div>
+      <div class="step-divider"></div>
+      <div class="step done"><div class="step-num"><span class="step-num-val">3</span></div><span class="step-label">Images</span></div>
+      <div class="step-divider"></div>
+      <div class="step done"><div class="step-num"><span class="step-num-val">4</span></div><span class="step-label">Mapping</span></div>
+      <div class="step-divider"></div>
+      <div class="step active"><div class="step-num"><span class="step-num-val">5</span></div><span class="step-label">AI Scoring</span></div>
+      <div class="step-divider"></div>
+      <div class="step inactive"><div class="step-num"><span class="step-num-val">6</span></div><span class="step-label">Summary</span></div>
+    </div>
   </div>
 
   <!-- Content card -->
