@@ -221,6 +221,12 @@ body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Inter', 'Sego
 .hs-overlay.neg { border: 2px solid #F97316; background: rgba(249,115,22,0.1); }
 .hs-overlay.term { border: 2px solid #EF4444; background: rgba(239,68,68,0.1); }
 .hs-overlay.cond { border: 2px solid #8B5CF6; background: rgba(139,92,246,0.1); }
+/* Hover — mid intensity, between default and selected */
+.hs-overlay.pending:not(.selected-hs):hover { background: rgba(96,165,250,0.20); box-shadow: 0 0 0 3px rgba(96,165,250,0.18); }
+.hs-overlay.pos:not(.selected-hs):hover     { background: rgba(34,197,94,0.20);  box-shadow: 0 0 0 3px rgba(34,197,94,0.18); }
+.hs-overlay.neg:not(.selected-hs):hover     { background: rgba(249,115,22,0.20); box-shadow: 0 0 0 3px rgba(249,115,22,0.18); }
+.hs-overlay.term:not(.selected-hs):hover    { background: rgba(239,68,68,0.20);  box-shadow: 0 0 0 3px rgba(239,68,68,0.18); }
+.hs-overlay.cond:not(.selected-hs):hover    { background: rgba(139,92,246,0.20); box-shadow: 0 0 0 3px rgba(139,92,246,0.18); }
 /* Selected (after saved, clicked) — polarity colour at higher intensity */
 .hs-overlay.selected-hs { border-width: 2.5px; border-style: solid; }
 .hs-overlay.pending.selected-hs { border-color: #60A5FA; background: rgba(96,165,250,0.25); }
@@ -460,6 +466,7 @@ body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Inter', 'Sego
   padding: 3px 0;
 }
 .radio-opt input[type="radio"] { accent-color: #4F46E5; width: 14px; height: 14px; cursor: pointer; }
+.radio-card:not([data-selected]):hover { background: #F5F3FF !important; border-color: #C7D2FE !important; }
 
 .screen-select-wrapper { position: relative; margin-top: 4px; }
 .screen-select {
@@ -678,6 +685,7 @@ body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Inter', 'Sego
 }
 .type-btn:hover { background: #F9FAFB; }
 .type-btn.active-type { border-color: #4F46E5; background: #EEF2FF; color: #4F46E5; font-weight: 500; }
+.type-btn.active-type .type-btn-icon svg path { fill: #4F46E5; }
 .type-btn-icon { font-size: 13px; padding-top: 3px; }
 
 #add-hs-btn {
@@ -760,7 +768,7 @@ body { font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Inter', 'Sego
   display: flex; align-items: center; justify-content: center;
   border-radius: 4px; transition: all 0.15s; flex-shrink: 0;
 }
-.dropdown-item-row .item-delete:hover { background: #FEE2E2; color: #DC2626; }
+.dropdown-item-row .item-delete:hover { background: #F2F4F7; }
 .add-item-btn {
   display: flex; align-items: center; gap: 4px;
   background: none; border: 1px dashed #D1D5DB; border-radius: 6px;
@@ -1294,7 +1302,7 @@ function renderPropertiesPanel() {
   const sc = state.screens[state.currentScreen];
 
   if (state.mode === 'editing-new' || state.mode === 'editing-saved') {
-    renderEditingPanel(body);
+    renderEditingPanel(body, true);
     return;
   }
 
@@ -1387,7 +1395,7 @@ function renderPropertiesPanel() {
     ${flowMarkup ? `
     <div style="padding: 0 16px 14px;">
       <hr class="section-divider" style="margin-bottom:12px;">
-      <div class="section-title" style="margin-bottom:8px;"><span class="section-icon">⇌</span> Current Screen Flow</div>
+      <div class="section-title" style="margin-bottom:8px;"><span class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.45552 2.51878C7.6206 2.50529 7.82124 2.50149 8.0855 2.50042C8.29154 3.0828 8.84705 3.5 9.5 3.5C10.3284 3.5 11 2.82843 11 2C11 1.17157 10.3284 0.5 9.5 0.5C8.84676 0.5 8.29104 0.917577 8.08523 1.50036C7.81158 1.50143 7.57573 1.50562 7.37409 1.5221C7.09304 1.54506 6.83469 1.59434 6.59202 1.71799C6.2157 1.90973 5.90973 2.2157 5.71799 2.59202C5.59434 2.83469 5.54506 3.09304 5.5221 3.37409C5.49999 3.64468 5.49999 3.97685 5.5 4.37932V5.5H3.91465C3.70873 4.9174 3.15311 4.5 2.5 4.5C1.67157 4.5 1 5.17157 1 6C1 6.82843 1.67157 7.5 2.5 7.5C3.15311 7.5 3.70873 7.0826 3.91465 6.5H5.5V7.62065C5.49999 8.02312 5.49999 8.35532 5.5221 8.62591C5.54506 8.90696 5.59434 9.16531 5.71799 9.40798C5.90973 9.78431 6.2157 10.0903 6.59202 10.282C6.83469 10.4057 7.09304 10.4549 7.37409 10.4779C7.57573 10.4944 7.81158 10.4986 8.08523 10.4996C8.29104 11.0824 8.84676 11.5 9.5 11.5C10.3284 11.5 11 10.8284 11 10C11 9.17157 10.3284 8.5 9.5 8.5C8.84705 8.5 8.29154 8.91721 8.0855 9.49959C7.82125 9.49852 7.6206 9.49471 7.45552 9.48123C7.23631 9.46332 7.12421 9.43085 7.04601 9.39101C6.85785 9.29513 6.70487 9.14215 6.60899 8.95399C6.56915 8.87579 6.53669 8.76369 6.51878 8.54448C6.50039 8.31944 6.5 8.02829 6.5 7.6V6.5H8.08535C8.29127 7.0826 8.84689 7.5 9.5 7.5C10.3284 7.5 11 6.82843 11 6C11 5.17157 10.3284 4.5 9.5 4.5C8.84689 4.5 8.29127 4.9174 8.08535 5.5H6.5V4.4C6.5 3.97171 6.50039 3.68056 6.51878 3.45552C6.53669 3.23631 6.56915 3.12421 6.60899 3.04601C6.70487 2.85785 6.85785 2.70487 7.04601 2.60899C7.12421 2.56915 7.23631 2.53669 7.45552 2.51878Z" fill="#667085"/></svg></span> Current Screen Flow</div>
       <div class="flow-section">${flowMarkup}</div>
     </div>` : ''}`;
 }
@@ -1506,7 +1514,7 @@ function buildConditionalFormHTML(hs) {
   const flowSection = `
     <hr class="section-divider">
     <div class="form-section">
-      <div class="section-title"><span class="section-icon">⇌</span> Current Screen Flow</div>
+      <div class="section-title"><span class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.45552 2.51878C7.6206 2.50529 7.82124 2.50149 8.0855 2.50042C8.29154 3.0828 8.84705 3.5 9.5 3.5C10.3284 3.5 11 2.82843 11 2C11 1.17157 10.3284 0.5 9.5 0.5C8.84676 0.5 8.29104 0.917577 8.08523 1.50036C7.81158 1.50143 7.57573 1.50562 7.37409 1.5221C7.09304 1.54506 6.83469 1.59434 6.59202 1.71799C6.2157 1.90973 5.90973 2.2157 5.71799 2.59202C5.59434 2.83469 5.54506 3.09304 5.5221 3.37409C5.49999 3.64468 5.49999 3.97685 5.5 4.37932V5.5H3.91465C3.70873 4.9174 3.15311 4.5 2.5 4.5C1.67157 4.5 1 5.17157 1 6C1 6.82843 1.67157 7.5 2.5 7.5C3.15311 7.5 3.70873 7.0826 3.91465 6.5H5.5V7.62065C5.49999 8.02312 5.49999 8.35532 5.5221 8.62591C5.54506 8.90696 5.59434 9.16531 5.71799 9.40798C5.90973 9.78431 6.2157 10.0903 6.59202 10.282C6.83469 10.4057 7.09304 10.4549 7.37409 10.4779C7.57573 10.4944 7.81158 10.4986 8.08523 10.4996C8.29104 11.0824 8.84676 11.5 9.5 11.5C10.3284 11.5 11 10.8284 11 10C11 9.17157 10.3284 8.5 9.5 8.5C8.84705 8.5 8.29154 8.91721 8.0855 9.49959C7.82125 9.49852 7.6206 9.49471 7.45552 9.48123C7.23631 9.46332 7.12421 9.43085 7.04601 9.39101C6.85785 9.29513 6.70487 9.14215 6.60899 8.95399C6.56915 8.87579 6.53669 8.76369 6.51878 8.54448C6.50039 8.31944 6.5 8.02829 6.5 7.6V6.5H8.08535C8.29127 7.0826 8.84689 7.5 9.5 7.5C10.3284 7.5 11 6.82843 11 6C11 5.17157 10.3284 4.5 9.5 4.5C8.84689 4.5 8.29127 4.9174 8.08535 5.5H6.5V4.4C6.5 3.97171 6.50039 3.68056 6.51878 3.45552C6.53669 3.23631 6.56915 3.12421 6.60899 3.04601C6.70487 2.85785 6.85785 2.70487 7.04601 2.60899C7.12421 2.56915 7.23631 2.53669 7.45552 2.51878Z" fill="#667085"/></svg></span> Current Screen Flow</div>
       <div class="flow-section">${flowPreview}</div>
     </div>`;
 
@@ -1525,7 +1533,7 @@ function buildConditionalFormHTML(hs) {
         </div>
       </div>
       <div style="font-size:11px;color:#6B7280;margin-top:4px;display:flex;align-items:center;gap:4px;">
-        <span>→</span> Agent always continues to next hotspot
+        Agent always continues to next hotspot
       </div>
     </div>
     <hr class="section-divider">
@@ -1565,7 +1573,7 @@ function buildConditionalFormHTML(hs) {
     ${flowSection}`;
 }
 
-function renderEditingPanel(body) {
+function renderEditingPanel(body, autoFocus = false) {
   const hs = state.editingHotspot;
   const typeMeta = TYPE_META[hs.type] || TYPE_META['click-area'];
   const nameVal = hs.name || '';
@@ -1664,7 +1672,7 @@ function renderEditingPanel(body) {
     const flowSection = flowPreview ? `
       <hr class="section-divider">
       <div class="form-section">
-        <div class="section-title"><span class="section-icon">⇌</span> Current Screen Flow</div>
+        <div class="section-title"><span class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.45552 2.51878C7.6206 2.50529 7.82124 2.50149 8.0855 2.50042C8.29154 3.0828 8.84705 3.5 9.5 3.5C10.3284 3.5 11 2.82843 11 2C11 1.17157 10.3284 0.5 9.5 0.5C8.84676 0.5 8.29104 0.917577 8.08523 1.50036C7.81158 1.50143 7.57573 1.50562 7.37409 1.5221C7.09304 1.54506 6.83469 1.59434 6.59202 1.71799C6.2157 1.90973 5.90973 2.2157 5.71799 2.59202C5.59434 2.83469 5.54506 3.09304 5.5221 3.37409C5.49999 3.64468 5.49999 3.97685 5.5 4.37932V5.5H3.91465C3.70873 4.9174 3.15311 4.5 2.5 4.5C1.67157 4.5 1 5.17157 1 6C1 6.82843 1.67157 7.5 2.5 7.5C3.15311 7.5 3.70873 7.0826 3.91465 6.5H5.5V7.62065C5.49999 8.02312 5.49999 8.35532 5.5221 8.62591C5.54506 8.90696 5.59434 9.16531 5.71799 9.40798C5.90973 9.78431 6.2157 10.0903 6.59202 10.282C6.83469 10.4057 7.09304 10.4549 7.37409 10.4779C7.57573 10.4944 7.81158 10.4986 8.08523 10.4996C8.29104 11.0824 8.84676 11.5 9.5 11.5C10.3284 11.5 11 10.8284 11 10C11 9.17157 10.3284 8.5 9.5 8.5C8.84705 8.5 8.29154 8.91721 8.0855 9.49959C7.82125 9.49852 7.6206 9.49471 7.45552 9.48123C7.23631 9.46332 7.12421 9.43085 7.04601 9.39101C6.85785 9.29513 6.70487 9.14215 6.60899 8.95399C6.56915 8.87579 6.53669 8.76369 6.51878 8.54448C6.50039 8.31944 6.5 8.02829 6.5 7.6V6.5H8.08535C8.29127 7.0826 8.84689 7.5 9.5 7.5C10.3284 7.5 11 6.82843 11 6C11 5.17157 10.3284 4.5 9.5 4.5C8.84689 4.5 8.29127 4.9174 8.08535 5.5H6.5V4.4C6.5 3.97171 6.50039 3.68056 6.51878 3.45552C6.53669 3.23631 6.56915 3.12421 6.60899 3.04601C6.70487 2.85785 6.85785 2.70487 7.04601 2.60899C7.12421 2.56915 7.23631 2.53669 7.45552 2.51878Z" fill="#667085"/></svg></span> Current Screen Flow</div>
         <div class="flow-section">${flowPreview}</div>
       </div>` : '';
 
@@ -1689,7 +1697,7 @@ function renderEditingPanel(body) {
       </div>
       <hr class="section-divider">
       <div class="form-section">
-        <div class="section-title"><span class="section-icon">⚡</span> Action</div>
+        <div class="section-title"><span class="section-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.81594 0.631281C8.05348 0.734396 8.19461 0.98177 8.16249 1.23873L7.66112 5.24971L11.2749 5.2497C11.4154 5.24968 11.5578 5.24965 11.6742 5.26018C11.7842 5.27015 11.9949 5.2965 12.1776 5.44414C12.3867 5.61317 12.5066 5.869 12.5025 6.1379C12.499 6.37278 12.3843 6.5515 12.3216 6.6424C12.2552 6.73851 12.164 6.84788 12.074 6.95586L6.86512 13.2065C6.69934 13.4054 6.42226 13.4712 6.18471 13.3681C5.94717 13.265 5.80604 13.0176 5.83816 12.7607L6.33954 8.74971L2.72579 8.74971C2.58521 8.74974 2.44283 8.74976 2.32649 8.73923C2.21647 8.72927 2.00579 8.70292 1.82308 8.55527C1.61391 8.38624 1.49409 8.13041 1.49815 7.86151C1.50169 7.62663 1.61632 7.44791 1.6791 7.35702C1.74548 7.2609 1.83666 7.15153 1.92668 7.04355C1.93114 7.0382 1.93559 7.03286 1.94005 7.02751L7.13553 0.792933C7.30131 0.593996 7.5784 0.528166 7.81594 0.631281Z" fill="#667085"/></svg></span> Action</div>
         <label class="radio-opt">
           <input type="radio" name="interaction" value="navigate" ${navChecked}
             onchange="onInteractionChange('navigate')"> Navigate to Screen
@@ -1717,7 +1725,7 @@ function renderEditingPanel(body) {
       <div class="form-section">
         <label class="form-label">Answer Key <span style="color:#9CA3AF;font-weight:400;">(Optional)</span></label>
         <input class="form-input" type="text" value="${hs.answerKey || ''}"
-          placeholder="Enter correct answer..."
+          placeholder="Enter answer key"
           oninput="onAnswerKeyInput(this.value)">
         <div style="font-size:10px;color:#9CA3AF;margin-top:2px;">The expected text the agent should type.</div>
       </div>`;
@@ -1728,17 +1736,17 @@ function renderEditingPanel(body) {
       <div class="form-section">
         <label class="form-label">Expected End State</label>
         <div style="display:flex;flex-direction:column;gap:6px;margin-top:2px;">
-          <label class="radio-opt" style="display:flex;flex-direction:row;align-items:center;gap:10px;border:1.5px solid ${shouldBeChecked ? '#4F46E5' : '#E5E7EB'};border-radius:8px;padding:10px 14px;margin:0;cursor:pointer;background:${shouldBeChecked ? '#EEF2FF' : 'white'};">
+          <label class="radio-opt radio-card" ${shouldBeChecked ? 'data-selected' : ''} style="display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;border:1.5px solid ${shouldBeChecked ? '#4F46E5' : '#E5E7EB'};border-radius:8px;padding:10px 14px;margin:0;cursor:pointer;background:${shouldBeChecked ? '#EEF2FF' : 'white'};">
             <input type="radio" name="checkbox-answer" value="checked" ${shouldBeChecked ? 'checked' : ''}
               onchange="onCheckboxAnswerChange(true)" style="display:none;">
-            <span style="font-size:16px;line-height:1;flex-shrink:0;">☑</span>
-            <span style="font-size:13px;font-weight:600;color:${shouldBeChecked ? '#4338CA' : '#374151'};">Must end checked</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.91927 1H3.08073C2.81716 0.999992 2.58977 0.999984 2.40249 1.01529C2.20481 1.03144 2.00821 1.06709 1.81902 1.16349C1.53677 1.3073 1.3073 1.53677 1.16349 1.81902C1.06709 2.00821 1.03144 2.20481 1.01529 2.40249C0.999984 2.58977 0.999992 2.81714 1 3.08071V8.91927C0.999992 9.18284 0.999984 9.41023 1.01529 9.59752C1.03144 9.79519 1.06709 9.9918 1.16349 10.181C1.3073 10.4632 1.53677 10.6927 1.81902 10.8365C2.00821 10.9329 2.20481 10.9686 2.40249 10.9847C2.58977 11 2.81715 11 3.08072 11H8.91928C9.18285 11 9.41023 11 9.59752 10.9847C9.79519 10.9686 9.9918 10.9329 10.181 10.8365C10.4632 10.6927 10.6927 10.4632 10.8365 10.181C10.9329 9.9918 10.9686 9.79519 10.9847 9.59752C11 9.41023 11 9.18285 11 8.91928V3.08072C11 2.81715 11 2.58977 10.9847 2.40249C10.9686 2.20481 10.9329 2.00821 10.8365 1.81902C10.6927 1.53677 10.4632 1.3073 10.181 1.16349C9.9918 1.06709 9.79519 1.03144 9.59752 1.01529C9.41023 0.999984 9.18284 0.999992 8.91927 1ZM8.60355 4.85355C8.79882 4.65829 8.79882 4.34171 8.60355 4.14645C8.40829 3.95118 8.09171 3.95118 7.89645 4.14645L5.25 6.79289L4.10355 5.64645C3.90829 5.45118 3.59171 5.45118 3.39645 5.64645C3.20118 5.84171 3.20118 6.15829 3.39645 6.35355L4.89645 7.85355C5.09171 8.04882 5.40829 8.04882 5.60355 7.85355L8.60355 4.85355Z" fill="${shouldBeChecked ? '#444CE7' : '#667085'}"/></svg>
+            <span style="font-size:13px;font-weight:600;color:${shouldBeChecked ? '#4338CA' : '#374151'};">Must check</span>
           </label>
-          <label class="radio-opt" style="display:flex;flex-direction:row;align-items:center;gap:10px;border:1.5px solid ${!shouldBeChecked ? '#4F46E5' : '#E5E7EB'};border-radius:8px;padding:10px 14px;margin:0;cursor:pointer;background:${!shouldBeChecked ? '#EEF2FF' : 'white'};">
+          <label class="radio-opt radio-card" ${!shouldBeChecked ? 'data-selected' : ''} style="display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;border:1.5px solid ${!shouldBeChecked ? '#4F46E5' : '#E5E7EB'};border-radius:8px;padding:10px 14px;margin:0;cursor:pointer;background:${!shouldBeChecked ? '#EEF2FF' : 'white'};">
             <input type="radio" name="checkbox-answer" value="unchecked" ${!shouldBeChecked ? 'checked' : ''}
               onchange="onCheckboxAnswerChange(false)" style="display:none;">
-            <span style="font-size:16px;line-height:1;flex-shrink:0;">☐</span>
-            <span style="font-size:13px;font-weight:600;color:${!shouldBeChecked ? '#4338CA' : '#374151'};">Must end unchecked</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M9.5 1.5H2.5C1.94772 1.5 1.5 1.94772 1.5 2.5V9.5C1.5 10.0523 1.94772 10.5 2.5 10.5H9.5C10.0523 10.5 10.5 10.0523 10.5 9.5V2.5C10.5 1.94772 10.0523 1.5 9.5 1.5Z" stroke="${!shouldBeChecked ? '#444CE7' : '#667085'}" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span style="font-size:13px;font-weight:600;color:${!shouldBeChecked ? '#4338CA' : '#374151'};">Must uncheck</span>
           </label>
         </div>
         <div style="font-size:10px;color:#9CA3AF;margin-top:6px;line-height:1.5;">The expected final state of this checkbox. If it already matches the screenshot, the agent should leave it alone.</div>
@@ -1753,7 +1761,7 @@ function renderEditingPanel(body) {
           <div class="dropdown-item-row">
             <input class="form-input" type="text" value="${item}"
               placeholder="Option ${idx + 1}" oninput="onDropdownItemInput(${idx}, this.value)">
-            <button class="item-delete" onclick="onDropdownItemDelete(${idx})" title="Remove">🗑</button>
+            <button class="item-delete" onclick="onDropdownItemDelete(${idx})" title="Remove"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 5L5 15M5 5L15 15" stroke="#344054" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
           </div>
           `).join('')}
         </div>
@@ -1765,7 +1773,7 @@ function renderEditingPanel(body) {
           <label class="form-label">Answer Key</label>
           <div class="screen-select-wrapper">
             <select class="screen-select dropdown-answer-select" onchange="onDropdownAnswerChange(this.value)">
-              <option value="" ${hs.dropdownAnswer == null ? 'selected' : ''}>Select correct answer...</option>
+              <option value="" ${hs.dropdownAnswer == null ? 'selected' : ''}>Select answer key</option>
               ${(hs.dropdownItems || []).map((item, idx) => `
               <option value="${idx}" ${hs.dropdownAnswer === idx ? 'selected' : ''}>${item || '(empty)'}</option>
               `).join('')}
@@ -1803,15 +1811,17 @@ function renderEditingPanel(body) {
     <div class="panel-actions">
       <button class="btn-primary" ${canSave ? '' : 'disabled'} onclick="saveHotspot()">Save Hotspot</button>
       ${isEditingSaved
-        ? `<button class="btn-danger" onclick="deleteHotspot()">🗑 Delete Hotspot</button>`
+        ? `<button class="btn-danger" onclick="deleteHotspot()">Delete Hotspot</button>`
         : `<button class="btn-secondary" onclick="discardHotspot()">Discard</button>`}
     </div>`;
 
-  // Focus name input
-  setTimeout(() => {
-    const inp = $('hs-name-input');
-    if (inp && !nameVal) inp.focus();
-  }, 50);
+  // Focus name input only on initial render, not on re-renders from interaction changes
+  if (autoFocus) {
+    setTimeout(() => {
+      const inp = $('hs-name-input');
+      if (inp && !nameVal) inp.focus();
+    }, 50);
+  }
 }
 
 // ═══════════════════════════════════════════════
