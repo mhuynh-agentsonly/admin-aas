@@ -193,7 +193,7 @@
     .hs-modal-close:hover { background: #F2F4F7; }
     .hs-modal-body { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
     .hs-modal-preview-wrap { flex-shrink: 0; padding: 20px 20px 0; }
-    .hs-modal-detail-scroll { flex: 1; overflow-y: auto; padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 16px; }
+    .hs-modal-detail-scroll { flex: 1; overflow-y: auto; padding: 24px 20px 20px; display: flex; flex-direction: column; gap: 24px; }
 
     /* Screen preview area */
     .hs-screen-preview { position: relative; background: #F2F4F7; border: 1px solid #E4E7EC; border-radius: 10px; overflow: hidden; }
@@ -215,13 +215,38 @@
     .hs-overlay.type-click-terminal { background: rgba(180,35,24,0.15);  border: 1.5px solid #B42318; }
 
 
-    /* Hotspot list in modal */
-    .hs-list-section { }
-    .hs-list-title { font-size: 12px; font-weight: 700; color: #344054; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.4px; }
-    .hs-list-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid #E4E7EC; border-radius: 6px; background: #F9FAFB; margin-bottom: 6px; }
-    .hs-list-type-dot { width: 8px; height: 8px; border-radius: 2px; border: 1.5px solid; flex-shrink: 0; }
-    .hs-list-name { font-size: 12px; font-weight: 600; color: #101828; flex: 1; }
-    .hs-list-detail { font-size: 11px; color: #667085; }
+    /* Section titles (Assigned Script Lines / Hotspots / Path in this screen) */
+    .hs-list-title { font-size: 14px; font-weight: 700; color: #344054; line-height: 20px; margin-bottom: 8px; }
+
+    /* Hotspot cards — new Figma design */
+    .hs-card-list { display: flex; flex-direction: column; gap: 6px; }
+    .hs-card { display: flex; align-items: flex-start; gap: 8px; padding: 8px; border-radius: 8px; }
+    .hs-card.outcome-default  { background: #fff; border: 1px dashed #D0D5DD; }
+    .hs-card.outcome-terminal { background: #FFFBFA; border: 1px dashed #FECDCA; }
+    .hs-card-icon { display: flex; align-items: flex-start; justify-content: center; flex-shrink: 0; padding-top: 2px; }
+    .hs-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+    .hs-card-type { color: #667085; font-size: 10px; font-weight: 500; }
+    .hs-card-name-row { display: flex; align-items: center; gap: 8px; }
+    .hs-card-name { flex: 1; color: #344054; font-size: 12px; font-weight: 700; }
+    .hs-card-answer { color: #667085; font-size: 12px; font-weight: 500; white-space: nowrap; }
+    /* Path slot inside click-area cards */
+    .hs-path-slot { display: flex; flex-direction: column; gap: 4px; }
+    .hs-path-row { display: flex; align-items: center; gap: 2px; }
+    .hs-badge-pts { padding: 2px 8px; border-radius: 16px; font-size: 10px; font-weight: 500; white-space: nowrap; min-width: 42px; text-align: center; display: inline-block; }
+    .hs-badge-pts.pos  { background: #EBFFF8; color: #006650; }
+    .hs-badge-pts.neg  { background: #FFF4ED; color: #B93815; }
+    .hs-badge-pts.neut { background: #F2F4F7; color: #667085; }
+    .hs-badge-stop { padding: 3px 5px; border-radius: 16px; background: #FEF3F2; display: inline-flex; align-items: center; justify-content: center; min-width: 42px; }
+    .hs-path-label { color: #101828; font-size: 12px; font-weight: 400; margin-left: 2px; }
+    .hs-path-dest  { color: #101828; font-size: 12px; font-weight: 400; }
+
+    /* Path in this screen section */
+    .hs-path-groups { display: flex; flex-direction: column; gap: 4px; }
+    .hs-path-group  { display: flex; flex-direction: column; gap: 4px; padding-bottom: 4px; }
+    .hs-path-group-name { color: #344054; font-size: 12px; font-weight: 500; }
+    .hs-path-group-rows { padding-left: 2px; border-left: 2px solid #E4E7EC; display: flex; flex-direction: column; gap: 4px; }
+    .hs-path-group-row { display: flex; align-items: center; gap: 4px; padding: 2px 0; }
+    .hs-path-tick { width: 9px; border-top: 2px solid #E4E7EC; flex-shrink: 0; }
 
     /* Script lines in modal */
     .modal-script-section { }
@@ -913,7 +938,7 @@
   <!-- Footer nav -->
   <div class="footer-nav">
     <button class="btn btn-secondary">Back</button>
-    <a href="https://mhuynh-agentsonly.github.io/admin-aas/ai-scoring-step-v2-with-preview.html" 
+    <a href="https://mhuynh-agentsonly.github.io/admin-aas/ai-scoring-step.html" 
    class="btn btn-primary" 
    style="display:inline-flex; align-items:center; justify-content:center; text-decoration:none;">
   Save &amp; Next
@@ -957,6 +982,10 @@
         <div class="hs-list-section">
           <div class="hs-list-title">Hotspots</div>
           <div id="hsHotspotList"><!-- Populated by JS --></div>
+        </div>
+        <div id="hsPathSection" style="display:none;">
+          <div class="hs-list-title">Path in this screen</div>
+          <div id="hsPathInScreen" class="hs-path-groups"><!-- Populated by JS --></div>
         </div>
       </div>
     </div>
@@ -1019,23 +1048,120 @@
   };
 
   const TYPE_COLORS = {
-    // Conditional hotspots — always purple
-    'text':           { bg: 'rgba(105,65,198,0.15)',  border: '#7F56D9', dotBg: 'rgba(105,65,198,0.15)' },
-    'checkbox':       { bg: 'rgba(105,65,198,0.15)',  border: '#7F56D9', dotBg: 'rgba(105,65,198,0.15)' },
-    'dropdown':       { bg: 'rgba(105,65,198,0.15)',  border: '#7F56D9', dotBg: 'rgba(105,65,198,0.15)' },
-    // Click areas — green correct / orange wrong+deduct / red terminal
-    'click':          { bg: 'rgba(0,176,129,0.15)',   border: '#00B081', dotBg: 'rgba(0,176,129,0.15)' },
-    'click-neg':      { bg: 'rgba(247,144,9,0.15)',   border: '#F79009', dotBg: 'rgba(247,144,9,0.15)' },
-    'click-terminal': { bg: 'rgba(180,35,24,0.15)',   border: '#B42318', dotBg: 'rgba(180,35,24,0.15)' },
+    'text':           { bg: 'rgba(105,65,198,0.15)',  border: '#7F56D9' },
+    'checkbox':       { bg: 'rgba(105,65,198,0.15)',  border: '#7F56D9' },
+    'dropdown':       { bg: 'rgba(105,65,198,0.15)',  border: '#7F56D9' },
+    'click':          { bg: 'rgba(0,176,129,0.15)',   border: '#00B081' },
+    'click-neg':      { bg: 'rgba(247,144,9,0.15)',   border: '#F79009' },
+    'click-terminal': { bg: 'rgba(180,35,24,0.15)',   border: '#B42318' },
   };
   const TYPE_NAMES = {
     'click':          'Click area',
-    'click-neg':      'Click area (wrong — deducts points)',
+    'click-neg':      'Click area',
     'click-terminal': 'Click area',
     'text':           'Text field',
     'checkbox':       'Checkbox',
     'dropdown':       'Dropdown',
   };
+
+  // SVG icons per hotspot type (16×16, fill #667085)
+  const ICON_TEXT_FIELD = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.64535 2H11.3547C11.6471 1.99999 11.8994 1.99998 12.1083 2.01423C12.3281 2.02924 12.5481 2.06224 12.7654 2.15224C13.2554 2.35523 13.6448 2.74458 13.8478 3.23463C13.9378 3.45192 13.9708 3.67186 13.9858 3.89175C14 4.10058 14 4.35291 14 4.64534V4.66667C14 5.03486 13.7015 5.33333 13.3333 5.33333C12.9651 5.33333 12.6667 5.03486 12.6667 4.66667C12.6667 4.34692 12.6663 4.14049 12.6555 3.98251C12.6452 3.83051 12.6274 3.77262 12.6159 3.74488C12.5483 3.58153 12.4185 3.45174 12.2551 3.38408C12.2274 3.37259 12.1695 3.35485 12.0175 3.34447C11.8595 3.3337 11.6531 3.33333 11.3333 3.33333H9.83333V12.6667H10.6667C11.0349 12.6667 11.3333 12.9651 11.3333 13.3333C11.3333 13.7015 11.0349 14 10.6667 14H5.33333C4.96514 14 4.66667 13.7015 4.66667 13.3333C4.66667 12.9651 4.96514 12.6667 5.33333 12.6667H6.16667V3.33333H4.66667C4.34692 3.33333 4.14049 3.3337 3.98251 3.34447C3.83051 3.35485 3.77262 3.37259 3.74488 3.38408C3.58153 3.45174 3.45174 3.58153 3.38408 3.74488C3.37259 3.77262 3.35485 3.83051 3.34447 3.98251C3.3337 4.14049 3.33333 4.34692 3.33333 4.66667C3.33333 5.03486 3.03486 5.33333 2.66667 5.33333C2.29848 5.33333 2 5.03486 2 4.66667L2 4.64535C1.99999 4.35291 1.99998 4.10058 2.01423 3.89175C2.02924 3.67186 2.06224 3.45192 2.15224 3.23463C2.35523 2.74458 2.74458 2.35523 3.23463 2.15224C3.45192 2.06224 3.67186 2.02924 3.89175 2.01423C4.10058 1.99998 4.35291 1.99999 4.64535 2Z" fill="#667085"/></svg>';
+  const ICON_DROPDOWN = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.99967 1.66602C2.0792 1.66602 1.33301 2.41221 1.33301 3.33268C1.33301 4.25316 2.0792 4.99935 2.99967 4.99935C3.92015 4.99935 4.66634 4.25316 4.66634 3.33268C4.66634 2.41221 3.92015 1.66602 2.99967 1.66602Z" fill="#667085"/><path d="M6.66634 2.66602L13.9997 2.66602C14.3679 2.66602 14.6663 2.96449 14.6663 3.33268C14.6663 3.70087 14.3679 3.99935 13.9997 3.99935H6.66634C6.29815 3.99935 5.99967 3.70087 5.99967 3.33268C5.99967 2.96449 6.29815 2.66602 6.66634 2.66602Z" fill="#667085"/><path d="M6.66634 11.9993H13.9997C14.3679 11.9993 14.6663 12.2978 14.6663 12.666C14.6663 13.0342 14.3679 13.3327 13.9997 13.3327H6.66634C6.29815 13.3327 5.99967 13.0342 5.99967 12.666C5.99967 12.2978 6.29815 11.9993 6.66634 11.9993Z" fill="#667085"/><path d="M13.9997 7.33268H6.66634C6.29815 7.33268 5.99967 7.63116 5.99967 7.99935C5.99967 8.36754 6.29815 8.66602 6.66634 8.66602H13.9997C14.3679 8.66602 14.6663 8.36754 14.6663 7.99935C14.6663 7.63116 14.3679 7.33268 13.9997 7.33268Z" fill="#667085"/><path d="M2.99967 10.9993C2.0792 10.9993 1.33301 11.7455 1.33301 12.666C1.33301 13.5865 2.0792 14.3327 2.99967 14.3327C3.92015 14.3327 4.66634 13.5865 4.66634 12.666C4.66634 11.7455 3.92015 10.9993 2.99967 10.9993Z" fill="#667085"/><path d="M2.99967 6.33268C2.0792 6.33268 1.33301 7.07887 1.33301 7.99935C1.33301 8.91982 2.0792 9.66602 2.99967 9.66602C3.92015 9.66602 4.66634 8.91982 4.66634 7.99935C4.66634 7.07887 3.92015 6.33268 2.99967 6.33268Z" fill="#667085"/></svg>';
+  const ICON_CLICK = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.00033 0.666016C6.36852 0.666016 6.66699 0.964492 6.66699 1.33268V2.33268C6.66699 2.70087 6.36852 2.99935 6.00033 2.99935C5.63214 2.99935 5.33366 2.70087 5.33366 2.33268V1.33268C5.33366 0.964492 5.63214 0.666016 6.00033 0.666016Z" fill="#667085"/><path d="M2.19559 2.19461C2.45594 1.93426 2.87805 1.93426 3.1384 2.19461L3.8455 2.90172C4.10585 3.16207 4.10585 3.58418 3.8455 3.84453C3.58515 4.10488 3.16304 4.10488 2.90269 3.84453L2.19559 3.13742C1.93524 2.87707 1.93524 2.45496 2.19559 2.19461Z" fill="#667085"/><path d="M3.8455 9.13742C4.10585 8.87707 4.10585 8.45496 3.8455 8.19461C3.58515 7.93426 3.16304 7.93426 2.90269 8.19461L2.19559 8.90172C1.93524 9.16207 1.93524 9.58418 2.19559 9.84453C2.45594 10.1049 2.87805 10.1049 3.1384 9.84453L3.8455 9.13742Z" fill="#667085"/><path d="M9.8455 2.19461C10.1059 2.45496 10.1059 2.87707 9.8455 3.13742L9.1384 3.84453C8.87805 4.10488 8.45594 4.10488 8.19559 3.84453C7.93524 3.58418 7.93524 3.16207 8.19559 2.90172L8.90269 2.19461C9.16304 1.93426 9.58515 1.93426 9.8455 2.19461Z" fill="#667085"/><path d="M1.33366 5.33268C0.965469 5.33268 0.666992 5.63116 0.666992 5.99935C0.666992 6.36754 0.965469 6.66602 1.33366 6.66602H2.33366C2.70185 6.66602 3.00033 6.36754 3.00033 5.99935C3.00033 5.63116 2.70185 5.33268 2.33366 5.33268H1.33366Z" fill="#667085"/><path d="M5.87119 5.0314C5.63321 4.95484 5.37238 5.01785 5.19561 5.19463C5.01883 5.37141 4.95581 5.63223 5.03238 5.87022L7.77312 14.3887C7.84427 14.6099 8.02539 14.778 8.25119 14.8326C8.47698 14.8871 8.7149 14.8202 8.87915 14.656L10.3337 13.2014L12.2697 15.1374C12.3947 15.2625 12.5643 15.3327 12.7411 15.3327C12.9179 15.3327 13.0875 15.2625 13.2125 15.1374L15.1384 13.2115C15.2634 13.0865 15.3337 12.9169 15.3337 12.7401C15.3337 12.5633 15.2634 12.3937 15.1384 12.2687L13.2024 10.3327L14.6569 8.87818C14.8212 8.71392 14.8881 8.47601 14.8335 8.25021C14.779 8.02441 14.6108 7.84329 14.3897 7.77215L5.87119 5.0314Z" fill="#667085"/></svg>';
+  const ICON_CHECKBOX = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.2 4.267C2.2 3.04 3.194 2.067 4.4 2.067H11.8C13.007 2.067 14 3.04 14 4.267v7.466C14 12.96 13.007 13.933 11.8 13.933H4.4C3.193 13.933 2.2 12.96 2.2 11.733V4.267zm2.2-.8c-.44 0-.8.358-.8.8v7.466c0 .443.36.8.8.8h7.4c.44 0 .8-.357.8-.8V4.267c0-.442-.36-.8-.8-.8H4.4zm5.638 2.905a.667.667 0 010 .942L7.195 10.157a.667.667 0 01-.943 0L4.999 8.904a.667.667 0 01.943-.943l.781.781 2.372-2.37a.667.667 0 01.943 0z" fill="#667085"/></svg>';
+  const ICON_STOP = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.567.834H7.432c.22-.001.41-.001.566.012.165.013.329.043.486.123.236.12.427.311.547.546.08.158.11.322.123.487.013.156.013.345.013.565V7.43c0 .22 0 .41-.013.565-.013.165-.043.329-.123.487-.12.235-.311.426-.547.546-.157.08-.321.11-.486.123-.156.013-.345.013-.565.013H2.567c-.22 0-.409 0-.565-.013-.165-.013-.329-.043-.486-.123-.236-.12-.427-.311-.547-.546-.08-.158-.11-.322-.123-.487-.013-.156-.013-.345-.013-.565V2.567c0-.22 0-.409.013-.565.013-.165.043-.329.123-.487.12-.235.311-.426.547-.546.157-.08.321-.11.486-.123.156-.013.345-.013.565-.013z" fill="#F04438"/></svg>';
+  const ARROW_SVG = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.083 5.001H7.916M7.916 5.001L5 2.084M7.916 5.001L5 7.917" stroke="#667085" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  function typeIcon(type) {
+    if (type === 'text')     return ICON_TEXT_FIELD;
+    if (type === 'dropdown') return ICON_DROPDOWN;
+    if (type === 'checkbox') return ICON_CHECKBOX;
+    return ICON_CLICK; // click, click-neg, click-terminal
+  }
+
+  // Per-screen hotspot metadata: answer key, outcome style, path outcomes
+  const SCREEN_HOTSPOT_META = {
+    1: [
+      { answerKey: '"Ohio"', outcome: 'terminal',
+        paths: [
+          { pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Continue', isStop: false },
+          { pts: null,    label: 'Wrong',   dest: 'End simulation', isStop: true }
+        ]},
+      { answerKey: '"Apr 30"', outcome: 'default',
+        paths: [
+          { pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Continue', isStop: false },
+          { pts: '-1 pt', ptCls: 'neg', label: 'Wrong',   dest: 'Continue', isStop: false }
+        ]},
+      { answerKey: '"May 1"', outcome: 'default',
+        paths: [
+          { pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Continue', isStop: false },
+          { pts: '-1 pt', ptCls: 'neg', label: 'Wrong',   dest: 'Continue', isStop: false }
+        ]},
+      { answerKey: null, outcome: 'default',
+        paths: [
+          { pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Screen 2', isStop: false }
+        ]},
+    ],
+    2: [
+      { answerKey: null, outcome: 'default',
+        paths: [{ pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Screen 3', isStop: false }]},
+    ],
+    3: [
+      { answerKey: '"2"', outcome: 'default',
+        paths: [
+          { pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Continue', isStop: false },
+          { pts: '-1 pt', ptCls: 'neg', label: 'Wrong',   dest: 'Continue', isStop: false }
+        ]},
+      { answerKey: null, outcome: 'terminal',
+        paths: [
+          { pts: null, label: 'Wrong',  dest: 'End simulation', isStop: true }
+        ]},
+      { answerKey: null, outcome: 'default',
+        paths: [{ pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Screen 4', isStop: false }]},
+    ],
+    4: [
+      { answerKey: null, outcome: 'default',
+        paths: [{ pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Screen 5', isStop: false }]},
+    ],
+    5: [
+      { answerKey: '"Claire"', outcome: 'terminal',
+        paths: [
+          { pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Continue', isStop: false },
+          { pts: null,    label: 'Wrong',   dest: 'End simulation', isStop: true }
+        ]},
+      { answerKey: 'Must check', outcome: 'default',
+        paths: [
+          { pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Continue', isStop: false },
+          { pts: '-1 pt', ptCls: 'neg', label: 'Wrong',   dest: 'Continue', isStop: false }
+        ]},
+      { answerKey: 'Must uncheck', outcome: 'default',
+        paths: [
+          { pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Continue', isStop: false },
+          { pts: '-1 pt', ptCls: 'neg', label: 'Wrong',   dest: 'Continue', isStop: false }
+        ]},
+      { answerKey: null, outcome: 'default',
+        paths: [{ pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Screen 6', isStop: false }]},
+    ],
+    6: [
+      { answerKey: null, outcome: 'default',
+        paths: [{ pts: '+1 pt', ptCls: 'pos', label: 'Correct', dest: 'Result screen', isStop: false }]},
+    ],
+  };
+
+  function buildPathRow(p) {
+    var badge;
+    if (p.isStop) {
+      badge = '<span class="hs-badge-stop">' + ICON_STOP + '</span>';
+    } else {
+      badge = '<span class="hs-badge-pts ' + (p.ptCls || 'pos') + '">' + p.pts + '</span>';
+    }
+    return '<div class="hs-path-row">'
+      + badge
+      + '<span class="hs-path-label">' + p.label + '</span>'
+      + '<span class="hs-path-arrow">' + ARROW_SVG + '</span>'
+      + '<span class="hs-path-dest">' + p.dest + '</span>'
+      + '</div>';
+  }
 
   function openScreenModal(screenNum) {
     const s = SCREENS[screenNum];
@@ -1084,18 +1210,82 @@
       scriptEl.innerHTML = linesHtml;
     }
 
-    // Build hotspot list (string concatenation)
+    // Build hotspot list — new card design
     const list = document.getElementById('hsHotspotList');
-    let hsListHtml = '';
-    s.hotspots.forEach(function(hs) {
-      const c = TYPE_COLORS[hs.type];
-      hsListHtml += '<div class="hs-list-item">'
-        + '<div class="hs-list-type-dot" style="background:' + c.bg + ';border-color:' + c.border + ';"></div>'
-        + '<div class="hs-list-name">' + hs.label + '</div>'
-        + '<div class="hs-list-detail">' + TYPE_NAMES[hs.type] + ' \u00b7 ' + hs.detail + '</div>'
+    const metaArr = SCREEN_HOTSPOT_META[screenNum] || [];
+    let hsListHtml = '<div class="hs-card-list">';
+    s.hotspots.forEach(function(hs, idx) {
+      const meta = metaArr[idx] || {};
+      const outcome = meta.outcome || 'default';
+
+      // Name row: name (with curly quotes) + optional answer key
+      let nameRowHtml = '<div class="hs-card-name-row">'
+        + '<div class="hs-card-name">\u201c' + hs.label + '\u201d</div>';
+      if (meta.answerKey) {
+        nameRowHtml += '<div class="hs-card-answer">Answer key: ' + meta.answerKey + '</div>';
+      }
+      nameRowHtml += '</div>';
+
+      // Path slot — shown for all hotspot types that have paths
+      let pathSlotHtml = '';
+      if (meta.paths && meta.paths.length) {
+        pathSlotHtml = '<div class="hs-path-slot">';
+        meta.paths.forEach(function(p) { pathSlotHtml += buildPathRow(p); });
+        pathSlotHtml += '</div>';
+      }
+
+      hsListHtml += '<div class="hs-card outcome-' + outcome + '">'
+        + '<div class="hs-card-icon">' + typeIcon(hs.type) + '</div>'
+        + '<div class="hs-card-body">'
+        + '<div class="hs-card-type">' + TYPE_NAMES[hs.type] + '</div>'
+        + nameRowHtml
+        + pathSlotHtml
+        + '</div>'
         + '</div>';
     });
+    hsListHtml += '</div>';
     list.innerHTML = hsListHtml;
+
+    // Build "Path in this screen" section
+    const pathSection = document.getElementById('hsPathSection');
+    const pathGroups = document.getElementById('hsPathInScreen');
+    // Collect hotspots that have paths with real destinations (not just "Continue")
+    const pathHotspots = s.hotspots.filter(function(hs, idx) {
+      const meta = metaArr[idx] || {};
+      return meta.paths && meta.paths.some(function(p) {
+        return p.dest && p.dest !== 'Continue';
+      });
+    });
+    if (pathHotspots.length === 0) {
+      pathSection.style.display = 'none';
+    } else {
+      pathSection.style.display = '';
+      let groupsHtml = '';
+      pathHotspots.forEach(function(hs, i) {
+        const hsIdx = s.hotspots.indexOf(hs);
+        const meta = metaArr[hsIdx] || {};
+        groupsHtml += '<div class="hs-path-group">'
+          + '<div class="hs-path-group-name">\u201c' + hs.label + '\u201d</div>'
+          + '<div class="hs-path-group-rows">';
+        meta.paths.forEach(function(p) {
+          var badge;
+          if (p.isStop) {
+            badge = '<span class="hs-badge-stop">' + ICON_STOP + '</span>';
+          } else {
+            badge = '<span class="hs-badge-pts ' + (p.ptCls || 'pos') + '">' + p.pts + '</span>';
+          }
+          groupsHtml += '<div class="hs-path-group-row">'
+            + '<div class="hs-path-tick"></div>'
+            + badge
+            + '<span class="hs-path-label">' + p.label + '</span>'
+            + '<span style="display:inline-flex;align-items:center;">' + ARROW_SVG + '</span>'
+            + '<span class="hs-path-dest">' + p.dest + '</span>'
+            + '</div>';
+        });
+        groupsHtml += '</div></div>';
+      });
+      pathGroups.innerHTML = groupsHtml;
+    }
 
     // Reset detail scroll each open
     const detailScroll = document.querySelector('.hs-modal-detail-scroll');
