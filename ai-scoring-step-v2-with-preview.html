@@ -137,6 +137,18 @@
 
     .prompt-box { background: #F9FAFB; border: 1px solid #E4E7EC; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: #344054; line-height: 1.65; }
     .prompt-text { white-space: pre-line; }
+    .prompt-scroll-wrap { position: relative; }
+    .prompt-scroll-body { overflow-y: auto; max-height: clamp(280px, 34vh, 480px); padding-bottom: 4px; }
+    .prompt-scroll-body.compact { max-height: clamp(180px, 22vh, 300px); }
+    .prompt-scroll-wrap::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 32px; background: linear-gradient(to bottom, transparent, #F9FAFB); pointer-events: none; opacity: 0; transition: opacity 0.2s; }
+    .prompt-scroll-wrap.has-overflow::after { opacity: 1; }
+    .prompt-scroll-body { scrollbar-width: none; }
+    .prompt-scroll-body:hover { scrollbar-width: thin; scrollbar-color: #D0D5DD transparent; }
+    .prompt-scroll-body::-webkit-scrollbar { width: 0; }
+    .prompt-scroll-body:hover::-webkit-scrollbar { width: 4px; }
+    .prompt-scroll-body::-webkit-scrollbar-track { background: transparent; }
+    .prompt-scroll-body::-webkit-scrollbar-thumb { background: #D0D5DD; border-radius: 4px; }
+    .prompt-scroll-body::-webkit-scrollbar-thumb:hover { background: #98A2B3; }
     .prompt-box-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid #E4E7EC; }
     .prompt-tag { font-size: 11px; font-weight: 500; color: #667085; background: #F2F4F7; border-radius: 4px; padding: 2px 7px; }
     .edit-link { font-size: 12px; font-weight: 600; color: #444CE7; display: flex; align-items: center; gap: 4px; text-decoration: none; cursor: pointer; }
@@ -512,7 +524,7 @@
             <div class="assistant-card active" id="card-1" onclick="selectAssistant(1)">
               <div class="assistant-avatar" style="background:#EEF4FF;"><span class="material-symbols-outlined" style="color:#6172F3;">chat</span></div>
               <div class="assistant-info">
-                <div class="assistant-name">Conversation Quality Evaluator</div>
+                <div class="assistant-name">Conversation Quality</div>
                 <div class="assistant-desc">Soft skills and clarity</div>
               </div>
               <div class="card-chevron"><span class="material-symbols-outlined">chevron_right</span></div>
@@ -556,7 +568,7 @@
             <div class="config-header">
               <div class="config-header-left">
                 <div class="config-name-row">
-                  <div class="config-name">Conversation Quality Evaluator</div>
+                  <div class="config-name">Conversation Quality</div>
                   <span class="config-role-badge specialist">Specialist</span>
                 </div>
                 <div class="config-subtitle">Soft skills and clarity</div>
@@ -574,6 +586,7 @@
                 </a>
               </div>
               <div class="prompt-box">
+                <div class="prompt-scroll-wrap"><div class="prompt-scroll-body">
                 <div class="prompt-text">You are a Customer Service Quality Analyst AI.
 Evaluate the agent's conversation in a hotel booking scenario.
 
@@ -600,6 +613,7 @@ Output format:
   "total_score": X,
   "feedback": "Concise explanation of strengths and weaknesses"
 }</div>
+                </div></div>
                 <div class="prompt-box-footer">
                   <span class="prompt-tag">Specialist prompt · Last edited 2 days ago</span>
                   <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
@@ -639,34 +653,14 @@ Output format:
     <div class="modal-two-col">
       <!-- Options list -->
       <div class="modal-body">
+        <div class="assistant-option" data-id="10" onclick="toggleSpecialist(10)">
+          <div class="option-avatar" style="background:#F2F4F7;"><span class="material-symbols-outlined" style="color:#667085;">accessible</span></div>
+          <div class="option-info"><div class="option-name">Accessibility &amp; Clarity Checker</div><div class="option-desc">Language simplicity and inclusivity</div></div>
+          <div class="option-check"><span class="material-symbols-outlined">check</span></div>
+        </div>
         <div class="assistant-option selected" data-id="1" onclick="toggleSpecialist(1)">
           <div class="option-avatar" style="background:#EEF4FF;"><span class="material-symbols-outlined" style="color:#6172F3;">chat</span></div>
-          <div class="option-info"><div class="option-name">Conversation Quality Evaluator</div><div class="option-desc">Soft skills and clarity</div></div>
-          <div class="option-check"><span class="material-symbols-outlined">check</span></div>
-        </div>
-        <div class="assistant-option" data-id="2" onclick="toggleSpecialist(2)">
-          <div class="option-avatar" style="background:#F4F3FF;"><span class="material-symbols-outlined" style="color:#7F56D9;">policy</span></div>
-          <div class="option-info"><div class="option-name">Intent &amp; Compliance Checker</div><div class="option-desc">Steps and compliance</div></div>
-          <div class="option-check"><span class="material-symbols-outlined">check</span></div>
-        </div>
-        <div class="assistant-option" data-id="3" onclick="toggleSpecialist(3)">
-          <div class="option-avatar" style="background:#ECFDF3;"><span class="material-symbols-outlined" style="color:#00B081;">highlight_mouse_cursor</span></div>
-          <div class="option-info"><div class="option-name">UI Interaction &amp; Accuracy Evaluator</div><div class="option-desc">Navigation accuracy</div></div>
-          <div class="option-check"><span class="material-symbols-outlined">check</span></div>
-        </div>
-        <div class="assistant-option" data-id="4" onclick="toggleSpecialist(4)">
-          <div class="option-avatar" style="background:#FFF6ED;"><span class="material-symbols-outlined" style="color:#F79009;">record_voice_over</span></div>
-          <div class="option-info"><div class="option-name">Audio Keyword &amp; Accuracy</div><div class="option-desc">Keyword accuracy and script adherence</div></div>
-          <div class="option-check"><span class="material-symbols-outlined">check</span></div>
-        </div>
-        <div class="assistant-option" data-id="5" onclick="toggleSpecialist(5)">
-          <div class="option-avatar" style="background:#FFF1F3;"><span class="material-symbols-outlined" style="color:#F63D68;">speed</span></div>
-          <div class="option-info"><div class="option-name">Resolution Speed Specialist</div><div class="option-desc">Task completion efficiency</div></div>
-          <div class="option-check"><span class="material-symbols-outlined">check</span></div>
-        </div>
-        <div class="assistant-option" data-id="6" onclick="toggleSpecialist(6)">
-          <div class="option-avatar" style="background:#FFF6ED;"><span class="material-symbols-outlined" style="color:#F79009;">favorite</span></div>
-          <div class="option-info"><div class="option-name">Empathy &amp; Rapport Specialist</div><div class="option-desc">Emotional tone and customer rapport</div></div>
+          <div class="option-info"><div class="option-name">Conversation Quality</div><div class="option-desc">Soft skills and clarity</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="7" onclick="toggleSpecialist(7)">
@@ -674,9 +668,14 @@ Output format:
           <div class="option-info"><div class="option-name">Data Privacy &amp; PII Checker</div><div class="option-desc">Sensitive data handling compliance</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
-        <div class="assistant-option" data-id="8" onclick="toggleSpecialist(8)">
-          <div class="option-avatar" style="background:#ECFDF3;"><span class="material-symbols-outlined" style="color:#00B081;">percent_discount</span></div>
-          <div class="option-info"><div class="option-name">Upsell &amp; Offer Awareness</div><div class="option-desc">Upsell opportunities and offer communication</div></div>
+        <div class="assistant-option" data-id="6" onclick="toggleSpecialist(6)">
+          <div class="option-avatar" style="background:#FFF6ED;"><span class="material-symbols-outlined" style="color:#F79009;">favorite</span></div>
+          <div class="option-info"><div class="option-name">Empathy &amp; Rapport</div><div class="option-desc">Emotional tone and customer rapport</div></div>
+          <div class="option-check"><span class="material-symbols-outlined">check</span></div>
+        </div>
+        <div class="assistant-option" data-id="2" onclick="toggleSpecialist(2)">
+          <div class="option-avatar" style="background:#F4F3FF;"><span class="material-symbols-outlined" style="color:#7F56D9;">policy</span></div>
+          <div class="option-info"><div class="option-name">Intent &amp; Compliance Checker</div><div class="option-desc">Steps and compliance</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
         <div class="assistant-option" data-id="9" onclick="toggleSpecialist(9)">
@@ -684,9 +683,24 @@ Output format:
           <div class="option-info"><div class="option-name">Knowledge Accuracy Verifier</div><div class="option-desc">Factual correctness of agent responses</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
-        <div class="assistant-option" data-id="10" onclick="toggleSpecialist(10)">
-          <div class="option-avatar" style="background:#F2F4F7;"><span class="material-symbols-outlined" style="color:#667085;">accessible</span></div>
-          <div class="option-info"><div class="option-name">Accessibility &amp; Clarity Checker</div><div class="option-desc">Language simplicity and inclusivity</div></div>
+        <div class="assistant-option" data-id="5" onclick="toggleSpecialist(5)">
+          <div class="option-avatar" style="background:#FFF1F3;"><span class="material-symbols-outlined" style="color:#F63D68;">speed</span></div>
+          <div class="option-info"><div class="option-name">Resolution Speed</div><div class="option-desc">Task completion efficiency</div></div>
+          <div class="option-check"><span class="material-symbols-outlined">check</span></div>
+        </div>
+        <div class="assistant-option" data-id="3" onclick="toggleSpecialist(3)">
+          <div class="option-avatar" style="background:#ECFDF3;"><span class="material-symbols-outlined" style="color:#00B081;">highlight_mouse_cursor</span></div>
+          <div class="option-info"><div class="option-name">UI Interaction &amp; Accuracy</div><div class="option-desc">Navigation accuracy</div></div>
+          <div class="option-check"><span class="material-symbols-outlined">check</span></div>
+        </div>
+        <div class="assistant-option" data-id="8" onclick="toggleSpecialist(8)">
+          <div class="option-avatar" style="background:#ECFDF3;"><span class="material-symbols-outlined" style="color:#00B081;">percent_discount</span></div>
+          <div class="option-info"><div class="option-name">Upsell &amp; Offer Awareness</div><div class="option-desc">Upsell opportunities and offer communication</div></div>
+          <div class="option-check"><span class="material-symbols-outlined">check</span></div>
+        </div>
+        <div class="assistant-option" data-id="4" onclick="toggleSpecialist(4)">
+          <div class="option-avatar" style="background:#FFF6ED;"><span class="material-symbols-outlined" style="color:#F79009;">record_voice_over</span></div>
+          <div class="option-info"><div class="option-name">Voice &amp; Keyword Accuracy</div><div class="option-desc">Keyword accuracy and script adherence</div></div>
           <div class="option-check"><span class="material-symbols-outlined">check</span></div>
         </div>
       </div>
@@ -742,14 +756,14 @@ Output format:
       <button class="modal-close" onclick="closeEvaluatorModal()"><span class="material-symbols-outlined">close</span></button>
     </div>
     <div class="modal-body">
-      <div class="assistant-option" data-eval-id="20" onclick="selectEvaluator(20)">
-        <div class="option-avatar" style="background:#F4F3FF;"><span class="material-symbols-outlined" style="color:#7F56D9;">workspace_premium</span></div>
-        <div class="option-info"><div class="option-name">Master Evaluator</div><div class="option-desc">Combines all specialist scores</div></div>
-        <div class="option-radio"></div>
-      </div>
       <div class="assistant-option" data-eval-id="21" onclick="selectEvaluator(21)">
         <div class="option-avatar" style="background:#ECFDF3;"><span class="material-symbols-outlined" style="color:#00B081;">balance</span></div>
         <div class="option-info"><div class="option-name">Balanced Scoring Evaluator</div><div class="option-desc">Prioritizes compliance when calculating the final score</div></div>
+        <div class="option-radio"></div>
+      </div>
+      <div class="assistant-option" data-eval-id="20" onclick="selectEvaluator(20)">
+        <div class="option-avatar" style="background:#F4F3FF;"><span class="material-symbols-outlined" style="color:#7F56D9;">workspace_premium</span></div>
+        <div class="option-info"><div class="option-name">Master Evaluator</div><div class="option-desc">Combines all specialist scores</div></div>
         <div class="option-radio"></div>
       </div>
     </div>
@@ -781,7 +795,7 @@ Output format:
 <script>
   // ── Data ─────────────────────────────────────────────────────
   const specialistData = {
-    1: { name: 'Conversation Quality Evaluator', desc: 'Soft skills and clarity', avatar: 'chat', avatarBg: '#EEF4FF', avatarColor: '#6172F3', lastEdited: '2 days ago',
+    1: { name: 'Conversation Quality', desc: 'Soft skills and clarity', avatar: 'chat', avatarBg: '#EEF4FF', avatarColor: '#6172F3', lastEdited: '2 days ago',
          prompt: `You are a Customer Service Quality Analyst AI.
 Evaluate the agent's conversation in a hotel booking scenario.
 
@@ -845,7 +859,7 @@ Output format:
 Critical Fail Conditions:
 - Booking confirmed without verifying dates
 - Incorrect pricing communicated` },
-    3: { name: 'UI Interaction & Accuracy Evaluator', desc: 'Navigation accuracy', avatar: 'highlight_mouse_cursor', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '1 week ago',
+    3: { name: 'UI Interaction & Accuracy', desc: 'Navigation accuracy', avatar: 'highlight_mouse_cursor', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '1 week ago',
          prompt: `You are a UI Interaction Scoring AI for a hotel booking system simulation.
 Analyze the agent's screen interactions.
 
@@ -874,7 +888,7 @@ Output format:
   "final_score": X,
   "feedback": "Explain incorrect navigation or missed steps"
 }` },
-    4: { name: 'Audio Keyword & Accuracy', desc: 'Keyword accuracy and script adherence', avatar: 'record_voice_over', avatarBg: '#FFF6ED', avatarColor: '#F79009', lastEdited: '3 days ago',
+    4: { name: 'Voice & Keyword Accuracy', desc: 'Keyword accuracy and script adherence', avatar: 'record_voice_over', avatarBg: '#FFF6ED', avatarColor: '#F79009', lastEdited: '3 days ago',
          prompt: `You are an AI that evaluates keyword and semantic accuracy in a hotel booking call.
 Compare the agent's responses against expected key information.
 
@@ -900,7 +914,7 @@ Output format:
   "overall_score": X,
   "feedback": "Highlight missing or incorrect information"
 }` },
-    5: { name: 'Resolution Speed Specialist', desc: 'Task completion efficiency', avatar: 'speed', avatarBg: '#FFF1F3', avatarColor: '#F63D68', lastEdited: '2 weeks ago',
+    5: { name: 'Resolution Speed', desc: 'Task completion efficiency', avatar: 'speed', avatarBg: '#FFF1F3', avatarColor: '#F63D68', lastEdited: '2 weeks ago',
          prompt: `You are a Task Efficiency Analyst AI for hotel booking simulations.
 Evaluate how efficiently the agent completed the booking process.
 
@@ -929,7 +943,7 @@ Output format:
   "final_score": X,
   "feedback": "Explain inefficiencies or unnecessary detours taken"
 }` },
-    6: { name: 'Empathy & Rapport Specialist', desc: 'Emotional tone and customer rapport', avatar: 'favorite', avatarBg: '#FFF6ED', avatarColor: '#F79009', lastEdited: '3 days ago',
+    6: { name: 'Empathy & Rapport', desc: 'Emotional tone and customer rapport', avatar: 'favorite', avatarBg: '#FFF6ED', avatarColor: '#F79009', lastEdited: '3 days ago',
          prompt: `You are an Empathy and Rapport Analyst AI for customer service interactions.
 Evaluate the emotional quality of the agent's communication throughout the hotel booking call.
 
@@ -1190,7 +1204,9 @@ Output format:
           </a>
         </div>
         <div class="prompt-box">
+          <div class="prompt-scroll-wrap"><div class="prompt-scroll-body">
           <div class="prompt-text">${d.prompt}</div>
+          </div></div>
           <div class="prompt-box-footer">
             <span class="prompt-tag">Specialist prompt · Last edited ${d.lastEdited}</span>
             <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
@@ -1230,7 +1246,9 @@ Output format:
       <div class="config-section">
         <div class="config-section-label"><span class="material-symbols-outlined">notes</span>Evaluation Prompt</div>
         <div class="prompt-box">
+          <div class="prompt-scroll-wrap"><div class="prompt-scroll-body">
           <div class="prompt-text">${d.prompt}</div>
+          </div></div>
           <div class="prompt-box-footer">
             <span class="prompt-tag">Evaluator prompt · Last edited ${d.lastEdited}</span>
             <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
@@ -1240,6 +1258,7 @@ Output format:
       <div class="config-section">
         <div class="config-section-label"><span class="material-symbols-outlined">data_object</span>Required Output Format</div>
         <div class="prompt-box">
+          <div class="prompt-scroll-wrap"><div class="prompt-scroll-body compact">
           <div class="prompt-text" style="font-size:12px;">{
   "overall_score": 0–100,
   "pass": true/false,
@@ -1252,6 +1271,7 @@ Output format:
   },
   "summary": "Overall feedback shown to the agent"
 }</div>
+          </div></div>
           <div class="prompt-box-footer">
             <span class="prompt-tag">Output format · Last edited ${d.lastEdited}</span>
             <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
@@ -1273,14 +1293,34 @@ Output format:
       list.innerHTML = '<div class="specialist-inputs-empty">No specialists added yet — add specialists to see them listed here.</div>';
       return;
     }
-    list.innerHTML = [...state.specialists].map(sid => {
-      const s = specialistData[sid];
-      return `<div class="specialist-input-row">
+    list.innerHTML = [...state.specialists]
+      .sort((a, b) => specialistData[a].name.localeCompare(specialistData[b].name))
+      .map(sid => {
+        const s = specialistData[sid];
+        return `<div class="specialist-input-row">
         <div class="specialist-input-avatar" style="background:${s.avatarBg};"><span class="material-symbols-outlined" style="color:${s.avatarColor};">${s.avatar}</span></div>
         <span class="specialist-input-name">${s.name}</span>
       </div>`;
-    }).join('');
+      }).join('');
   }
+
+  // ── Prompt fade visibility ────────────────────────────────────
+  function updatePromptFades() {
+    document.querySelectorAll('.prompt-scroll-body').forEach(el => {
+      const wrap = el.closest('.prompt-scroll-wrap');
+      if (!wrap) return;
+      const overflows = el.scrollHeight > el.clientHeight + 2;
+      wrap.classList.toggle('has-overflow', overflows);
+      if (!el._fadeListenerAttached) {
+        el._fadeListenerAttached = true;
+        el.addEventListener('scroll', () => {
+          const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 4;
+          wrap.classList.toggle('has-overflow', !atBottom);
+        });
+      }
+    });
+  }
+  window.addEventListener('resize', updatePromptFades);
 
   // ── Select / highlight ────────────────────────────────────────
   function selectAssistant(id, role) {
@@ -1303,6 +1343,7 @@ Output format:
     if (panel) {
       panel.style.display = 'flex';
       if (role === 'evaluator') refreshEvaluatorInputs(id);
+      requestAnimationFrame(updatePromptFades);
     }
   }
 
@@ -1363,6 +1404,7 @@ Output format:
     [...state.specialists].forEach(id => {
       if (!modalSpecialistChecked.has(id)) removeSpecialist(id);
     });
+
     // Add newly checked
     [...modalSpecialistChecked].forEach(id => {
       if (!state.specialists.has(id)) addSpecialist(id);
@@ -1377,10 +1419,22 @@ Output format:
     updateValidation();
   }
 
+  function sortSpecialistList() {
+    const list = document.getElementById('specialistList');
+    const cards = [...list.querySelectorAll('.assistant-card')];
+    cards.sort((a, b) => {
+      const nameA = specialistData[parseInt(a.id.replace('card-', ''))].name;
+      const nameB = specialistData[parseInt(b.id.replace('card-', ''))].name;
+      return nameA.localeCompare(nameB);
+    });
+    cards.forEach(card => list.appendChild(card));
+  }
+
   function addSpecialist(id) {
     state.specialists.add(id);
     const card = buildSpecialistCard(id);
     document.getElementById('specialistList').appendChild(card);
+    sortSpecialistList();
     const config = buildSpecialistConfig(id);
     document.getElementById('rightPanelBody').insertBefore(config, document.getElementById('emptyConfig'));
     updateSpecialistCount();
@@ -1677,6 +1731,7 @@ Output format:
     updateSpecialistCount();
     selectAssistant(1, 'specialist');
     updateValidation();
+    requestAnimationFrame(updatePromptFades);
   }
 
   initialize();
