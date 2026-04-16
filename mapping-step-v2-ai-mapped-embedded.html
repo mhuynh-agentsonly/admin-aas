@@ -163,12 +163,17 @@
 
 
     .bubble-audio { display: flex; align-items: center; gap: 5px; margin-top: 5px; }
-    .audio-play { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; border: none; cursor: pointer; }
+    .audio-play { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; border: none; cursor: pointer; transition: background 0.15s; }
     .customer .audio-play { background: #D0D5DD; }
     .agent .audio-play { background: #C7D7FE; }
+    .customer .audio-play:hover { background: #B8BFC9; }
+    .agent .audio-play:hover { background: #B2CCFE; }
     .audio-play svg { width: 10px; height: 10px; }
     .customer .audio-play svg { color: #344054; }
     .agent .audio-play svg { color: #3538CD; }
+    /* Playing state */
+    .audio-play.playing { background: #EEF4FF !important; color: #3538CD; }
+    .audio-play.playing svg { color: #3538CD; }
 
     /* Footer nav */
     .footer-nav { background-color: #fff; border: 1px solid #E4E7EC; border-radius: 0 0 16px 16px; margin: 0 48px; padding: 16px 32px 24px 24px; display: flex; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
@@ -1324,6 +1329,28 @@
     }
     return lines;
   }
+
+  // ─── Audio play toggle ───────────────────────────────────────
+  const PLAY_ICON  = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+  const PAUSE_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>';
+
+  function toggleAudioPlay(btn) {
+    const isPlaying = btn.classList.contains('playing');
+    // Stop all others first
+    document.querySelectorAll('.audio-play.playing').forEach(function(el) {
+      el.classList.remove('playing');
+      el.innerHTML = PLAY_ICON;
+    });
+    if (!isPlaying) {
+      btn.classList.add('playing');
+      btn.innerHTML = PAUSE_ICON;
+    }
+  }
+
+  // Wire up all audio-play buttons
+  document.querySelectorAll('.audio-play').forEach(function(btn) {
+    btn.addEventListener('click', function() { toggleAudioPlay(btn); });
+  });
 
   function closeModal() {
     document.getElementById('hsModalBackdrop').classList.remove('open');
