@@ -51,7 +51,7 @@
 
     /* ── Content card ── */
     .content-card { margin: 0 48px 0; background: #fff; border-radius: 0 0 12px 12px; overflow: hidden; display: flex; flex-direction: column; flex: 1; min-height: 0; }
-    .card-header { padding: 24px 28px 20px; border-bottom: 1px solid #E4E7EC; flex-shrink: 0; }
+    .card-header { padding: 24px 28px 0; flex-shrink: 0; }
     .training-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
     .training-name { font-size: 18px; font-weight: 700; color: #101828; }
     .badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px; }
@@ -59,7 +59,7 @@
     .step-label { font-size: 13px; color: #667085; }
 
     /* ── Pass Rate bar ── */
-    .pass-rate-bar { padding: 16px 28px; border-bottom: 1px solid #E4E7EC; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+    .pass-rate-bar { padding: 8px 28px 16px 28px; border-bottom: 1px solid #E4E7EC; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
     .pass-rate-label-group { display: flex; flex-direction: column; gap: 3px; }
     .pass-rate-label { font-size: 14px; font-weight: 700; color: #101828; }
     .pass-rate-helper { font-size: 13px; color: #667085; }
@@ -496,6 +496,7 @@
         <span class="training-name">Hotel Training</span>
         <span class="badge badge-audio-image">Audio &amp; Image</span>
       </div>
+      <!-- Step name omitted — already visible in the progress bar above, repeating it here adds no value and wastes vertical space -->
     </div>
 
     <!-- Pass Rate -->
