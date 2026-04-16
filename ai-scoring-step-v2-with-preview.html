@@ -58,6 +58,19 @@
     .badge-audio-image { background: #EEF4FF; color: #3538CD; }
     .step-label { font-size: 13px; color: #667085; }
 
+    /* ── Pass Rate bar ── */
+    .pass-rate-bar { padding: 16px 28px; border-bottom: 1px solid #E4E7EC; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+    .pass-rate-label-group { display: flex; flex-direction: column; gap: 3px; }
+    .pass-rate-label { font-size: 14px; font-weight: 700; color: #101828; }
+    .pass-rate-helper { font-size: 13px; color: #667085; }
+    .pass-rate-input-wrap { width: 130px; display: inline-flex; align-items: stretch; border-radius: 8px; outline: 1px solid #D0D5DD; outline-offset: -1px; background: #fff; flex-shrink: 0; }
+    .pass-rate-input-wrap:focus-within { outline: 1.5px solid #444CE7; box-shadow: 0 0 0 3px #C7D7FE; }
+    .pass-rate-input { flex: 1 1 0; padding: 10px 14px; font-size: 16px; font-weight: 400; color: #101828; font-family: 'DM Sans', sans-serif; border: none; border-radius: 8px 0 0 8px; outline: 1px solid #D0D5DD; outline-offset: -1px; background: #fff; -moz-appearance: textfield; }
+    .pass-rate-input:focus { outline: none; }
+    .pass-rate-input::-webkit-outer-spin-button,
+    .pass-rate-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    .pass-rate-unit { padding: 10px 12px 10px 14px; font-size: 16px; font-weight: 400; color: #667085; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; background: #fff; }
+
     /* ── Two-column body ── */
     .two-col { display: flex; flex: 1; min-height: 0; }
 
@@ -305,20 +318,8 @@
     /* Result screens section */
     .preview-result-section { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #E4E7EC; padding-top: 16px; }
     .preview-result-section-label { font-size: 10px; font-weight: 700; color: #444CE7; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
-    .preview-result-card { border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
-    .preview-result-card.pass { border: 1.5px dashed #6CE9A6; background: #fff; }
-    .preview-result-card.fail { border: 1.5px dashed #FEC84B; background: #fff; }
-    .preview-result-card.crit { border: 1.5px dashed #FDA29B; background: #fff; }
-    .preview-result-status { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; }
-    .preview-result-card.pass .preview-result-status { color: #027A48; }
-    .preview-result-card.fail .preview-result-status { color: #B54708; }
-    .preview-result-card.crit .preview-result-status { color: #B42318; }
-    .preview-result-status .material-symbols-outlined { font-size: 15px; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
-    .preview-result-message { font-size: 11.5px; font-weight: 600; line-height: 1.4; }
-    .preview-result-card.pass .preview-result-message { color: #027A48; }
-    .preview-result-card.fail .preview-result-message { color: #B54708; }
-    .preview-result-card.crit .preview-result-message { color: #B42318; }
-    .preview-result-passmark { font-size: 10.5px; color: #98A2B3; }
+    .preview-result-screen-box { border: 1.5px dashed #A4BCFD; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; background: #fff; }
+    .preview-result-passmark { font-size: 11.5px; color: #344054; }
     .preview-result-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     .preview-result-stat { background: #fff; border: 1px solid #E4E7EC; border-radius: 7px; padding: 7px 10px; display: flex; flex-direction: column; gap: 1px; }
     .preview-result-stat-label { font-size: 10px; color: #667085; }
@@ -495,7 +496,18 @@
         <span class="training-name">Hotel Training</span>
         <span class="badge badge-audio-image">Audio &amp; Image</span>
       </div>
-      <div class="step-label">AI Scoring</div>
+    </div>
+
+    <!-- Pass Rate -->
+    <div class="pass-rate-bar">
+      <div class="pass-rate-label-group">
+        <span class="pass-rate-label">Pass Rate</span>
+        <span class="pass-rate-helper">The minimum score an agent must achieve to pass this simulation. Default is 75%.</span>
+      </div>
+      <div class="pass-rate-input-wrap">
+        <input class="pass-rate-input" type="number" value="75" min="0" max="100" />
+        <span class="pass-rate-unit">%</span>
+      </div>
     </div>
 
     <div class="two-col">
@@ -615,7 +627,7 @@ Output format:
 }</div>
                 </div></div>
                 <div class="prompt-box-footer">
-                  <span class="prompt-tag">Specialist prompt · Last edited 2 days ago</span>
+                  <span class="prompt-tag">Specialist prompt · Last edited 04/14/2026, 10:23 AM</span>
                   <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
                 </div>
               </div>
@@ -795,7 +807,7 @@ Output format:
 <script>
   // ── Data ─────────────────────────────────────────────────────
   const specialistData = {
-    1: { name: 'Conversation Quality', desc: 'Soft skills and clarity', avatar: 'chat', avatarBg: '#EEF4FF', avatarColor: '#6172F3', lastEdited: '2 days ago',
+    1: { name: 'Conversation Quality', desc: 'Soft skills and clarity', avatar: 'chat', avatarBg: '#EEF4FF', avatarColor: '#6172F3', lastEdited: '04/14/2026, 10:23 AM',
          prompt: `You are a Customer Service Quality Analyst AI.
 Evaluate the agent's conversation in a hotel booking scenario.
 
@@ -822,7 +834,7 @@ Output format:
   "total_score": X,
   "feedback": "Concise explanation of strengths and weaknesses"
 }` },
-    2: { name: 'Intent & Compliance Checker', desc: 'Steps and compliance', avatar: 'policy', avatarBg: '#F4F3FF', avatarColor: '#7F56D9', lastEdited: '5 days ago',
+    2: { name: 'Intent & Compliance Checker', desc: 'Steps and compliance', avatar: 'policy', avatarBg: '#F4F3FF', avatarColor: '#7F56D9', lastEdited: '04/11/2026, 3:45 PM',
          prompt: `You are a Compliance and Process AI for hotel booking interactions.
 Analyze the conversation transcript and determine whether the agent correctly followed required steps.
 
@@ -859,7 +871,7 @@ Output format:
 Critical Fail Conditions:
 - Booking confirmed without verifying dates
 - Incorrect pricing communicated` },
-    3: { name: 'UI Interaction & Accuracy', desc: 'Navigation accuracy', avatar: 'highlight_mouse_cursor', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '1 week ago',
+    3: { name: 'UI Interaction & Accuracy', desc: 'Navigation accuracy', avatar: 'highlight_mouse_cursor', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '04/09/2026, 2:17 PM',
          prompt: `You are a UI Interaction Scoring AI for a hotel booking system simulation.
 Analyze the agent's screen interactions.
 
@@ -888,7 +900,7 @@ Output format:
   "final_score": X,
   "feedback": "Explain incorrect navigation or missed steps"
 }` },
-    4: { name: 'Voice & Keyword Accuracy', desc: 'Keyword accuracy and script adherence', avatar: 'record_voice_over', avatarBg: '#FFF6ED', avatarColor: '#F79009', lastEdited: '3 days ago',
+    4: { name: 'Voice & Keyword Accuracy', desc: 'Keyword accuracy and script adherence', avatar: 'record_voice_over', avatarBg: '#FFF6ED', avatarColor: '#F79009', lastEdited: '04/13/2026, 11:42 AM',
          prompt: `You are an AI that evaluates keyword and semantic accuracy in a hotel booking call.
 Compare the agent's responses against expected key information.
 
@@ -914,7 +926,7 @@ Output format:
   "overall_score": X,
   "feedback": "Highlight missing or incorrect information"
 }` },
-    5: { name: 'Resolution Speed', desc: 'Task completion efficiency', avatar: 'speed', avatarBg: '#FFF1F3', avatarColor: '#F63D68', lastEdited: '2 weeks ago',
+    5: { name: 'Resolution Speed', desc: 'Task completion efficiency', avatar: 'speed', avatarBg: '#FFF1F3', avatarColor: '#F63D68', lastEdited: '04/02/2026, 9:05 AM',
          prompt: `You are a Task Efficiency Analyst AI for hotel booking simulations.
 Evaluate how efficiently the agent completed the booking process.
 
@@ -943,7 +955,7 @@ Output format:
   "final_score": X,
   "feedback": "Explain inefficiencies or unnecessary detours taken"
 }` },
-    6: { name: 'Empathy & Rapport', desc: 'Emotional tone and customer rapport', avatar: 'favorite', avatarBg: '#FFF6ED', avatarColor: '#F79009', lastEdited: '3 days ago',
+    6: { name: 'Empathy & Rapport', desc: 'Emotional tone and customer rapport', avatar: 'favorite', avatarBg: '#FFF6ED', avatarColor: '#F79009', lastEdited: '04/13/2026, 4:30 PM',
          prompt: `You are an Empathy and Rapport Analyst AI for customer service interactions.
 Evaluate the emotional quality of the agent's communication throughout the hotel booking call.
 
@@ -969,7 +981,7 @@ Output format:
   "total_score": X,
   "feedback": "Highlight cold, dismissive, or robotic moments in the interaction"
 }` },
-    7: { name: 'Data Privacy & PII Checker', desc: 'Sensitive data handling compliance', avatar: 'database', avatarBg: '#F4F3FF', avatarColor: '#7F56D9', lastEdited: '1 week ago',
+    7: { name: 'Data Privacy & PII Checker', desc: 'Sensitive data handling compliance', avatar: 'database', avatarBg: '#F4F3FF', avatarColor: '#7F56D9', lastEdited: '04/09/2026, 8:52 AM',
          prompt: `You are a Data Privacy Compliance AI for hotel booking contact center simulations.
 Verify that the agent handled customer information in accordance with privacy best practices.
 
@@ -1002,7 +1014,7 @@ Output format:
 Critical Fail Conditions:
 - Agent verbally repeated full card or ID details
 - Agent shared guest information without consent` },
-    8: { name: 'Upsell & Offer Awareness', desc: 'Upsell opportunities and offer communication', avatar: 'percent_discount', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '5 days ago',
+    8: { name: 'Upsell & Offer Awareness', desc: 'Upsell opportunities and offer communication', avatar: 'percent_discount', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '04/11/2026, 1:20 PM',
          prompt: `You are an Upsell and Offer Awareness AI for hotel booking interactions.
 Evaluate whether the agent appropriately identified and communicated relevant upsell opportunities.
 
@@ -1035,7 +1047,7 @@ Output format:
   "score": X,
   "feedback": "Note missed opportunities and any inappropriate upsell attempts"
 }` },
-    9: { name: 'Knowledge Accuracy Verifier', desc: 'Factual correctness of agent responses', avatar: 'school', avatarBg: '#EEF4FF', avatarColor: '#6172F3', lastEdited: '2 days ago',
+    9: { name: 'Knowledge Accuracy Verifier', desc: 'Factual correctness of agent responses', avatar: 'school', avatarBg: '#EEF4FF', avatarColor: '#6172F3', lastEdited: '04/14/2026, 2:38 PM',
          prompt: `You are a Knowledge Accuracy Verification AI for hotel booking simulations.
 Assess whether the agent provided factually correct information throughout the interaction.
 
@@ -1069,7 +1081,7 @@ Output format:
   "critical_fail": true/false,
   "feedback": "Detail any incorrect or misleading information provided by the agent"
 }` },
-    10: { name: 'Accessibility & Clarity Checker', desc: 'Language simplicity and inclusivity', avatar: 'accessible', avatarBg: '#F2F4F7', avatarColor: '#667085', lastEdited: '4 days ago',
+    10: { name: 'Accessibility & Clarity Checker', desc: 'Language simplicity and inclusivity', avatar: 'accessible', avatarBg: '#F2F4F7', avatarColor: '#667085', lastEdited: '04/12/2026, 3:15 PM',
          prompt: `You are an Accessibility and Language Clarity AI for customer service simulations.
 Evaluate whether the agent communicated in a way that is inclusive, simple, and accessible to all customers.
 
@@ -1098,9 +1110,9 @@ Output format:
   };
 
   const evaluatorData = {
-    20: { name: 'Master Evaluator', desc: 'Combines all specialist scores into one final result', avatar: 'workspace_premium', avatarBg: '#F4F3FF', avatarColor: '#7F56D9', lastEdited: '4 days ago',
+    20: { name: 'Master Evaluator', desc: 'Combines all specialist scores into one final result', avatar: 'workspace_premium', avatarBg: '#F4F3FF', avatarColor: '#7F56D9', lastEdited: '04/12/2026, 11:05 AM',
           prompt: 'You will receive structured output from each specialist assistant. Synthesize their findings into a single coherent evaluation: an overall score, a pass/fail verdict, and a concise summary of strengths and areas for improvement. Weigh each specialist\'s output equally unless a critical failure is flagged.' },
-    21: { name: 'Balanced Scoring Evaluator', desc: 'Prioritizes compliance when calculating the final score', avatar: 'balance', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '1 week ago',
+    21: { name: 'Balanced Scoring Evaluator', desc: 'Prioritizes compliance when calculating the final score', avatar: 'balance', avatarBg: '#ECFDF3', avatarColor: '#00B081', lastEdited: '04/09/2026, 4:22 PM',
           prompt: 'Synthesize specialist outputs with a compliance-first approach. If any compliance violation is flagged by a specialist, reduce the final score significantly. Otherwise, aggregate scores proportionally and provide a final verdict with reasoning.' },
   };
 
@@ -1272,10 +1284,6 @@ Output format:
   "summary": "Overall feedback shown to the agent"
 }</div>
           </div></div>
-          <div class="prompt-box-footer">
-            <span class="prompt-tag">Output format · Last edited ${d.lastEdited}</span>
-            <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
-          </div>
         </div>
       </div>
       <div class="config-section">
@@ -1321,6 +1329,14 @@ Output format:
     });
   }
   window.addEventListener('resize', updatePromptFades);
+
+  // ── Pass Rate clamp ───────────────────────────────────────────
+  document.querySelector('.pass-rate-input').addEventListener('change', function () {
+    let val = parseInt(this.value, 10);
+    if (isNaN(val) || val < 0) val = 0;
+    if (val > 100) val = 100;
+    this.value = val;
+  });
 
   // ── Select / highlight ────────────────────────────────────────
   function selectAssistant(id, role) {
@@ -1663,39 +1679,12 @@ Output format:
           out('Correct','Result Screen', bdgOk(1)))),
     ].join('') + `
     <div class="preview-result-section">
-      <div class="preview-result-section-label">Result Screens</div>
-
-      <div class="preview-result-card pass">
-        <div class="preview-result-status"><span class="material-symbols-outlined">verified</span>Passed</div>
-        <div class="preview-result-message">Great job completing the simulation!</div>
-        <div class="preview-result-passmark">Required Pass Mark: 75%</div>
+      <div class="preview-result-section-label">Result Screen</div>
+      <div class="preview-result-screen-box">
+        <div class="preview-result-passmark">Required Pass Mark: <strong>75%</strong></div>
         <div class="preview-result-stats">
           <div class="preview-result-stat"><div class="preview-result-stat-label">Completion Time</div><div class="preview-result-stat-value">5:23</div></div>
           <div class="preview-result-stat"><div class="preview-result-stat-label">Overall Score</div><div class="preview-result-stat-value">90%</div></div>
-          <div class="preview-result-stat"><div class="preview-result-stat-label">Correct Clicks</div><div class="preview-result-stat-value green">+8 pts</div></div>
-          <div class="preview-result-stat"><div class="preview-result-stat-label">Penalty Mistakes</div><div class="preview-result-stat-value red">−1 pts</div></div>
-        </div>
-      </div>
-
-      <div class="preview-result-card fail">
-        <div class="preview-result-status"><span class="material-symbols-outlined">close</span>Not passed</div>
-        <div class="preview-result-message">Almost there — this result doesn't meet the pass mark yet</div>
-        <div class="preview-result-passmark">Required Pass Mark: 75%</div>
-        <div class="preview-result-stats">
-          <div class="preview-result-stat"><div class="preview-result-stat-label">Completion Time</div><div class="preview-result-stat-value">5:23</div></div>
-          <div class="preview-result-stat"><div class="preview-result-stat-label">Overall Score</div><div class="preview-result-stat-value">2%</div></div>
-          <div class="preview-result-stat"><div class="preview-result-stat-label">Correct Clicks</div><div class="preview-result-stat-value green">+3 pts</div></div>
-          <div class="preview-result-stat"><div class="preview-result-stat-label">Penalty Mistakes</div><div class="preview-result-stat-value red">−1 pts</div></div>
-        </div>
-      </div>
-
-      <div class="preview-result-card crit">
-        <div class="preview-result-status"><span class="material-symbols-outlined">chat_info</span>Critical failure</div>
-        <div class="preview-result-message">You failed — a critical error ended the simulation</div>
-        <div class="preview-result-passmark">Required Pass Mark: 75%</div>
-        <div class="preview-result-stats">
-          <div class="preview-result-stat"><div class="preview-result-stat-label">Completion Time</div><div class="preview-result-stat-value">5:23</div></div>
-          <div class="preview-result-stat"><div class="preview-result-stat-label">Overall Score</div><div class="preview-result-stat-value">0%</div></div>
           <div class="preview-result-stat"><div class="preview-result-stat-label">Correct Clicks</div><div class="preview-result-stat-value green">+8 pts</div></div>
           <div class="preview-result-stat"><div class="preview-result-stat-label">Penalty Mistakes</div><div class="preview-result-stat-value red">−1 pts</div></div>
         </div>
