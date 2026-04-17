@@ -120,6 +120,27 @@
     .script-panel-header { padding: 16px 16px 14px; padding-right: 32px; border-bottom: 1px solid #F2F4F7; flex-shrink: 0; position: sticky; top: 0; background: #fff; z-index: 1; }
     .script-thread { padding: 16px 16px 32px; margin-right: 32px; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow-y: auto; position: relative; background-color: #FCFCFE; background-image: radial-gradient(circle, rgba(180, 190, 220, 0.25) 1px, transparent 1px); background-size: 12px 12px; }
 
+    /* ── Map with AI button ── */
+    .map-ai-btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s, opacity 0.15s; border: none; white-space: nowrap; font-family: 'DM Sans', sans-serif; }
+    .map-ai-btn.primary { background: #3538CD; color: #fff; }
+    .map-ai-btn.primary:hover:not(:disabled) { background: #2D31A6; }
+    .map-ai-btn.secondary { background: #fff; color: #344054; border: 1.5px solid #D0D5DD; }
+    .map-ai-btn.secondary:hover:not(:disabled) { background: #F9FAFB; }
+    .map-ai-btn.remap { background: #fff; color: #3538CD; border: 1px solid #6172F3; border-radius: 8px; }
+    .map-ai-btn.remap:hover:not(:disabled) { background: #EEF4FF; border-color: #6172F3; color: #444CE7; }
+    .map-ai-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .map-ai-btn .btn-spinner { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+    .map-ai-btn.remap .btn-spinner { border-color: rgba(53,56,205,0.2); border-top-color: #3538CD; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Confirm row */
+    .remap-confirm-row { display: flex; align-items: center; gap: 6px; }
+
+    /* ── Script skeleton ── */
+    .script-skeleton { position: absolute; inset: 0; z-index: 5; padding: 20px 16px 32px; display: flex; flex-direction: column; gap: 14px; background-color: #FCFCFE; background-image: radial-gradient(circle, rgba(180,190,220,0.25) 1px, transparent 1px); background-size: 12px 12px; overflow: hidden; }
+    .sk-bubble { height: 38px; border-radius: 10px; background: linear-gradient(90deg, #E4E7EC 25%, #F2F4F7 50%, #E4E7EC 75%); background-size: 400% 100%; animation: skshimmer 1.4s ease infinite; flex-shrink: 0; }
+    .sk-bubble.right { align-self: flex-end; }
+    @keyframes skshimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
+
     /* Break zone between lines */
     .break-zone { display: flex; align-items: center; gap: 0; height: 28px; cursor: pointer; position: relative; }
     .break-zone .bz-line { flex: 1; height: 1px; background: transparent; transition: background 0.15s; }
@@ -434,12 +455,12 @@
       <div class="step-divider"></div>
       <div class="step done">
         <div class="step-num">2</div>
-        <span class="step-label">Script &amp; Audio</span>
+        <span class="step-label">Images</span>
       </div>
       <div class="step-divider"></div>
       <div class="step done">
         <div class="step-num">3</div>
-        <span class="step-label">Images</span>
+        <span class="step-label">Script &amp; Audio</span>
       </div>
       <div class="step-divider"></div>
       <div class="step active">
@@ -603,11 +624,28 @@
       <!-- ── RIGHT: Script Thread ── -->
       <div class="script-panel">
         <div class="script-panel-header">
-          <div class="panel-title">Script</div>
-          <div class="panel-desc" style="font-size:12px;color:#667085;margin-top:2px;line-height:1.45;">Add screen breaks between lines to assign the script to each screen. Screens with no lines will behave as silent interaction screens.</div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">
+            <div>
+              <div class="panel-title">Script</div>
+              <div class="panel-desc" style="font-size:12px;color:#667085;margin-top:2px;line-height:1.45;">Add screen breaks between lines to assign the script to each screen. Screens with no lines will behave as silent interaction screens.</div>
+            </div>
+            <div id="mapBtnArea" style="flex-shrink:0;padding-top:2px;"></div>
+          </div>
         </div>
 
         <div class="script-thread" id="scriptThread">
+
+          <!-- Skeleton overlay — shown during AI mapping -->
+          <div id="scriptSkeleton" style="display:none;" class="script-skeleton">
+            <div class="sk-bubble right" style="width:72%;"></div>
+            <div class="sk-bubble" style="width:52%;animation-delay:0.1s;"></div>
+            <div class="sk-bubble right" style="width:83%;animation-delay:0.05s;"></div>
+            <div class="sk-bubble" style="width:38%;animation-delay:0.15s;"></div>
+            <div class="sk-bubble right" style="width:67%;animation-delay:0.08s;"></div>
+            <div class="sk-bubble" style="width:58%;animation-delay:0.2s;"></div>
+            <div class="sk-bubble right" style="width:78%;animation-delay:0.12s;"></div>
+            <div class="sk-bubble" style="width:44%;animation-delay:0.06s;"></div>
+          </div>
 
           <!-- AI mapping notice -->
           <div id="aiMappingBanner" style="display:flex;align-items:center;gap:10px;background:#F0FDF9;border:1.5px solid #A9EFD8;border-radius:8px;padding:10px 14px;margin-bottom:12px;">
@@ -951,6 +989,28 @@
   </div>
 
 </div><!-- /main -->
+
+<!-- ══ Remap Warning Modal ════════════════════════════════════════ -->
+<div id="remapModalBackdrop" style="display:none;position:fixed;inset:0;background:rgba(16,24,40,0.5);z-index:300;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;width:460px;max-width:92vw;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.20);position:relative;">
+    <!-- Close button -->
+    <button onclick="cancelRemap()" style="position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:1.5px solid #E4E7EC;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#98A2B3;padding:0;font-family:'DM Sans',sans-serif;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+    <!-- Warning icon -->
+    <div style="width:56px;height:56px;border-radius:50%;background:#FEF0C7;display:flex;align-items:center;justify-content:center;margin-bottom:20px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#DC6803" stroke-width="2" width="26" height="26"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+    </div>
+    <div style="margin-bottom:28px;">
+      <div style="font-size:18px;font-weight:700;color:#101828;margin-bottom:8px;">Reset mapping?</div>
+      <div style="font-size:14px;color:#667085;line-height:1.65;">This will reset your current mapping — all screen break placements you've made will be lost. AI will re-assign the script lines from scratch.</div>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <button onclick="cancelRemap()" style="flex:1;padding:11px 0;border-radius:10px;border:1.5px solid #D0D5DD;background:#fff;font-size:14px;font-weight:600;color:#344054;cursor:pointer;font-family:'DM Sans',sans-serif;">Cancel</button>
+      <button onclick="confirmRemap()" style="flex:1;padding:11px 0;border-radius:10px;border:none;background:#3538CD;font-size:14px;font-weight:600;color:#fff;cursor:pointer;font-family:'DM Sans',sans-serif;">Reset Mapping</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══ Hotspot Preview Modal ══════════════════════════════════════ -->
 <div class="hs-modal-backdrop" id="hsModalBackdrop" onclick="closeModalOnBackdrop(event)">
@@ -1370,18 +1430,175 @@
     banner.style.maxHeight = '0';
     banner.style.marginBottom = '0';
     banner.style.overflow = 'hidden';
-    setTimeout(function() { banner.remove(); }, 300);
+    // Hide (not remove) so getElementById always finds the element for future remap cycles
+    setTimeout(function() {
+      banner.style.display = 'none';
+      banner.style.transition = '';
+      banner.style.opacity = '';
+      banner.style.maxHeight = '';
+      banner.style.marginBottom = '';
+      banner.style.overflow = '';
+    }, 300);
   }
 
   // ─── Break removal ───────────────────────────────────────────
   function removeBreak(screenNum) {
-    const breakEl = document.getElementById('break-s' + screenNum);
+    const breakEl = document.querySelector('.screen-break[data-break-screen="' + screenNum + '"]');
     if (!breakEl) return;
 
     dismissAiBanner();
     breakEl.remove();
     updateScreenSummary();
   }
+
+  // ─── AI Mapping helpers ───────────────────────────────────────
+
+  // Fixed AI break positions: [afterLine, screenNum]
+  // (afterLine = the break-zone onclick number that the break sits immediately after)
+  const AI_BREAK_POSITIONS = [[2,2],[4,3],[8,4],[9,5],[11,6]];
+
+  // Build a fresh screen-break pill element
+  function buildBreakEl(screenNum) {
+    const el = document.createElement('div');
+    el.className = 'screen-break';
+    el.id = 'break-s' + screenNum;
+    el.dataset.breakScreen = screenNum;
+    el.innerHTML =
+      '<div class="ssl-line"></div>' +
+      '<div class="sb-pill">' +
+        '<span class="sb-label">Screen ' + screenNum + ' \u2014 ' + screenName(screenNum) + '</span>' +
+        '<div class="sb-remove" onclick="removeBreak(' + screenNum + ')" title="Remove break">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ssl-line"></div>';
+    return el;
+  }
+
+  // Remove every screen-break and silent-segment from the script thread
+  function purgeBreaks() {
+    const thread = document.getElementById('scriptThread');
+    thread.querySelectorAll('.screen-break, .silent-segment').forEach(function(el) { el.remove(); });
+  }
+
+  // Re-insert AI breaks at their canonical positions and refresh the left panel
+  function restoreAiBreaks() {
+    AI_BREAK_POSITIONS.forEach(function(pair) {
+      var afterLine = pair[0], screenNum = pair[1];
+      var bz = document.querySelector('.break-zone[onclick="openPicker(event, this,' + afterLine + ')"]');
+      if (bz) bz.insertAdjacentElement('afterend', buildBreakEl(screenNum));
+    });
+    updateScreenSummary();
+  }
+
+  // ─── AI Mapping state machine ────────────────────────────────
+  const CARD_LINE_COUNTS = { 1:2, 2:2, 3:4, 4:1, 5:2, 6:2 };
+  const LINES_SVG = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>';
+  let bannerDismissed = false;
+  var _currentStream = null; // reference to latest onComplete; used to cancel stale streams
+
+  const SPARKLE_SVG = '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" style="flex-shrink:0;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 18.33V14.17M3.75 5.83V1.67M1.67 3.75h4.16M1.67 16.25h4.16M10.83 2.5l-1.44 3.76c-.24.61-.36.92-.54 1.17-.17.23-.36.43-.59.59-.26.18-.56.3-1.17.53L3.33 10l3.76 1.45c.61.24.91.36 1.17.54.23.16.42.36.59.59.18.26.3.56.54 1.17L10.83 17.5l1.45-3.76c.24-.61.36-.91.54-1.17.16-.23.36-.42.59-.59.26-.18.56-.3 1.17-.54L18.33 10l-3.75-1.45c-.61-.24-.91-.36-1.17-.54-.23-.17-.43-.36-.59-.59-.18-.26-.3-.56-.54-1.17L10.83 2.5z"/></svg>';
+
+  function setMappingState(state, opts) {
+    var isRemap = !!(opts && opts.remap);
+    const btnArea  = document.getElementById('mapBtnArea');
+    const skeleton = document.getElementById('scriptSkeleton');
+    const banner   = document.getElementById('aiMappingBanner');
+
+    if (state === 'unmapped') {
+      btnArea.innerHTML = '<button class="map-ai-btn primary" onclick="startMapping()">' + SPARKLE_SVG + 'Map with AI</button>';
+      skeleton.style.display = 'none';
+      banner.style.cssText = 'display:none;';
+      bannerDismissed = false;
+      purgeBreaks();          // remove all breaks + silent segments from DOM
+      updateScreenSummary();  // no breaks → Screen 1 gets all 13 lines, rest 0
+
+    } else if (state === 'mapping') {
+      // Loading button matches whichever button triggered the action
+      btnArea.innerHTML = isRemap
+        ? '<button class="map-ai-btn remap" disabled>' + SPARKLE_SVG + 'Mapping...</button>'
+        : '<button class="map-ai-btn primary" disabled><span class="btn-spinner"></span>Mapping...</button>';
+      skeleton.style.display = 'flex';
+      banner.style.cssText = 'display:none;';
+      purgeBreaks();          // clean slate before streaming
+      // Reset all cards to 0 for the streaming animation
+      for (var i = 1; i <= 6; i++) { updateScreenCard(i, 0); }
+      var badge = document.getElementById('screenMappedCount');
+      badge.textContent = '0 of 6 mapped';
+      badge.style.background = '#F2F4F7';
+      badge.style.color = '#667085';
+      streamScreenCards(function() { setMappingState('mapped'); });
+
+    } else if (state === 'mapped') {
+      btnArea.innerHTML = '<button class="map-ai-btn remap" onclick="showRemapConfirm()">' + SPARKLE_SVG + 'Re-map</button>';
+      skeleton.style.display = 'none';
+      purgeBreaks();          // remove any stale manual breaks before restoring AI ones
+      restoreAiBreaks();      // re-insert AI breaks + call updateScreenSummary()
+      if (!bannerDismissed) {
+        banner.style.cssText = 'display:flex;align-items:center;gap:10px;background:#F0FDF9;border:1.5px solid #A9EFD8;border-radius:8px;padding:10px 14px;margin-bottom:12px;';
+      }
+    }
+  }
+
+  function startMapping() { setMappingState('mapping'); }
+
+  function showRemapConfirm() {
+    document.getElementById('remapModalBackdrop').style.display = 'flex';
+  }
+  function cancelRemap() {
+    document.getElementById('remapModalBackdrop').style.display = 'none';
+  }
+  function confirmRemap() {
+    document.getElementById('remapModalBackdrop').style.display = 'none';
+    bannerDismissed = false;
+    setMappingState('mapping', { remap: true });
+  }
+
+  function streamScreenCards(onComplete) {
+    _currentStream = onComplete; // mark this as the live stream
+    var n = 1;
+    function step() {
+      if (_currentStream !== onComplete) return; // a newer stream started — abort this one
+      if (n > 6) {
+        setTimeout(function() {
+          if (_currentStream === onComplete) onComplete();
+        }, 400);
+        return;
+      }
+      updateScreenCard(n, CARD_LINE_COUNTS[n]);
+      var badge = document.getElementById('screenMappedCount');
+      badge.textContent = n + ' of 6 mapped';
+      if (n === 6) {
+        badge.style.background = '#EEF4FF';
+        badge.style.color = '#3538CD';
+      }
+      n++;
+      setTimeout(step, 950); // 6 × 950ms ≈ 5.7s total
+    }
+    setTimeout(step, 950); // first card after 950ms
+  }
+
+  function updateScreenCard(screenNum, lineCount) {
+    var card = document.getElementById('ssc-' + screenNum);
+    if (!card) return;
+    var tag = card.querySelector('.ssc-lines-tag');
+    if (!tag) return;
+    if (lineCount === 0) {
+      tag.className = 'ssc-lines-tag no-lines';
+      tag.innerHTML = LINES_SVG + ' No script lines';
+      card.classList.remove('mapped');
+      card.classList.add('silent');
+    } else {
+      tag.className = 'ssc-lines-tag has-lines';
+      tag.innerHTML = LINES_SVG + ' ' + lineCount + ' line' + (lineCount !== 1 ? 's' : '');
+      card.classList.remove('silent');
+      card.classList.add('mapped');
+    }
+  }
+
+  // Track banner dismissal
+  var _origDismiss = dismissAiBanner;
+  dismissAiBanner = function() { bannerDismissed = true; _origDismiss(); };
 
   // ─── Screen picker popover ───────────────────────────────────
   let _pickerAnchor = null; // the break-zone element that triggered the picker
@@ -1395,27 +1612,30 @@
     const allChildren = Array.from(thread.children);
     const zoneIdx = allChildren.indexOf(zoneEl);
 
-    // Find the nearest screen-break ABOVE the clicked zone
+    // Find the nearest VISIBLE screen-break ABOVE the clicked zone
     let screenAbove = 1; // default: Screen 1 owns the top
     for (let i = zoneIdx - 1; i >= 0; i--) {
-      if (allChildren[i].classList.contains('screen-break')) {
+      if (allChildren[i].classList.contains('screen-break') && allChildren[i].style.display !== 'none') {
         screenAbove = parseInt(allChildren[i].dataset.breakScreen);
         break;
       }
     }
 
-    // Find the nearest screen-break BELOW the clicked zone
+    // Find the nearest VISIBLE screen-break BELOW the clicked zone
     let screenBelow = 7; // sentinel: nothing below
     for (let i = zoneIdx + 1; i < allChildren.length; i++) {
-      if (allChildren[i].classList.contains('screen-break')) {
+      if (allChildren[i].classList.contains('screen-break') && allChildren[i].style.display !== 'none') {
         screenBelow = parseInt(allChildren[i].dataset.breakScreen);
         break;
       }
     }
 
     const isBefore1 = (afterLine === 'before-first');
+    // Only count visible breaks as "already placed"
     const existingBreakNums = new Set(
-      Array.from(thread.querySelectorAll('.screen-break')).map(function(el) { return parseInt(el.dataset.breakScreen); })
+      Array.from(thread.querySelectorAll('.screen-break'))
+        .filter(function(el) { return el.style.display !== 'none'; })
+        .map(function(el) { return parseInt(el.dataset.breakScreen); })
     );
 
     // For before-first, screenAbove is implicitly 1 (Screen 1 owns the top by default).
@@ -1519,8 +1739,11 @@
     const thread = document.getElementById('scriptThread');
     const children = Array.from(thread.children);
 
+    // Only consider VISIBLE screen-breaks (hidden ones are from unmapped/mapping state)
+    const isVisibleBreak = el => el.classList.contains('screen-break') && el.style.display !== 'none';
+
     // Compute Screen 1 boundary state (used for both label + silent segment)
-    const firstBreak = children.find(el => el.classList.contains('screen-break'));
+    const firstBreak = children.find(isVisibleBreak);
     const firstBreakIdx = firstBreak ? children.indexOf(firstBreak) : -1;
     const firstLineIdx = children.findIndex(el => el.classList.contains('script-line'));
     const breakIsAboveLine1 = firstBreak && firstBreakIdx < firstLineIdx;
@@ -1540,11 +1763,11 @@
       }
     }
 
-    // Count lines per screen
+    // Count lines per screen (skip hidden breaks)
     const counts = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0};
     let currentScreen = 1;
     children.forEach(el => {
-      if (el.classList.contains('screen-break')) {
+      if (isVisibleBreak(el)) {
         currentScreen = parseInt(el.dataset.breakScreen);
       } else if (el.classList.contains('script-line')) {
         counts[currentScreen] = (counts[currentScreen] || 0) + 1;
@@ -1566,7 +1789,7 @@
     // This avoids stale segments from previous states.
     thread.querySelectorAll('.silent-segment').forEach(function(seg) { seg.remove(); });
 
-    const breakEls = Array.from(thread.querySelectorAll('.screen-break'));
+    const breakEls = Array.from(thread.querySelectorAll('.screen-break')).filter(isVisibleBreak);
     breakEls.forEach(function(breakEl, i) {
       const thisScreen = parseInt(breakEl.dataset.breakScreen);
       const nextBreak = breakEls[i + 1];
@@ -1643,7 +1866,7 @@
 
   // ─── Init ─────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', function() {
-    updateScreenSummary();
+    setMappingState('unmapped'); // purges HTML breaks, resets left panel via updateScreenSummary
   });
 </script>
 </body>
