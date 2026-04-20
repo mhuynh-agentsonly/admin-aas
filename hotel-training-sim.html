@@ -1453,11 +1453,11 @@ function buildFlowMarkup(hotspots) {
     const itemClass  = isTerminal ? 'flow-term' : (hs.points < 0 ? 'flow-neg' : '');
     let dest = '', ptsLabel = '';
     if (isTerminal) {
-      dest = 'Terminal'; ptsLabel = 'Click';
+      dest = 'Terminal'; ptsLabel = 'Wrong';
     } else {
       dest = hs.destScreen != null ? (isPreviewOnlyScreen(hs.destScreen) ? 'Result Screen' : (state.screens[hs.destScreen]?.name || `Screen ${hs.destScreen + 1}`)) : '—';
       const pts = hs.points || 1;
-      ptsLabel = 'Click · ' + (pts >= 0 ? '+' : '−') + Math.abs(pts) + ' pts';
+      ptsLabel = (pts >= 0 ? 'Correct' : 'Wrong') + ' · ' + (pts >= 0 ? '+' : '−') + Math.abs(pts) + ' pts';
     }
 
     markup += `
@@ -1655,8 +1655,8 @@ function renderEditingPanel(body, autoFocus = false) {
         ? (isPreviewOnlyScreen(hs.destScreen) ? 'Result Screen' : (state.screens[hs.destScreen]?.name || `Screen ${hs.destScreen + 1}`))
         : hs.interaction === 'end-simulation' ? 'Terminal' : '';
       const livePts = hs.interaction !== 'end-simulation'
-        ? ('Click · ' + ((hs.points != null ? hs.points : 1) >= 0 ? `+${Math.abs(hs.points != null ? hs.points : 1)} pts` : `−${Math.abs(hs.points)} pts`))
-        : 'Click';
+        ? (((hs.points != null ? hs.points : 1) >= 0 ? 'Correct' : 'Wrong') + ' · ' + ((hs.points != null ? hs.points : 1) >= 0 ? `+${Math.abs(hs.points != null ? hs.points : 1)} pts` : `−${Math.abs(hs.points)} pts`))
+        : 'Wrong';
       flowPreview += `
         <div class="flow-item ${liveItemClass}">
           <div class="flow-dot ${livePcls}"></div>
