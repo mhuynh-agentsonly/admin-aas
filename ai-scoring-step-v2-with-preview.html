@@ -286,7 +286,8 @@
     .preview-badge { display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; white-space: nowrap; }
     .preview-badge.badge-correct { background: #ECFDF3; color: #027A48; border-radius: 20px; padding: 2px 7px; }
     .preview-badge.badge-penalty { background: #FFF6ED; color: #B54708; border-radius: 20px; padding: 2px 7px; }
-    .preview-badge.badge-terminal { width: 12px; height: 12px; background: #B42318; border-radius: 3px; flex-shrink: 0; }
+    .preview-badge.badge-terminal { width: 36px; height: 17px; background: #FEF3F2; border-radius: 20px; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+    .preview-badge.badge-terminal::before { content: ''; width: 8px; height: 8px; background: #F04438; border-radius: 2px; flex-shrink: 0; }
 
     /* View sim output link in Specialist config */
     .view-sim-link { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: #444CE7; cursor: pointer; text-decoration: none; margin-top: 2px; }
