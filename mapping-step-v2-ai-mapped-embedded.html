@@ -1530,7 +1530,7 @@
       streamScreenCards(function() { setMappingState('mapped'); });
 
     } else if (state === 'mapped') {
-      btnArea.innerHTML = '<button class="map-ai-btn remap" onclick="showRemapConfirm()">' + SPARKLE_SVG + 'Re-map</button>';
+      btnArea.innerHTML = '';
       skeleton.style.display = 'none';
       purgeBreaks();          // remove any stale manual breaks before restoring AI ones
       restoreAiBreaks();      // re-insert AI breaks + call updateScreenSummary()
