@@ -186,12 +186,6 @@
     .evaluator-note-text { font-size: 12px; color: #2D31A6; line-height: 1.6; }
     .evaluator-note-text strong { font-weight: 700; display: block; margin-bottom: 2px; font-size: 13px; }
 
-    /* Specialist inputs list in evaluator */
-    .specialist-inputs-list { display: flex; flex-direction: column; gap: 6px; }
-    .specialist-input-row { display: flex; align-items: center; gap: 8px; background: #F9FAFB; border: 1px solid #E4E7EC; border-radius: 8px; padding: 10px 14px; }
-    .specialist-input-name { font-size: 13px; font-weight: 600; color: #344054; flex: 1; }
-    .specialist-input-badge { font-size: 11px; font-weight: 500; color: #3538CD; background: #EEF4FF; border-radius: 4px; padding: 2px 7px; }
-    .specialist-inputs-empty { font-size: 12px; color: #98A2B3; font-style: italic; padding: 8px 0; }
 
     /* Toggle */
     .toggle { position: relative; width: 34px; height: 19px; flex-shrink: 0; }
@@ -1268,30 +1262,10 @@ Output format:
           </div></div>
         </div>
       </div>
-      <div class="config-section">
-        <div class="config-section-label"><span class="material-symbols-outlined">hub</span>Specialist Inputs</div>
-        <div class="specialist-inputs-list" id="eval-inputs-${id}"></div>
-      </div>
     `;
     return panel;
   }
 
-  function refreshEvaluatorInputs(evalId) {
-    const list = document.getElementById(`eval-inputs-${evalId}`);
-    if (!list) return;
-    if (state.specialists.size === 0) {
-      list.innerHTML = '<div class="specialist-inputs-empty">No specialists added yet — add specialists to see them listed here.</div>';
-      return;
-    }
-    list.innerHTML = [...state.specialists]
-      .sort((a, b) => specialistData[a].name.localeCompare(specialistData[b].name))
-      .map(sid => {
-        const s = specialistData[sid];
-        return `<div class="specialist-input-row">
-        <span class="specialist-input-name">${s.name}</span>
-      </div>`;
-      }).join('');
-  }
 
   // ── Prompt fade visibility ────────────────────────────────────
   function updatePromptFades() {
@@ -1339,7 +1313,6 @@ Output format:
     const panel = document.getElementById(panelId);
     if (panel) {
       panel.style.display = 'flex';
-      if (role === 'evaluator') refreshEvaluatorInputs(id);
       requestAnimationFrame(updatePromptFades);
     }
   }
@@ -1435,8 +1408,6 @@ Output format:
     const config = buildSpecialistConfig(id);
     document.getElementById('rightPanelBody').insertBefore(config, document.getElementById('emptyConfig'));
     updateSpecialistCount();
-    // Refresh evaluator inputs if evaluator is configured
-    if (state.evaluatorId) refreshEvaluatorInputs(state.evaluatorId);
   }
 
   function removeSpecialist(id) {
@@ -1444,7 +1415,6 @@ Output format:
     document.getElementById(`card-${id}`)?.remove();
     document.getElementById(`config-${id}`)?.remove();
     updateSpecialistCount();
-    if (state.evaluatorId) refreshEvaluatorInputs(state.evaluatorId);
   }
 
   // ── Evaluator modal ───────────────────────────────────────────
