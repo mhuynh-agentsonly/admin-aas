@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin AAS Archive</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --panel-hover: #f8fafc;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+      --warning-bg: #fffbeb;
+      --warning-border: #fcd34d;
+      --warning-text: #92400e;
+      --archive-bg: #fff7ed;
+      --archive-border: #fdba74;
+      --archive-text: #9a3412;
+      --link: #b45309;
+      --shadow-sm: 0 8px 24px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 12px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 40px 20px 64px;
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 34px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      margin: 0 0 32px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.65;
+      max-width: 780px;
+    }
+
+    .top-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: var(--link);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .top-link:hover {
+      text-decoration: underline;
+    }
+
+    .notice {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: var(--warning-text);
+      padding: 16px 18px;
+      border-radius: 14px;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      transition: 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      min-height: 152px;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #cbd5e1;
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-title {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .card-title span:first-child {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .badge {
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--archive-border);
+      background: var(--archive-bg);
+      color: var(--archive-text);
+      white-space: nowrap;
+    }
+
+    .desc {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .footer {
+      margin-top: 44px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.95em;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 24px 16px 40px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .card {
+        min-height: unset;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="top-link" href="../index.html">← Back to Admin AAS index</a>
+
+    <h1>Admin AAS Archive</h1>
+    <p class="subtitle">
+      These files are deprecated and kept for reference only. They may contain outdated flows, older UI patterns, or behavior that no longer reflects the latest product direction.
+    </p>
+
+    <div class="notice">
+      Please do not use files in <code>archive/</code> as the source of truth for implementation unless specifically discussed.
+    </div>
+
+    <div class="grid">
+      <a class="card" href="./ai-scoring-step-v2.html">
+        <div class="card-title">
+          <span>AI Scoring Step V2</span>
+          <span class="badge">Archived</span>
+        </div>
+        <p class="desc">
+          Previous V2 scoring prototype kept for historical reference.
+        </p>
+      </a>
+
+      <a class="card" href="./ai-scoring-step.html">
+        <div class="card-title">
+          <span>AI Scoring Step</span>
+          <span class="badge">Archived</span>
+        </div>
+        <p class="desc">
+          Earlier scoring flow prototype no longer used as the main implementation reference.
+        </p>
+      </a>
+
+      <a class="card" href="./ai-scoring-v2-flexible.html">
+        <div class="card-title">
+          <span>AI Scoring V2 Flexible</span>
+          <span class="badge">Archived</span>
+        </div>
+        <p class="desc">
+          Flexible scoring variant retained for comparison and past design context.
+        </p>
+      </a>
+
+      <a class="card" href="./README.md">
+        <div class="card-title">
+          <span>Archive README</span>
+          <span class="badge">Archived</span>
+        </div>
+        <p class="desc">
+          Notes explaining that files in this folder are deprecated.
+        </p>
+      </a>
+    </div>
+
+    <p class="footer">
+      If you need the latest approved demos, please go back to the main Admin AAS index.
+    </p>
+  </div>
+</body>
+</html>
