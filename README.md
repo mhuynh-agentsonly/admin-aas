@@ -1,6 +1,7 @@
 # Admin AAS Demo Repo
 
 This repo contains sim demo prototypes.
+Admin AAS Github Pages: https://mhuynh-agentsonly.github.io/admin-aas/index.html
 
 Please note:
 - Files in the `archive/` folder are deprecated
