@@ -97,7 +97,7 @@
     .assistant-card.active { border-color: #A4BCFD; background: #F5F8FF; }
     .assistant-info { flex: 1; min-width: 0; }
     .assistant-name { font-size: 13px; font-weight: 700; color: #101828; overflow-wrap: anywhere; line-height: 1.35; }
-    .assistant-desc { font-size: 11px; color: #667085; margin-top: 1px; line-height: 1.4; overflow-wrap: anywhere; }
+    .assistant-desc { font-size: 11px; color: #667085; margin-top: 1px; line-height: 1.4; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .card-chevron { color: #D0D5DD; flex-shrink: 0; }
     .card-chevron .material-symbols-outlined { font-size: 18px; }
     .assistant-card.active .card-chevron { color: #3538CD; }
@@ -618,7 +618,7 @@ Output format:
                 </div></div>
                 <div class="prompt-box-footer">
                   <span class="prompt-tag">Specialist prompt · Last edited 04/14/2026, 10:23 AM</span>
-                  <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
+                  <a class="edit-link">View in OpenAI<span class="material-symbols-outlined">open_in_new</span></a>
                 </div>
               </div>
             </div>
@@ -1197,7 +1197,7 @@ Output format:
           </div></div>
           <div class="prompt-box-footer">
             <span class="prompt-tag">Specialist prompt · Last edited ${d.lastEdited}</span>
-            <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
+            <a class="edit-link">View in OpenAI<span class="material-symbols-outlined">open_in_new</span></a>
           </div>
         </div>
       </div>
@@ -1239,7 +1239,7 @@ Output format:
           </div></div>
           <div class="prompt-box-footer">
             <span class="prompt-tag">Evaluator prompt · Last edited ${d.lastEdited}</span>
-            <a class="edit-link"><span class="material-symbols-outlined">edit</span>Edit in Playground</a>
+            <a class="edit-link">View in OpenAI<span class="material-symbols-outlined">open_in_new</span></a>
           </div>
         </div>
       </div>
